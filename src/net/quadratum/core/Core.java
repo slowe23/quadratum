@@ -80,4 +80,11 @@ public interface Core {
 	 * @return true if the update succeeded, false otherwise
 	 */
 	boolean updateUnit(int id, int unitID, Piece piece);
+	
+	/**
+	 * Returns the name of a player
+	 * @param player the id of the player (i.e. 1-n where n is the number of players, not the player's secret id)
+	 */
+	String getPlayerName(int player);
+	
 }

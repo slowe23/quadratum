@@ -9,10 +9,10 @@ public interface Player {
 	 * Notifies the player that there is a new game.
 	 * @param id the ID for this Player.
 	 * @param mapData the MapData this game is using.
-	 * @param otherPlayers the other players in the Game.
+	 * @param otherPlayers the number of other players in the Game.
 	 * @param pieces the Pieces that are available for use.
 	 */
-	void start(int id, MapData mapData, List<String> otherPlayers, List<Piece> pieces);
+	void start(int id, MapData mapData, int otherPlayers, List<Piece> pieces);
 	
 	/**
 	 * Notifies the player that the game has ended.
