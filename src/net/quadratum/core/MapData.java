@@ -6,6 +6,7 @@ public class MapData {
 	
 	/** Terrain of the map. */
 	int[][] _terrain;
+	
 	/** Coordinates where a Player can place units. */
-	Set<Point> _plcaementArea;
+	Set<Point> _placementArea;
 }

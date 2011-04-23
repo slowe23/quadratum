@@ -7,12 +7,13 @@ public interface Player {
 
 	/**
 	 * Notifies the player that there is a new game.
+	 * @param core the game core
 	 * @param id the ID for this Player.
 	 * @param mapData the MapData this game is using.
 	 * @param otherPlayers the number of other players in the Game.
 	 * @param pieces the Pieces that are available for use.
 	 */
-	void start(int id, MapData mapData, int otherPlayers, List<Piece> pieces);
+	void start(Core core, int id, MapData mapData, int otherPlayers, List<Piece> pieces);
 	
 	/**
 	 * Notifies the player that the game has ended.
