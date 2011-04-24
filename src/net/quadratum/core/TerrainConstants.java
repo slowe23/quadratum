@@ -1,4 +1,6 @@
-class TerrainConstants
+package net.quadratum.core;
+
+public class TerrainConstants
 {
 	public static final int LAND = 0;
 	public static final int WATER = 1;
