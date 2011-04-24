@@ -110,7 +110,7 @@ class GameCore implements Core
 	 * @param id the player's secret id
 	 * @return the id of that player
 	 */
-	private int getPlayerID(int id)
+	private int getPlayerId(int id)
 	{
 		for(int i = 0; i < _playerInformation.size(); i++)
 		{
@@ -119,6 +119,9 @@ class GameCore implements Core
 		return -1;
 	}
 	
+	/**
+	 * Starts the game.
+	 */
 	public void start()
 	{
 		if(_players.size() == 0)
@@ -153,27 +156,73 @@ class GameCore implements Core
 		}
 	}
 	
+	/**
+	 * Callback for notifying the GameCode that a player is ready.
+	 * @param id the secret id
+	 */
 	public void ready(int id)
 	{
-		_playerInformation.get(getPlayerID(id))._ready = true;
-		// TO DO: Check to see if everyone is ready, and, if so, start the game
+		_playerInformation.get(getPlayerId(id))._ready = true;
+		for(int i = 0; i < _playerInformation.size(); i++)
+		{
+			if(!_playerInformation.get(i)._ready)
+			{
+				return;
+			}
+		}
+		_players.get(0).turnStart();
 	}
 	
+	/**
+	 * Callback for ending a turn.
+	 * @param id the secret id
+	 */
 	public void endTurn(int id)
 	{
-		if(getPlayerID(id) == _turn)
+		if(getPlayerId(id) == _turn)
 		{
 			nextTurn();
 		}
 	}
-	public boolean unitAction(int id, int unitId, Point coords) { return true; } // Callback for unit actions (returns false for invalid actions) - if coords is an empty square, the unit moves, if coords contains a unit, the unit attacks
 	
-	public HashMap<Point, Action.ActionType> getValidActions(int id, int unitId) { return null; } // Gets the valid actions for a unit, returns null if no possible actions
+	/**
+	 * Performs a unit's action.
+	 * @param id the secret it
+	 * @param unitId the unit's id
+	 * @param coords the point at which the action should be taken
+	 * @return true if the action has been taken, false if otherwise
+	 */
+	public boolean unitAction(int id, int unitId, Point coords) { return true; }
 	
+	/**
+	 * Calculates the valid actions for a given unit
+	 * @param id the secret id
+	 * @param unitId the unit's id
+	 * @return a map of Points to Action.ActionTypes that represents what actions can be taken where
+	 */
+	public HashMap<Point, Action.ActionType> getValidActions(int id, int unitId) { return null; }
+	
+	/**
+	 * Generates what the player can see.
+	 * @param id the non-secret id
+	 * @return a map of Points to unit ids
+	 */
+	private HashMap<Point, Integer> generateMapForPlayer(int id) { return null; }
+	
+	/**
+	 * Generates new map information and sends it to all players.
+	 */
+	private void updateMaps() {}
+	
+	/**
+	 * Callback for quitting a game.
+	 * @param id the secret id
+	 */
 	public void quit(int id)
 	{
-		int player = getPlayerID(id);
+		int player = getPlayerId(id);
 		_playerInformation.get(player)._lost = true;
+		_playerInformation.get(player)._quit = true;
 		if(_turn == player)
 		{
 			nextTurn();
@@ -234,15 +283,29 @@ class GameCore implements Core
 	 */
 	public void sendChatMessage(int id, String message)
 	{
-		int from = getPlayerID(id);
+		int from = getPlayerId(id);
 		for(int i = 0; i < _players.size(); i++)
 		{
 			_players.get(i).chatMessage(from, new String(message));
 		}
 	}
 	
+	/**
+	 * Callback for placing a unit.
+	 * @param id the secret id
+	 * @param coords the Point at which the unit should be placed
+	 * @return true if the unit is placed sucessfully, false otherwise
+	 */
 	public boolean placeUnit(int id, Point coords) { return true; } // Callback for placing a unit
-	public boolean updateUnit(int id, int unitID, Piece newPiece) { return true; } // Callback for updating a unit
+	
+	/**
+	 * Callback for updating a unit.
+	 * @param id the secret id
+	 * @param unitId the id of the unit
+	 * @param newPiece the piece to add to the unit
+	 * @return true if the piece is added sucessfuly, false otherwise
+	 */
+	public boolean updateUnit(int id, int unitId, Piece newPiece) { return true; } // Callback for updating a unit
 	
 	/**
 	 * Gets a player's name
