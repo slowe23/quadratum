@@ -7,7 +7,7 @@ public class PlayerInformation {
 	 * @param id the player's secret id
 	 * @param name the player's name
 	 */
-	public void PlayerInformation(int id, String name)
+	PlayerInformation(int id, String name)
 	{
 		_id = id;
 		_name = name;

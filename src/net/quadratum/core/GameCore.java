@@ -10,7 +10,6 @@ class GameCore implements Core
 	private int[][] _terrain;
 	private ArrayList<ArrayList<Point>> _startingLocations;
 	private ArrayList<Unit> _units;
-	private ArrayList<UnitInformation> _unitInformation;
 	private ArrayList<Player> _players;
 	private ArrayList<PlayerInformation> _playerInformation;
 	private ArrayList<Piece> _pieces;
@@ -23,10 +22,9 @@ class GameCore implements Core
 	 * @param map the map file name
 	 * @param winCondition the win condition
 	 */
-	void GameCore(String map, WinCondition winCondition)
+	public void GameCore(String map, WinCondition winCondition)
 	{
 		_units = new ArrayList<Unit>();
-		_unitInformation = new ArrayList<UnitInformation>();
 		_players = new ArrayList<Player>();
 		_playerInformation = new ArrayList<PlayerInformation>();
 		_pieces = new ArrayList<Piece>();
@@ -56,7 +54,7 @@ class GameCore implements Core
 		boolean found = false;
 		while(true)
 		{
-			for(int i = 0; i < _playerInformation.length(); i++)
+			for(int i = 0; i < _playerInformation.size(); i++)
 			{
 				if(_playerInformation.get(i)._id == random)
 				{
@@ -97,7 +95,7 @@ class GameCore implements Core
 	 */
 	private Player getPlayer(int id)
 	{
-		for(int i = 0; i < _playerInformation.length(); i++)
+		for(int i = 0; i < _playerInformation.size(); i++)
 		{
 			if(_playerInformation.get(i)._id == id)
 			{
@@ -106,9 +104,24 @@ class GameCore implements Core
 		}
 		return null;
 	}
+	
+	/**
+	 * Gets a player's id by their secret id.
+	 * @param id the player's secret id
+	 * @return the id of that player
+	 */
+	private int getPlayerID(int id)
+	{
+		for(int i = 0; i < _playerInformation.size(); i++)
+		{
+			return i;
+		}
+		return -1;
+	}
+	
 	public void start()
 	{
-		if(_players.length() == 0)
+		if(_players.size() == 0)
 		{
 			// TO DO: add exception to throw
 		}
@@ -121,35 +134,36 @@ class GameCore implements Core
 			return;
 		}
 		MapData tempMap;
-		ArrayList<Point> startingLocations, tempLocations;
-		for(int i = 0; i < _players.length(); i++)
+		HashSet<Point> startingLocations;
+		ArrayList<Point> tempLocations;
+		for(int i = 0; i < _players.size(); i++)
 		{
 			// Copy data so the player can't modify it
 			
 			// TO DO: copy terrain
-			startingLocations = new ArrayList<Point>();
+			startingLocations = new HashSet<Point>();
 			tempLocations = _startingLocations.get(i);
-			for(int j = 0; j < tempLocations.length(); j++)
+			for(int j = 0; j < tempLocations.size(); j++)
 			{
 				startingLocations.add(new Point(tempLocations.get(i).getX(), tempLocations.get(i).getY()));
 			}
-			tempMap = new MapData(terrain, startingLocations);
+			tempMap = new MapData(_terrain, startingLocations);
 			// TO DO: copy pieces
-			_players.get(i).start(_playerInformation.get(i)._id, tempMap, _players.length(), _pieces);
+			_players.get(i).start(this, _playerInformation.get(i)._id, tempMap, _players.size(), _pieces);
 		}
 	}
 	
-	void ready(int id)
+	public void ready(int id)
 	{
-		getPlayer(id)._ready = true;
+		_playerInformation.get(getPlayerID(id))._ready = true;
 		// TO DO: Check to see if everyone is ready, and, if so, start the game
 	}
-	void endTurn(int id); // Callback so players can let the game core know that their turn has ended
-	boolean unitAction(int id, int unitId, Point coords); // Callback for unit actions (returns false for invalid actions) - if coords is an empty square, the unit moves, if coords contains a unit, the unit attacks
-	HashMap<Point, Action> getValidActions(int id, int unitId); // Gets the valid actions for a unit, returns null if no possible actions
-	void quit(int id)
+	public void endTurn(int id) {} // Callback so players can let the game core know that their turn has ended
+	public boolean unitAction(int id, int unitId, Point coords) { return true; } // Callback for unit actions (returns false for invalid actions) - if coords is an empty square, the unit moves, if coords contains a unit, the unit attacks
+	public HashMap<Point, Action.ActionType> getValidActions(int id, int unitId) { return null; } // Gets the valid actions for a unit, returns null if no possible actions
+	public void quit(int id)
 	{
-		int player = _players.indexOf(getPlayer(id));
+		int player = getPlayerID(id);
 		_playerInformation.get(player)._lost = true;
 		if(_turn == player)
 		{
@@ -171,9 +185,9 @@ class GameCore implements Core
 	 */
 	private void sendChatMessage(String message)
 	{
-		for(int i = 0; _players.length(); i++)
+		for(int i = 0; i < _players.size(); i++)
 		{
-			_players.chatMessage(-1, new String(message));
+			_players.get(i).chatMessage(-1, new String(message));
 		}
 	}
 	
@@ -184,15 +198,14 @@ class GameCore implements Core
 	 */
 	public void sendChatMessage(int id, String message)
 	{
-		int from = _players.indexOf(getPlayer(id));
-		for(int i = 0; _players.length(); i++)
+		int from = getPlayerID(id);
+		for(int i = 0; i < _players.size(); i++)
 		{
-			_players.chatMessage(from, new String(message));
+			_players.get(i).chatMessage(from, new String(message));
 		}
 	}
-	public boolean placeUnit(int id, Point coords); // Callback for placing a unit
-	public boolean updateUnit(int id, int unitId, Piece newPiece); // Callback for updating a unit
-	
+	public boolean placeUnit(int id, Point coords) { return true; } // Callback for placing a unit
+	public boolean updateUnit(int id, int unitID, Piece newPiece) { return true; } // Callback for updating a unit
 	/**
 	 * Gets a player's name
 	 * @param player the player's non-secret id
