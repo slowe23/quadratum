@@ -29,4 +29,7 @@ public class PlayerInformation {
 	
 	/** Has the player quit? */
 	boolean _quit;
+	
+	/** Has the player lost? */
+	boolean _lost;
 }
