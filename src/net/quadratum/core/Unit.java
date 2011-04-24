@@ -10,9 +10,12 @@ public class Unit {
 	String _name;
 	/** Pieces this Unit contains. */
 	Map<Point, Piece> _pieces;
-	/** The Player who owns this Unit. */
-	Player _owner;
+	/** The player who owns this Unit. */
+	int _owner;
 	/** Cached stats for this Unit. */
 	Map<String,Integer> _stats;
-	
+	/** Has the unit moved this turn? */
+	boolean _hasMoved;
+	/** Has the unit attacked this turn? */
+	boolean _hasAttacked;
 }
