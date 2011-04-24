@@ -12,6 +12,16 @@ public class Point {
 		_y = y;
 	}
 	
+	/**
+	 * The copy constructor for Point.
+	 * @param point the Point to copy
+	 */
+	public Point(Point point)
+	{
+		_x = point.getX();
+		_y = point.getY();
+	}
+	
 	public int getX() {
 		return _x;
 	}
