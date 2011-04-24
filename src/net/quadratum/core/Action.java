@@ -10,7 +10,7 @@ public class Action {
 	Point _dest;
 	
 	// TODO should this get moved to a separate class?
-	enum ActionType {
+	public enum ActionType {
 		MOVE,
 		ATTACK,
 		GATHER_RESOURCES;
