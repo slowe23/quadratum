@@ -75,5 +75,11 @@ public class VirtualCore implements Core {
 
 		return null;
 	}
+	
+	@Override
+	public int getResources(int id) {
+
+		return 0;
+	}
 
 }

@@ -88,4 +88,9 @@ public interface Core {
 	 */
 	String getPlayerName(int player);
 	
+	/**
+	 * Get's a player's resources.
+	 * @param id the secret id
+	 */
+	int getResources(int id);
 }

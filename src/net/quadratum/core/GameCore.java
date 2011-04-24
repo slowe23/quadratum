@@ -8,8 +8,9 @@ import java.util.Random;
 class GameCore implements Core
 {
 	private int[][] _terrain;
-	private ArrayList<ArrayList<Point>> _startingLocations;
+	private ArrayList<HashSet<Point>> _startingLocations;
 	private ArrayList<Unit> _units;
+	private ArrayList<UnitInformation> _unitInformation;
 	private ArrayList<Player> _players;
 	private ArrayList<PlayerInformation> _playerInformation;
 	private ArrayList<Piece> _pieces;
@@ -24,7 +25,9 @@ class GameCore implements Core
 	 */
 	public void GameCore(String map, WinCondition winCondition)
 	{
+		_startingLocations = new ArrayList<HashSet<Point>>();
 		_units = new ArrayList<Unit>();
+		_unitInformation = new ArrayList<UnitInformation>();
 		_players = new ArrayList<Player>();
 		_playerInformation = new ArrayList<PlayerInformation>();
 		_pieces = new ArrayList<Piece>();
@@ -137,22 +140,16 @@ class GameCore implements Core
 			return;
 		}
 		MapData tempMap;
-		HashSet<Point> startingLocations;
-		ArrayList<Point> tempLocations;
+		ArrayList<Piece> tempPieces;
 		for(int i = 0; i < _players.size(); i++)
 		{
-			// Copy data so the player can't modify it
-			
-			// TO DO copy terrain
-			startingLocations = new HashSet<Point>();
-			tempLocations = _startingLocations.get(i);
-			for(int j = 0; j < tempLocations.size(); j++)
+			tempMap = new MapData(_terrain, _startingLocations.get(i));
+			tempPieces = new ArrayList<Piece>();
+			for(int j = 0; j < _pieces.size(); j++)
 			{
-				startingLocations.add(new Point(tempLocations.get(i).getX(), tempLocations.get(i).getY()));
+				tempPieces.add(new Piece(_pieces.get(j)));
 			}
-			tempMap = new MapData(_terrain, startingLocations);
-			// TODO copy pieces
-			_players.get(i).start(this, _playerInformation.get(i)._id, tempMap, _players.size(), _pieces);
+			_players.get(i).start(this, _playerInformation.get(i)._id, tempMap, _players.size(), tempPieces);
 		}
 	}
 	
@@ -315,5 +312,14 @@ class GameCore implements Core
 	public String getPlayerName(int player)
 	{
 		return new String(_playerInformation.get(player)._name);
+	}
+	
+	/**
+	 * Get's a player's resources.
+	 * @param id the secret id
+	 */
+	public int getResources(int id)
+	{
+		return _playerInformation.get(getPlayerId(id))._resources;
 	}
 }
