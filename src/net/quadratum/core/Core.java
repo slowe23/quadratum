@@ -7,7 +7,7 @@ public interface Core {
 	/**
 	 * Adds a player to the game being run by this Core.
 	 * @param p a player to be added
-	 * @param platerName the player to be added
+	 * @param playerName the player to be added
 	 */
 	void addPlayer(Player p, String playerName);
 	

@@ -140,7 +140,7 @@ class GameCore implements Core
 		{
 			// Copy data so the player can't modify it
 			
-			// TO DO: copy terrain
+			// TO DO copy terrain
 			startingLocations = new HashSet<Point>();
 			tempLocations = _startingLocations.get(i);
 			for(int j = 0; j < tempLocations.size(); j++)
@@ -148,7 +148,7 @@ class GameCore implements Core
 				startingLocations.add(new Point(tempLocations.get(i).getX(), tempLocations.get(i).getY()));
 			}
 			tempMap = new MapData(_terrain, startingLocations);
-			// TO DO: copy pieces
+			// TODO copy pieces
 			_players.get(i).start(this, _playerInformation.get(i)._id, tempMap, _players.size(), _pieces);
 		}
 	}
@@ -158,9 +158,18 @@ class GameCore implements Core
 		_playerInformation.get(getPlayerID(id))._ready = true;
 		// TO DO: Check to see if everyone is ready, and, if so, start the game
 	}
-	public void endTurn(int id) {} // Callback so players can let the game core know that their turn has ended
+	
+	public void endTurn(int id)
+	{
+		if(getPlayerID(id) == _turn)
+		{
+			nextTurn();
+		}
+	}
 	public boolean unitAction(int id, int unitId, Point coords) { return true; } // Callback for unit actions (returns false for invalid actions) - if coords is an empty square, the unit moves, if coords contains a unit, the unit attacks
+	
 	public HashMap<Point, Action.ActionType> getValidActions(int id, int unitId) { return null; } // Gets the valid actions for a unit, returns null if no possible actions
+	
 	public void quit(int id)
 	{
 		int player = getPlayerID(id);
@@ -172,12 +181,39 @@ class GameCore implements Core
 	}
 	
 	/**
+	 * Checks if someone has won/lost
+	 */
+	private void checkWinLoss() {}
+	
+	/**
 	 * Moves onto the next turn and calculates wins
 	 */
 	private void nextTurn()
 	{
-		// TO DO: implement next turn and check for wins/losses and end game
+		checkWinLoss();
+		for(int i = 0; i < _players.size() - 1; i++)
+		{
+			_turn++;
+			if(_turn == _players.size())
+			{
+				_turn = 0;
+			}
+			if(!_playerInformation.get(_turn)._quit && !_playerInformation.get(_turn)._lost)
+			{
+				return;
+			}
+			_players.get(_turn).turnStart();
+		}
+		// If we have reached here, the game should be over...
+		endGame(-1);
+		// TODO implement next turn and check for wins/losses and end game
 	}
+	
+	/**
+	 * Ends the game and sends stats.
+	 * @param winner the winner of the game
+	 */
+	private void endGame(int winner) {}
 	
 	/**
 	 * Sends a chat message to all players from the system
@@ -204,8 +240,10 @@ class GameCore implements Core
 			_players.get(i).chatMessage(from, new String(message));
 		}
 	}
+	
 	public boolean placeUnit(int id, Point coords) { return true; } // Callback for placing a unit
 	public boolean updateUnit(int id, int unitID, Piece newPiece) { return true; } // Callback for updating a unit
+	
 	/**
 	 * Gets a player's name
 	 * @param player the player's non-secret id
