@@ -9,8 +9,8 @@ public class Unit {
 	int _size;
 	/** Name of the Unit. */
 	String _name;
-	/** Pieces this Unit contains. */
-	Map<Point, Piece> _pieces;
+	/** Blocks this Unit contains. */
+	Map<Point, Block> _blocks;
 	/** The player who owns this Unit. */
 	int _owner;
 	/** Cached stats for this Unit. */
@@ -23,7 +23,7 @@ public class Unit {
 	public Unit(Unit unit)
 	{
 		_stats = new HashMap<String, Integer>();
-		_pieces = new HashMap<Point, Piece>();
+		_blocks = new HashMap<Point, Block>();
 		_size = unit._size;
 		_name = new String(unit._name);
 		_owner = unit._owner;
@@ -31,9 +31,9 @@ public class Unit {
 		{
 			_stats.put(new String(key), new Integer(unit._stats.get(key)));
 		}
-		for(Point key : unit._pieces.keySet())
+		for(Point key : unit._blocks.keySet())
 		{
-			_pieces.put(new Point(key), new Piece(unit._pieces.get(key)));
+			_blocks.put(new Point(key), new Block(unit._blocks.get(key)));
 		}
 	}
 }

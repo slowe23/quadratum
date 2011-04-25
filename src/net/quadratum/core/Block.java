@@ -8,7 +8,7 @@ public class Block {
 	/** Bonuses given by this Block. */
 	Map<BonusType,Integer> _bonuses;
 	/** Health points this Block has. */
-	int _health;
+	int _health, _totalHealth;
 	
 	enum BonusType {
 		ATTACK,
@@ -30,6 +30,7 @@ public class Block {
 	{
 		_bonuses = new HashMap<BonusType, Integer>();
 		_health = block._health;
+		_totalHealth = block._totalHealth;
 		for(BonusType key : block._bonuses.keySet())
 		{
 			_bonuses.put(key, new Integer(block._bonuses.get(key)));
