@@ -5,9 +5,9 @@ public class Action {
 	/** The type of action that was performed. */
 	ActionType _action;
 	/** The source point this action was performed from. */
-	Point _source;
+	MapPoint _source;
 	/** The destination point this action was performed at. */
-	Point _dest;
+	MapPoint _dest;
 	
 	// TODO should this get moved to a separate class?
 	public enum ActionType {

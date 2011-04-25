@@ -10,7 +10,7 @@ public interface WinCondition {
 	 * @param playerInformation The information of the player who we are checking.
 	 * @return true if the player has won, false otherwise.
 	 */
-	boolean hasPlayerWon(Map<Point,Integer> units, PlayerInformation playerInformation);
+	boolean hasPlayerWon(Map<MapPoint,Integer> units, PlayerInformation playerInformation);
 	
 	/**
 	 * Determines if a player has lost the game.
@@ -18,5 +18,5 @@ public interface WinCondition {
 	 * @param playerInformation The information of player who we are checking.
 	 * @return true if the player has lost, false otherwise.
 	 */
-    boolean eliminatePlayer(Map<Point,Integer> units, PlayerInformation playerInformation);
+    boolean eliminatePlayer(Map<MapPoint,Integer> units, PlayerInformation playerInformation);
 }
