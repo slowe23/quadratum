@@ -57,8 +57,8 @@ public interface Core {
 	void quit(int id);
 	
 	/**
-	 * Callback that alerts the core that a chat message should be sent.
-	 * @param id the ID of the player who sent the message
+	 * Callback that alerts the core that a chat message should be sent
+	 * @param id the ID of the player who sent the message - can be this
 	 * @param message the message that is being sent
 	 */
 	void sendChatMessage(int id, String message);
@@ -72,15 +72,29 @@ public interface Core {
 	boolean placeUnit(int id, Point coords);
 	
 	/**
+	 * Returns the number of units left to place for the given player
+	 * @param id The player id
+	 */
+	int getRemainingUnits(int id);
+	
+	/**
+	 * Returns the unit with the given ID
+	 * @param id The player's id
+	 * @param id The unit in question's id
+	 */
+	Unit getUnit(int id, int unitID);
+	
+	/**
 	 * Callback that alerts the core that a player is placing the given
 	 * piece in the unit that is known by the given ID.
 	 * @param id the ID of the player
 	 * @param unitID the ID of the unit
-	 * @param piece the piece that the player wishes to place in the
+	 * @param pieceID the ID of the piece that the player wishes to place in the
 	 * given unit
+	 * @param coords The coordinates in the unit where the piece should be placed
 	 * @return true if the update succeeded, false otherwise
 	 */
-	boolean updateUnit(int id, int unitID, Piece piece);
+	boolean updateUnit(int id, int unitID, int pieceID, Point coords);
 	
 	/**
 	 * Returns the name of a player
@@ -93,4 +107,21 @@ public interface Core {
 	 * @param id the secret id
 	 */
 	int getResources(int id);
+	
+	/**
+	 * Gets the cost of a given piece for a given player
+	 * @param id the Player's id
+	 * @param pieceID the ID of the piece in question
+	 * @param unitID the ID of the unit in which to place the piece
+	 */
+	int getPieceCost(int id, int pieceID, int unitID);
+	
+	/**
+	 * Returns whether the given piece may be placed in the given unit of the given player
+	 *
+	 * @param id the Player's id
+	 * @param pieceID the ID of the piece in question
+	 * @param unitID the ID of the unit in which to place the piece
+	 */
+	boolean isAvailable(int id, int pieceID, int unitID);
 }

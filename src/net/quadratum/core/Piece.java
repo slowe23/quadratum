@@ -20,5 +20,4 @@ public class Piece {
 			_blocks.put(new Point(key), new Block(piece._blocks.get(key)));
 		}
 	}
-	
 }
