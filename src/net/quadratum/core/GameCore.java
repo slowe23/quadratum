@@ -8,7 +8,7 @@ import java.util.Random;
 class GameCore implements Core
 {
 	private int[][] _terrain;
-	private ArrayList<HashSet<Point>> _startingLocations;
+	private ArrayList<HashSet<MapPoint>> _startingLocations;
 	private ArrayList<Unit> _units;
 	private ArrayList<UnitInformation> _unitInformation;
 	private ArrayList<Player> _players;
@@ -16,25 +16,24 @@ class GameCore implements Core
 	private ArrayList<Piece> _pieces;
 	private WinCondition _winCondition;
 	private int _turn;
-	private boolean _started, _allReady;
+	private boolean _started;
 	
 	/**
 	 * Constructor for GameCore.
 	 * @param map the map file name
 	 * @param winCondition the win condition
 	 */
-	public void GameCore(String map, WinCondition winCondition)
+	public GameCore(String map, WinCondition winCondition)
 	{
-		_startingLocations = new ArrayList<HashSet<Point>>();
+		_startingLocations = new ArrayList<HashSet<MapPoint>>();
 		_units = new ArrayList<Unit>();
 		_unitInformation = new ArrayList<UnitInformation>();
 		_players = new ArrayList<Player>();
 		_playerInformation = new ArrayList<PlayerInformation>();
 		_pieces = new ArrayList<Piece>();
 		_winCondition = winCondition;
-		_turn = 0;
+		_turn = -1;
 		_started = false;
-		_allReady = false;
 	}
 	
 	/**
@@ -81,43 +80,28 @@ class GameCore implements Core
 	 * @param player the actual player
 	 * @param playerName the name of the player
 	 */
-	public void addPlayer(Player player, String playerName)
+	public void addPlayer(Player player, String playerName, int maxUnits)
 	{
 		if(_started == false)
 		{
-			int id = getRandom();
 			_players.add(player);
-			_playerInformation.add(new PlayerInformation(id, playerName));
+			_playerInformation.add(new PlayerInformation(playerName, maxUnits));
 		}
 	}
-	
+		
 	/**
-	 * Gets a player by their secret id.
-	 * @param id the player's secret id
-	 * @return the instance of that player
-	 */
-	private Player getPlayer(int id)
-	{
-		for(int i = 0; i < _playerInformation.size(); i++)
-		{
-			if(_playerInformation.get(i)._id == id)
-			{
-				return _players.get(i);
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Gets a player's id by their secret id.
-	 * @param id the player's secret id
+	 * Gets a player's id from a reference.
+	 * @param p the Player
 	 * @return the id of that player
 	 */
-	private int getPlayerId(int id)
+	private int getPlayerId(Player p)
 	{
-		for(int i = 0; i < _playerInformation.size(); i++)
+		for(int i = 0; i < _players.size(); i++)
 		{
-			return i;
+			if(_players.get(i) == p)
+			{
+				return i;
+			}
 		}
 		return -1;
 	}
@@ -149,7 +133,8 @@ class GameCore implements Core
 			{
 				tempPieces.add(new Piece(_pieces.get(j)));
 			}
-			_players.get(i).start(this, _playerInformation.get(i)._id, tempMap, _players.size(), tempPieces);
+			_players.get(i).start(this, tempMap, i, _players.size());
+			_players.get(i).updatePieces(_pieces);
 		}
 	}
 	
@@ -157,9 +142,9 @@ class GameCore implements Core
 	 * Callback for notifying the GameCode that a player is ready.
 	 * @param id the secret id
 	 */
-	public void ready(int id)
+	public void ready(Player p)
 	{
-		_playerInformation.get(getPlayerId(id))._ready = true;
+		_playerInformation.get(getPlayerId(p))._ready = true;
 		for(int i = 0; i < _playerInformation.size(); i++)
 		{
 			if(!_playerInformation.get(i)._ready)
@@ -167,6 +152,7 @@ class GameCore implements Core
 				return;
 			}
 		}
+		_turn = 0;
 		_players.get(0).turnStart();
 	}
 	
@@ -174,9 +160,9 @@ class GameCore implements Core
 	 * Callback for ending a turn.
 	 * @param id the secret id
 	 */
-	public void endTurn(int id)
+	public void endTurn(Player p)
 	{
-		if(getPlayerId(id) == _turn)
+		if(getPlayerId(p) == _turn)
 		{
 			nextTurn();
 		}
@@ -189,22 +175,22 @@ class GameCore implements Core
 	 * @param coords the point at which the action should be taken
 	 * @return true if the action has been taken, false if otherwise
 	 */
-	public boolean unitAction(int id, int unitId, Point coords) { return true; }
+	public boolean unitAction(Player p, int unitId, MapPoint coords) { return true; }
 	
 	/**
 	 * Calculates the valid actions for a given unit
 	 * @param id the secret id
 	 * @param unitId the unit's id
-	 * @return a map of Points to Action.ActionTypes that represents what actions can be taken where
+	 * @return a map of MapPoints to Action.ActionTypes that represents what actions can be taken where
 	 */
-	public HashMap<Point, Action.ActionType> getValidActions(int id, int unitId) { return null; }
+	public HashMap<MapPoint, Action.ActionType> getValidActions(Player p, int unitId) { return null; }
 	
 	/**
 	 * Generates what the player can see.
 	 * @param id the non-secret id
-	 * @return a map of Points to unit ids
+	 * @return a map of MapPoints to unit ids
 	 */
-	private HashMap<Point, Integer> generateMapForPlayer(int id) { return null; }
+	private HashMap<MapPoint, Integer> generateMapForPlayer(Player p) { return null; }
 	
 	/**
 	 * Generates new map information and sends it to all players.
@@ -215,9 +201,9 @@ class GameCore implements Core
 	 * Callback for quitting a game.
 	 * @param id the secret id
 	 */
-	public void quit(int id)
+	public void quit(Player p)
 	{
-		int player = getPlayerId(id);
+		int player = getPlayerId(p);
 		_playerInformation.get(player)._lost = true;
 		_playerInformation.get(player)._quit = true;
 		if(_turn == player)
@@ -252,7 +238,6 @@ class GameCore implements Core
 		}
 		// If we have reached here, the game should be over...
 		endGame(-1);
-		// TODO implement next turn and check for wins/losses and end game
 	}
 	
 	/**
@@ -278,9 +263,9 @@ class GameCore implements Core
 	 * @param id the secret id
 	 * @param message the message to send
 	 */
-	public void sendChatMessage(int id, String message)
+	public void sendChatMessage(Player p, String message)
 	{
-		int from = getPlayerId(id);
+		int from = getPlayerId(p);
 		for(int i = 0; i < _players.size(); i++)
 		{
 			_players.get(i).chatMessage(from, new String(message));
@@ -290,23 +275,24 @@ class GameCore implements Core
 	/**
 	 * Callback for placing a unit.
 	 * @param id the secret id
-	 * @param coords the Point at which the unit should be placed
+	 * @param coords the MapPoint at which the unit should be placed
 	 * @return true if the unit is placed sucessfully, false otherwise
 	 */
-	public boolean placeUnit(int id, Point coords) { return true; } // Callback for placing a unit
+	public boolean placeUnit(Player p, MapPoint coords) { return true; } // Callback for placing a unit
 	
 	/**
 	 * Callback for updating a unit.
 	 * @param id the secret id
 	 * @param unitId the id of the unit
-	 * @param newPiece the piece to add to the unit
+	 * @param pieceId the id of the piece to add
+	 * @param coords the coordinates in the unit to place the piece
 	 * @return true if the piece is added sucessfuly, false otherwise
 	 */
-	public boolean updateUnit(int id, int unitId, Piece newPiece) { return true; } // Callback for updating a unit
+	public boolean updateUnit(Player p, int unitId, int pieceId, MapPoint coords) { return true; } // Callback for updating a unit
 	
 	/**
 	 * Gets a player's name
-	 * @param player the player's non-secret id
+	 * @param player the player's id
 	 * @return the player's name
 	 */
 	public String getPlayerName(int player)
@@ -318,8 +304,47 @@ class GameCore implements Core
 	 * Get's a player's resources.
 	 * @param id the secret id
 	 */
-	public int getResources(int id)
+	public int getResources(Player p)
 	{
-		return _playerInformation.get(getPlayerId(id))._resources;
+		return _playerInformation.get(getPlayerId(p))._resources;
+	}
+	
+	/**
+	 * Returns information about a specific unit.
+	 * @param p the Player who is requesting the information
+	 * @param unitId the id of the unit
+	 * @return a copy of the Unit
+	 */
+	public Unit getUnit(Player p, int unitId)
+	{
+		if(unitId >= _units.size() && unitId < 0)
+		{
+			return null;
+		}
+		Unit unit = new Unit(_units.get(unitId));
+		if(true) // TODO check to see if the unit is visible to the player
+		{
+			return null;
+		}
+		return unit;
+	}
+	
+	/**
+	 * Returns the number of units left to build for a given player.
+	 * @param p the Player we are checking
+	 * @return the number of units the Player can build
+	 */
+	public int getRemainingUnits(Player p)
+	{
+		int built = 0;
+		int player = getPlayerId(p);
+		for(int i = 0; i < _units.size(); i++)
+		{
+			if(_units.get(i)._owner == player)
+			{
+				built++;
+			}
+		}
+		return _playerInformation.get(player)._maxUnits - built;
 	}
 }

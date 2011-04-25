@@ -4,15 +4,17 @@ public class PlayerInformation {
 
 	/**
 	 * Constructor for PlayerInformation.
-	 * @param id the player's secret id
-	 * @param name the player's name
+	 * @param name the Player's name
+	 * @param maxUnits the maximum number of units for this Player
 	 */
-	PlayerInformation(int id, String name)
+	PlayerInformation(String name, int maxUnits)
 	{
-		_id = id;
-		_name = name;
+		_name = new String(name); // Just to be safe
 		_resources = 0;
 		_ready = false;
+		_quit = false;
+		_lost = false;
+		_maxUnits = maxUnits;
 	}
 
 	/** Number of resources a Player has. */
@@ -32,4 +34,7 @@ public class PlayerInformation {
 	
 	/** Has the player lost? */
 	boolean _lost;
+	
+	/** How many units the Player can build. */
+	int _maxUnits;
 }
