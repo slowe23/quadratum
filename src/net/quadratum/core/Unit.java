@@ -6,15 +6,15 @@ import java.util.HashMap;
 public class Unit {
 		
 	/** Width and height of the Unit. */
-	int _size;
+	public int _size;
 	/** Name of the Unit. */
-	String _name;
+	public String _name;
 	/** Blocks this Unit contains. */
-	Map<Point, Block> _blocks;
+	public Map<MapPoint, Block> _blocks;
 	/** The player who owns this Unit. */
-	int _owner;
+	public int _owner;
 	/** Cached stats for this Unit. */
-	Map<String,Integer> _stats;
+	public Map<String,Integer> _stats;
 	
 	/**
 	 * Copy constructor for Unit.
@@ -23,7 +23,7 @@ public class Unit {
 	public Unit(Unit unit)
 	{
 		_stats = new HashMap<String, Integer>();
-		_blocks = new HashMap<Point, Block>();
+		_blocks = new HashMap<MapPoint, Block>();
 		_size = unit._size;
 		_name = new String(unit._name);
 		_owner = unit._owner;
@@ -31,9 +31,9 @@ public class Unit {
 		{
 			_stats.put(new String(key), new Integer(unit._stats.get(key)));
 		}
-		for(Point key : unit._blocks.keySet())
+		for(MapPoint key : unit._blocks.keySet())
 		{
-			_blocks.put(new Point(key), new Block(unit._blocks.get(key)));
+			_blocks.put(new MapPoint(key), new Block(unit._blocks.get(key)));
 		}
 	}
 }

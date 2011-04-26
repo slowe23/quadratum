@@ -48,10 +48,10 @@ public interface Player {
 	 * @param units new positions of units.
 	 * @param lastAction The action that caused this update
 	 */
-	public void updateMap(Map<Point, Integer> units, Action lastAction);
+	public void updateMap(Map<MapPoint, Integer> units, Action lastAction);
 	
 	/**
-	 * Notifies the player of a chat message.
+	 * Notifies the player of a chat message (can be from self).
 	 * @param from the ID of the player who this message was sent by.
 	 * @param message the message that is being sent.
 	 */
