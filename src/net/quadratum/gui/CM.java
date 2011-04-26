@@ -39,4 +39,10 @@ public class CM {
 	public static Color applyAlpha(Color c, int alpha) {
 		return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
 	}
+	
+	public static Color overlay(Color over, Color base) {
+		int alpha = over.getAlpha();
+		int coAlpha = 255 - over.getAlpha();
+		return new Color((over.getRed()*alpha + base.getRed()*coAlpha)/255, (over.getGreen()*alpha + base.getRed()*coAlpha)/255, (over.getBlue()*alpha + base.getBlue()*coAlpha)/255);
+	}
 }

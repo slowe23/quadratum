@@ -22,18 +22,21 @@ public class Unit {
 	 */
 	public Unit(Unit unit)
 	{
-		_stats = new HashMap<String, Integer>();
+		this(unit._size, unit._name, unit._blocks, unit._owner, unit._stats);
+	}
+	
+	public Unit(int size, String name, Map<MapPoint, Block> blocks, int owner, Map<String, Integer> stats) {
+		_size = size;
+		_name = name;
+		
 		_blocks = new HashMap<MapPoint, Block>();
-		_size = unit._size;
-		_name = new String(unit._name);
-		_owner = unit._owner;
-		for(String key : unit._stats.keySet())
-		{
-			_stats.put(new String(key), new Integer(unit._stats.get(key)));
-		}
-		for(MapPoint key : unit._blocks.keySet())
-		{
-			_blocks.put(new MapPoint(key), new Block(unit._blocks.get(key)));
-		}
+		for(MapPoint key : blocks.keySet())
+			_blocks.put(new MapPoint(key), new Block(blocks.get(key)));
+		
+		_owner = owner;
+		
+		_stats = new HashMap<String, Integer>();
+		for(String key : stats.keySet())
+			_stats.put(key, new Integer(stats.get(key)));
 	}
 }

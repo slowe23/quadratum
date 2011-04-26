@@ -1,5 +1,7 @@
 package net.quadratum.gui;
 
+import net.quadratum.core.*;
+
 import javax.swing.JPanel;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,6 +11,7 @@ import java.util.*;
 public class MapPanel extends JPanel implements MapView, MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
 	
 	private static final int DEFAULT_SCALE = 3;  //Default scale level
+	private static final int MIN_SCALE = 2, MAX_SCALE = 8;
 	
 	private UnitHandler _unitHandler;
 	private GraphicsCoordinator _graphicsCoordinator;
@@ -18,6 +21,7 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 	private int _scaleLevel;  //Scale level
 
 	private int[][] _terrain;
+	private Set<MapPoint> _placement;
 	
 	private Point _press;  //The location where the mouse was pressed (null when the mouse is not currently pressed)
 	private double _pvx, _pvy;  //The location of the view when the mouse was pressed
@@ -59,11 +63,34 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 				for(int j = Math.max(0, (int)vY); j<_terrain[i].length && j<vY+vH; j++) {
 					BufferedImage tile = _graphicsCoordinator.getTerrainTile(_terrain[i][j], scale);
 					g.drawImage(tile, offx+scale*i, offy+scale*j, scale, scale, this);
+
+					if(_placement!=null && _placement.contains(new MapPoint(i, j))) {
+						g.setColor(new Color(255, 0, 0, 127));
+						g.fillRect(offx+scale*i, offy+scale*j, scale, scale);
+					}
 				}
 			}
 			
 			//Draw units
-			//TODO
+			Map<MapPoint, Unit> units = _unitHandler.getUnits();
+			if(units!=null) {
+				Unit selected = _unitHandler.getSelectedUnit();
+				
+				for(MapPoint p : units.keySet()) {
+					if(p._x>=(int)vX && p._x <vX+vW && p._y>=(int)vY && p._y<vX+vW) {
+						Unit unit = units.get(p);
+						BufferedImage unitImage = _graphicsCoordinator.getUnitImage(unit, _scaleLevel);
+						int dx = (scale-unitImage.getWidth())/2, dy = (scale-unitImage.getHeight())/2;
+						g.drawImage(unitImage, offx + scale*p._x + dx, offy + scale*p._y + dy, this);
+						
+						if(unit==selected) {
+							g.setColor(_graphicsCoordinator.getForegroundColor());
+							g.drawRect(offx+scale*p._x, offy+scale*p._y, scale-1, scale-1);
+						}
+					}
+				}
+			}
+			
 		} else {
 			//Draw waiting screen
 			g.setColor(_graphicsCoordinator.getForegroundColor());
@@ -71,6 +98,11 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 			String waiting = "Waiting for game to start...";
 			g.drawString(waiting, (getWidth()-fM.stringWidth(waiting))/2, (getHeight()-(fM.getAscent()+fM.getDescent()))/2+fM.getAscent());
 		}
+	}
+	
+	public void start(MapData m) {
+		setTerrain(m._terrain);
+		_placement = m._placementArea;
 	}
 	
 	public void setTerrain(int[][] t) {
@@ -100,7 +132,7 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 	}
 	
 	public void setScaleLevel(int scaleLevel) {
-		_scaleLevel = Math.max(1, Math.min(scaleLevel, 8));
+		_scaleLevel = Math.max(MIN_SCALE, Math.min(scaleLevel, MAX_SCALE));
 	}
 	
 	public void setViewPos(double x, double y) {
