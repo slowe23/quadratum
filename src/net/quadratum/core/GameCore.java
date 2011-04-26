@@ -158,6 +158,7 @@ class GameCore implements Core
 		synchronized(_turnLockObject)
 		{
 			// TODO check turn
+			return false;
 		}
 	}
 	
@@ -420,6 +421,7 @@ class GameCore implements Core
 		synchronized(_turnLockObject)
 		{
 			// TODO check turn
+			return false;
 		}
 		
 	}
@@ -438,6 +440,7 @@ class GameCore implements Core
 		synchronized(_turnLockObject)
 		{
 			// TODO check turn
+			return false;
 		}
 	}
 	
