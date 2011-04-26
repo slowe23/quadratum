@@ -7,6 +7,7 @@ import java.util.*;
 public class TestingCore implements Core {
 	
 	private Player _player;
+	private int _index;
 	
 	/**
 	 * Adds a player to the game being run by this Core.
@@ -22,7 +23,8 @@ public class TestingCore implements Core {
 	 * Starts the game.
 	 */
 	public void start() {
-		_player.start(this, new MapData(createRandomTerrain(), new HashSet<MapPoint>()), 0, 1);
+		_index = new Random().nextInt(8);
+		_player.start(this, new MapData(createRandomTerrain(), new HashSet<MapPoint>()), _index, 8);
 	}
 	
 	private static int[][] createRandomTerrain() {
@@ -86,7 +88,7 @@ public class TestingCore implements Core {
 	 * @param message the message that is being sent
 	 */
 	public void sendChatMessage(Player p, String message) {
-		p.chatMessage(0, message);
+		p.chatMessage(_index, message);
 	}
 	
 	/**
@@ -145,23 +147,4 @@ public class TestingCore implements Core {
 	public int getResources(Player p) {
 		return 0;
 	}
-	
-	/**
-	 * Gets the cost of a given piece for a given player
-	 * @param p the Player itself
-	 * @param pieceID the ID of the piece in question
-	 * @param unitID the ID of the unit in which to place the piece
-	 */
-	// I think there might be a better solution to this - we should discuss again sometime
-	//public int getPieceCost(Player p, int pieceID, int unitID);
-	
-	/**
-	 * Returns whether the given piece may be placed in the given unit of the given player
-	 *
-	 * @param p the Player itself
-	 * @param pieceID the ID of the piece in question
-	 * @param unitID the ID of the unit in which to place the piece
-	 */
-	// Same as above
-	//public boolean isAvailable(Player p, int pieceID, int unitID);
 }
