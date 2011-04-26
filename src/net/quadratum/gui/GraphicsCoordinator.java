@@ -17,6 +17,8 @@ public interface GraphicsCoordinator {
 	
 	public BufferedImage getUnitImage(Unit u, int blockSize);
 	
+	public BufferedImage getPieceImage(Piece p, int blockSize);
+	
 	public BufferedImage getBlockImage(Block b, int size);
 	public BufferedImage getBlockMask(int size);
 	public Color getBlockColor(Block b);

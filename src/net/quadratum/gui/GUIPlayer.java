@@ -14,11 +14,13 @@ public class GUIPlayer implements Player {
 	private ChatHandler _chatHandler;
 	private GraphicsCoordinator _graphicsCoordinator;
 	private UnitHandler _unitHandler;
+	private GameplayHandler _gameplayHandler;
 	
 	public GUIPlayer() {
 		_chatHandler = new GUIPlayerChatHandler();
 		_graphicsCoordinator = new GUIPlayerGraphicsCoordinator();
 		_unitHandler = new GUIPlayerUnitHandler();
+		_gameplayHandler = new GUIPlayerGameplayHandler();
 	}
 	
 	public void createWindow() {
@@ -37,7 +39,7 @@ public class GUIPlayer implements Player {
 		_core = core;
 		_id = id;
 		
-		//TODO: more stuff
+		_gameplayHandler.startGame(mapData);
 	}
 	
 	/**
@@ -109,6 +111,10 @@ public class GUIPlayer implements Player {
 		return _unitHandler;
 	}
 	
+	public GameplayHandler getGameplayHandler() {
+		return _gameplayHandler;
+	}
+	
 	private class GUIPlayerChatHandler implements ChatHandler {
 		private ChatPanel _chat;
 		
@@ -158,11 +164,11 @@ public class GUIPlayer implements Player {
 		}
 		
 		public BufferedImage getTerrainTile(int terrainValue, int size) {
-			Color c = getTerrainColor(terrainValue);
 			
 			BufferedImage toRet = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);  //TODO: caching
 			
 			Graphics g = toRet.getGraphics();
+			g.setColor(getTerrainColor(terrainValue));
 			g.fillRect(0, 0, size, size);
 			
 			return toRet;
@@ -172,10 +178,9 @@ public class GUIPlayer implements Player {
 			return Color.GREEN;
 		}
 		
-		public BufferedImage getUnitImage(Unit u, int blockSize) {
-			int size = u._size*blockSize;
+		public BufferedImage getUnitImage(Unit unit, int blockSize) {
+			int size = unit._size*blockSize;
 			
-			//TODO
 			BufferedImage toRet = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 			
 			Graphics g = toRet.getGraphics();
@@ -183,15 +188,38 @@ public class GUIPlayer implements Player {
 			g.setColor(getForegroundColor());
 			g.fillRect(0, 0, size, size);
 
-			for(MapPoint p : u._blocks.keySet()) {
-				Block b = u._blocks.get(p);
+			for(MapPoint p : unit._blocks.keySet()) {
+				Block b = unit._blocks.get(p);
 				g.setColor(getBlockBaseColor(b));
 				g.fillRect(p._x*blockSize, p._y*blockSize, blockSize, blockSize);
 			}
 			
-			g.setColor(getPlayerColor(u._owner));
+			g.setColor(getPlayerColor(unit._owner));
 			g.drawRect(0, 0, size-1, size-1);
 
+			return toRet;
+		}
+		
+		public BufferedImage getPieceImage(Piece piece, int blockSize) {
+			int[] bounds = piece.getBounds();
+			int xsize = bounds[2]-bounds[0]+1, ysize = bounds[3]-bounds[1]+1;
+			int offx = -1*bounds[0], offy = -1*bounds[1];
+			
+			BufferedImage toRet = new BufferedImage(xsize, ysize, BufferedImage.TYPE_INT_ARGB);
+			
+			Graphics g = toRet.getGraphics();
+			BufferedImage mask = getBlockMask(blockSize);
+			
+			for(MapPoint mP : piece._blocks.keySet()) {
+				Block b = piece._blocks.get(mP);
+				int x = (offx+mP._x)*blockSize, y = (offy+mP._y)*blockSize;
+				
+				g.setColor(getBlockBaseColor(b));
+				g.fillRect(x, y, blockSize, blockSize);
+				
+				g.drawImage(mask, x, y, blockSize, blockSize, null);
+			}
+			
 			return toRet;
 		}
 		
@@ -255,6 +283,9 @@ public class GUIPlayer implements Player {
 		private Map<MapPoint, Unit> _units;
 		private Unit _selectedUnit;
 		
+		private UnitImagePanel _unitImagePanel;
+		private MapPanel _mapPanel;
+		
 		public GUIPlayerUnitHandler() { }
 		
 		public Map<MapPoint, Unit> getUnits() {
@@ -273,6 +304,32 @@ public class GUIPlayer implements Player {
 		public void setSelectedUnit(Unit unit) {
 			_selectedUnit = unit;
 			//TODO: appropriate notifications
+		}
+	}
+	
+	private class GUIPlayerGameplayHandler implements GameplayHandler {
+		private MapPanel _mapPanel;
+		private MinimapPanel _minimapPanel;
+		
+		public GUIPlayerGameplayHandler() { }
+		
+		public void setMapPanel(MapPanel mapPanel) {
+			if(_mapPanel==null) {
+				_mapPanel = mapPanel;
+				_minimapPanel = mapPanel.getMinimapPanel();
+			} else
+				throw new RuntimeException("Map panel can only be set once.");
+		}
+		
+		public void startGame(MapData m) {
+			if(_mapPanel==null)
+				throw new RuntimeException("Map panel not set.");
+			if(_minimapPanel==null)
+				throw new RuntimeException("Minimap panel not set.");
+			
+			_mapPanel.setTerrain(m._terrain);  //This automatically sets the minimap terrain as well
+			_mapPanel.repaint();
+			_minimapPanel.repaint();
 		}
 	}
 }
