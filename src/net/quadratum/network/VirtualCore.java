@@ -76,7 +76,7 @@ public class VirtualCore implements Core {
 
 	@Override
 	public Map<MapPoint, ActionType> getValidActions(Player p, int unitID) {
-		// TODO protocol/caching
+		// TODO protocol/caching, this might not even use the network at all
 		return null;
 	}
 

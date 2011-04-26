@@ -21,4 +21,9 @@ public class MapPoint {
 		_x = point._x;
 		_y = point._y;
 	}
+	
+	@Override
+	public int hashCode() {
+		return _x << 16 ^ _y;
+	}
 }
