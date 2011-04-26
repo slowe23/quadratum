@@ -10,13 +10,13 @@ public class MapData {
 	 * @param terrain the terrain
 	 * @param placementLocations possible unit placement locations
 	 */
-	MapData(int[][] terrain, Set<Point> placementLocations)
+	public MapData(int[][] terrain, Set<MapPoint> placementLocations)
 	{
 		// Copy placement locations
-		_placementArea = new HashSet<Point>();
-		for(Point point : placementLocations)
+		_placementArea = new HashSet<MapPoint>();
+		for(MapPoint point : placementLocations)
 		{
-			_placementArea.add(new Point(point));
+			_placementArea.add(new MapPoint(point));
 		}
 		// Copy terrain
 		_terrain = new int[terrain.length][terrain[0].length];
@@ -30,8 +30,8 @@ public class MapData {
 	}
 	
 	/** Terrain of the map. */
-	int[][] _terrain;
+	public int[][] _terrain;
 	
 	/** Coordinates where a Player can place units. */
-	Set<Point> _placementArea;
+	public Set<MapPoint> _placementArea;
 }
