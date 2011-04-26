@@ -133,16 +133,22 @@ public class NetworkPlayer extends Thread implements Player {
 			_core.endTurn(this);
 		} else if (parts[0].equals("unitaction")) {
 			// The player has performed an action.
+			boolean success = false;
 			// protocol: unitaction \t id \t x \t y
 			try {
 				int id = Integer.parseInt(parts[1]);
 				int x = Integer.parseInt(parts[2]);
 				int y = Integer.parseInt(parts[3]);
-				boolean success = _core.unitAction(this, id, new MapPoint(x,y));
+				success = _core.unitAction(this, id, new MapPoint(x,y));
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
-			// TODO send back value of success
+			// send back whether or not it succeeded
+			try {
+				_out.write("unitaction\t"+success+"\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else if (parts[0].equals("getvalidactions")) {
 			// The player is requesting valid actions.
 			// This might be left out, since the VC should
@@ -157,56 +163,86 @@ public class NetworkPlayer extends Thread implements Player {
 			_core.sendChatMessage(this,parts[1]);
 		} else if (parts[0].equals("placeunit")) {
 			// The player is placing a unit.
+			boolean success = false;
 			// protocol: placeunit \t x \t y
 			try {
 				int x = Integer.parseInt(parts[1]);
 				int y = Integer.parseInt(parts[2]);
-				boolean success = _core.placeUnit(this, new MapPoint(x,y));
+				success = _core.placeUnit(this, new MapPoint(x,y));
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
-			// TODO send back value of success
+			// send back whether or not it succeeded
+			try {
+				_out.write("unitplaced\t"+success+"\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else if (parts[0].equals("getremainingunits")) {
 			// The player wants to know how many units they have left to place.
 			int remunits = _core.getRemainingUnits(this);
-			// TODO send back value of res
+			// send back the remaining units count
+			try {
+				_out.write("remainingunits\t"+remunits+"\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else if (parts[0].equals("getunit")) {
 			// The player wants to get a particular unit.
+			Unit u;
 			// protocol: getunit \t id
 			try {
 				int id = Integer.parseInt(parts[1]);
-				Unit u = _core.getUnit(this, id);
+				u = _core.getUnit(this, id);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
 			// TODO send back value of u
 		} else if (parts[0].equals("updateunit")) {
 			// The player wants to update a unit with a piece.
+			boolean success = false;
 			// protocol: updateunit \t unit ID \t piece ID \t x \t y
 			try {
 				int unitID = Integer.parseInt(parts[1]);
 				int pieceID = Integer.parseInt(parts[2]);
 				int x = Integer.parseInt(parts[3]);
 				int y = Integer.parseInt(parts[4]);
-				boolean success = _core.updateUnit(this, unitID, pieceID, new MapPoint(x,y));
+				success = _core.updateUnit(this, unitID, pieceID, new MapPoint(x,y));
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
-			// TODO send back value of success
+			// send back whether it succeeded
+			try {
+				_out.write("unitupdated\t"+success+"\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else if (parts[0].equals("getplayername")) {
 			// The player wants to know the name of a given player.
+			int id = -1;
+			String name = "";
 			// protocol: getplayername \t id
 			try {
-				int id = Integer.parseInt(parts[1]);
-				String name = _core.getPlayerName(id);
+				id = Integer.parseInt(parts[1]);
+				name = _core.getPlayerName(id);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
-			// TODO send back value of name
+			// send back the id and player name
+			try {
+				_out.write("playername\t"+id+"\t"+name+"\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else if (parts[0].equals("getresources")) {
 			// The player wants to know how many resources he has.
 			int res = _core.getResources(this);
-			// TODO return value of res
+			// send back the amount of resources
+			try {
+				_out.write("resources\t"+res+"\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
