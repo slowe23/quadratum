@@ -108,23 +108,4 @@ public interface Core {
 	 * @param p the Player itself
 	 */
 	int getResources(Player p);
-	
-	/**
-	 * Gets the cost of a given piece for a given player
-	 * @param p the Player itself
-	 * @param pieceID the ID of the piece in question
-	 * @param unitID the ID of the unit in which to place the piece
-	 */
-	// I think there might be a better solution to this - we should discuss again sometime
-	//int getPieceCost(Player p, int pieceID, int unitID);
-	
-	/**
-	 * Returns whether the given piece may be placed in the given unit of the given player
-	 *
-	 * @param p the Player itself
-	 * @param pieceID the ID of the piece in question
-	 * @param unitID the ID of the unit in which to place the piece
-	 */
-	// Same as above
-	//boolean isAvailable(Player p, int pieceID, int unitID);
 }
