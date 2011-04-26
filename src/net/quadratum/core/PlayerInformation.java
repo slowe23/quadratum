@@ -16,12 +16,23 @@ public class PlayerInformation {
 		_lost = false;
 		_maxUnits = maxUnits;
 	}
+	
+	/**
+	 * Copy contructor for PlayerInformation.
+	 * @param pi the PlayerInformation to copy
+	 */
+	public PlayerInformation(PlayerInformation pi)
+	{
+		_resources = pi._resources;
+		_name = new String(pi._name);
+		_ready = pi._ready;
+		_quit = pi._quit;
+		_lost = pi._lost;
+		_maxUnits = pi._maxUnits;
+	}
 
 	/** Number of resources a Player has. */
 	int _resources;
-
-	/** Player's sercret id */
-	int _id;
 
 	/** Name of the Player. */
 	String _name;

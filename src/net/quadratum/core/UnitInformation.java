@@ -6,4 +6,6 @@ public class UnitInformation
 	boolean _hasMoved;
 	/** Has the unit attacked this turn? */
 	boolean _hasAttacked;
+	/** The position of the unit. */
+	MapPoint _position;
 }
