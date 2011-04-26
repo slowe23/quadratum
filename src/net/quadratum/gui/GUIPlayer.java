@@ -11,12 +11,6 @@ public class GUIPlayer implements Player, UnitHolder {
 	
 	private int _id;
 	
-	public static void main(String[] args) {
-		GUIPlayer pl = new GUIPlayer();
-		pl.createWindow();
-		pl.start(new TestingCore(), null, 0, 1);
-	}
-	
 	public GUIPlayer() {
 	}
 	
