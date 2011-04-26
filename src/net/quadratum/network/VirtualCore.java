@@ -2,83 +2,94 @@ package net.quadratum.network;
 
 import java.util.Map;
 
-import net.quadratum.core.Action;
+import net.quadratum.core.Action.ActionType;
 import net.quadratum.core.Core;
-import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
-import net.quadratum.core.Point;
+import net.quadratum.core.MapPoint;
+import net.quadratum.core.Unit;
 
 public class VirtualCore implements Core {
 
 	@Override
-	public void addPlayer(Player p, String playerName) {
-
-
+	public void addPlayer(Player p, String playerName, int maxUnits) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void start() {
 
-
 	}
 
 	@Override
-	public void ready(int id) {
-
-
+	public void ready(Player p) {
+		// TODO protocol
+		
 	}
 
 	@Override
-	public void endTurn(int id) {
-
-
+	public void endTurn(Player p) {
+		// TODO protocol
+		
 	}
 
 	@Override
-	public boolean unitAction(int id, int unitID, Point coords) {
-
+	public boolean unitAction(Player p, int unitID, MapPoint coords) {
+		// TODO protocol
 		return false;
 	}
 
 	@Override
-	public Map<Point, Action.ActionType> getValidActions(int id, int unitID) {
-
+	public Map<MapPoint, ActionType> getValidActions(Player p, int unitID) {
+		// TODO protocol
 		return null;
 	}
 
 	@Override
-	public void quit(int id) {
-
-
+	public void quit(Player p) {
+		// TODO protocol
+		
 	}
 
 	@Override
-	public void sendChatMessage(int id, String message) {
-
-
+	public void sendChatMessage(Player p, String message) {
+		// TODO protocol
+		
 	}
 
 	@Override
-	public boolean placeUnit(int id, Point coords) {
-
+	public boolean placeUnit(Player p, MapPoint coords) {
+		// TODO protocol
 		return false;
 	}
 
 	@Override
-	public boolean updateUnit(int id, int unitID, Piece piece) {
-
-		return false;
+	public int getRemainingUnits(Player p) {
+		// TODO protocol
+		return 0;
 	}
 
 	@Override
-	public String getPlayerName(int player) {
-
+	public Unit getUnit(Player p, int unitID) {
+		// TODO protocol
 		return null;
+	}
+
+	@Override
+	public boolean updateUnit(Player p, int unitID, int pieceID, MapPoint coords) {
+		// TODO protocol
+		return false;
 	}
 	
 	@Override
-	public int getResources(int id) {
+	public String getPlayerName(int player) {
+		// TODO protocol
+		return null;
+	}
 
+	@Override
+	public int getResources(Player p) {
+		// TODO protocol
 		return 0;
 	}
 
