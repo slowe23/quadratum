@@ -57,7 +57,7 @@ public class NetworkPlayer extends Thread implements Player {
 		try {
 			_out.write("updatepieces");
 			for (Piece p : pieces) {
-				// find out some concise way to represent a piece and write it out
+				// TODO find out some concise way to represent a piece
 			}
 			_out.write("\n");
 		} catch (IOException e) {
@@ -91,7 +91,7 @@ public class NetworkPlayer extends Thread implements Player {
 	@Override
 	public void turnStart() {
 		try {
-			_out.write("turnStart\n");
+			_out.write("turnstart\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -126,10 +126,10 @@ public class NetworkPlayer extends Thread implements Player {
 		String[] parts = message.split("\t");
 		// Look at the first part of the incoming message
 		if (parts[0].equals("ready")) {
-			// The player is signalling that they are ready.
+			// The player is signaling that they are ready.
 			_core.ready(this);
 		} else if (parts[0].equals("endturn")) {
-			// The player is signalling that their turn is over.
+			// The player is signaling that their turn is over.
 			_core.endTurn(this);
 		} else if (parts[0].equals("unitaction")) {
 			// The player has performed an action.

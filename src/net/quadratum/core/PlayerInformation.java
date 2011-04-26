@@ -7,7 +7,7 @@ public class PlayerInformation {
 	 * @param name the Player's name
 	 * @param maxUnits the maximum number of units for this Player
 	 */
-	PlayerInformation(String name, int maxUnits)
+	public PlayerInformation(String name, int maxUnits)
 	{
 		_name = new String(name); // Just to be safe
 		_resources = 0;
