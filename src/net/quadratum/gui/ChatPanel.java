@@ -18,17 +18,15 @@ public class ChatPanel extends JPanel implements ActionListener, ItemListener {
 		
 		setLayout(new BorderLayout());
 		
-		///Add labeled show/hide checkbox
-		_show = new JCheckBox("Show recent messages over map", _message.getShowMessages());
-		_show.addItemListener(this);
+		JPanel ctr = new JPanel();
+		ctr.setLayout(new BorderLayout());
 		
-		add(_show, BorderLayout.NORTH);
-		
+		//Add main text area
 		JScrollPane jsp = CM.createScrollingTextDisplay();
 		_area = (JTextArea)(jsp.getViewport().getView());
 		_area.setRows(5);
 		
-		add(jsp, BorderLayout.CENTER);
+		ctr.add(jsp, BorderLayout.CENTER);
 		
 		///Add text entry area with text field and button
 		JPanel textEntryPanel = new JPanel();
@@ -44,7 +42,15 @@ public class ChatPanel extends JPanel implements ActionListener, ItemListener {
 		
 		textEntryPanel.add(_fieldButton, BorderLayout.EAST);
 		
-		add(textEntryPanel, BorderLayout.SOUTH);
+		ctr.add(textEntryPanel, BorderLayout.SOUTH);
+		
+		add(ctr, BorderLayout.CENTER);
+		
+		///Add labeled show/hide checkbox
+		_show = new JCheckBox("Show recent messages over map", _message.getShowMessages());
+		_show.addItemListener(this);
+		
+		add(_show, BorderLayout.SOUTH);
 		
 		_chatHandler.setChatPanel(this);
 	}
@@ -58,6 +64,16 @@ public class ChatPanel extends JPanel implements ActionListener, ItemListener {
 			_area.append(msg);
 			
 			_message.newMessage(from, msg);
+		}
+	}
+	
+	public void addMessage(String message) {
+		synchronized(_area) {
+			if(_area.getText().length()>0)
+				_area.append("\n");
+			_area.append(message);
+			
+			_message.newMessage(message);
 		}
 	}
 	

@@ -33,12 +33,13 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);
+		addMouseWheelListener(this);
 		addComponentListener(this);
 		
 		setBackground(_graphicsCoordinator.getBackgroundColor());
 	}
 	
-	public MinimapPanel getMinimap() {
+	public MinimapPanel getMinimapPanel() {
 		return _minimap;
 	}
 	
@@ -55,8 +56,8 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 			g.drawRect(offx-1, offy-1, scale*_terrain.length+2-1, scale*_terrain[0].length+2-1);
 			
 			//Draw visible map tiles
-			for(int i = (int)vX; i<_terrain.length && i<vX+vW; i++) {
-				for(int j = (int)vY; j<_terrain[i].length && j<vY+vH; j++) {
+			for(int i = Math.max(0, (int)vX); i<_terrain.length && i<vX+vW; i++) {
+				for(int j = Math.max(0, (int)vY); j<_terrain[i].length && j<vY+vH; j++) {
 					BufferedImage tile = _graphicsCoordinator.getTerrainTile(_terrain[i][j], scale);
 					g.drawImage(tile, offx+scale*i, offy+scale*j, scale, scale, this);
 				}
@@ -161,6 +162,10 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 			setViewPos(_pvx - (e.getX()-_press.x)/((double)(SCALES[_scale])), _pvy - (e.getY()-_press.y)/((double)(SCALES[_scale])));
 			repaint();
 			_minimap.repaint();
+			
+			_press = new Point(e.getX(), e.getY());
+			_pvx = getViewX();
+			_pvy = getViewY();
 		}
 	}
 	
@@ -173,7 +178,8 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 	public void componentMoved(ComponentEvent e) { }
 
 	public void componentResized(ComponentEvent e) {
-		fixViewPos();
+		if(_terrain!=null)
+			fixViewPos();
 		repaint();
 		_minimap.repaint();
 	}

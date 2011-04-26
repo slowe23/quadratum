@@ -38,6 +38,28 @@ public class Piece {
 	}
 	
 	/**
+	 * Compute the minimum and maximum coordinates (relative to the piece's origin) of blocks in this piece
+	 * Coordinates are stored in the following order: {min_x, min_y, max_x, max_y}
+	 */
+	public int[] getBounds() {
+		int[] bounds = new int[4];
+		boolean any = false;
+		for(MapPoint m : _blocks.keySet()) {
+			if(!any || m._x<bounds[0])
+				bounds[0] = m._x;
+			if(!any || m._y<bounds[1])
+				bounds[1] = m._y;
+			if(!any || m._x>bounds[2])
+				bounds[2] = m._x;
+			if(!any || m._y>bounds[3])
+				bounds[3] = m._y;
+
+			any = true;
+		}
+		return bounds;
+	}
+	
+	/**
 	 * Used to convert this Piece into a String.
 	 * @return a String representation of this Piece
 	 */

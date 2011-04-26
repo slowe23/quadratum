@@ -2,6 +2,7 @@ package net.quadratum.gui;
 
 import javax.swing.*;
 import java.awt.Color;
+import javax.swing.border.TitledBorder;
 
 //Static convenience methods
 public class CM {
@@ -31,7 +32,7 @@ public class CM {
 	
 	public static JPanel createTitledPanel(String title) {
 		JPanel panel = new JPanel();
-		panel.setBorder(BorderFactory.createTitledBorder(title));
+		panel.setBorder(BorderFactory.createTitledBorder(null, title, TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION));
 		return panel;
 	}
 	

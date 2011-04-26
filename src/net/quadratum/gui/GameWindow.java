@@ -15,6 +15,8 @@ public class GameWindow extends JFrame implements WindowListener {
 		
 		addWindowListener(this);
 		
+		GameplayHandler gameplayHandler = player.getGameplayHandler();
+		
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
 		
@@ -25,6 +27,7 @@ public class GameWindow extends JFrame implements WindowListener {
 		
 		//Add map display panel
 		MapPanel map = new MapPanel(player);
+		gameplayHandler.setMapPanel(map);
 		mapPane.add(map, new Integer(0));
 		
 		//Add message display
@@ -40,23 +43,26 @@ public class GameWindow extends JFrame implements WindowListener {
 		LineConstraints constraints;
 		
 		//Add minimap panel
-		MinimapPanel minimap = map.getMinimap();
+		MinimapPanel minimap = map.getMinimapPanel();
 		constraints = new LineConstraints(0.2);
 		controls.add(minimap, constraints);
+		
+		//Add selected unit panel
+		JPanel sUPanel = CM.createTitledPanel("Selected Unit");
+		sUPanel.setLayout(new LineLayout(LineLayout.LEFT_TO_RIGHT));
 		
 		//Add unit info panel
 		JPanel uInfo = CM.createTitledPanel("Unit Info");
 		uInfo.setLayout(new FillLayout());
-		
 		uInfo.add(CM.createScrollingTextDisplay());
-		
-		constraints = new LineConstraints(0.2);
-		controls.add(uInfo, constraints);
+		sUPanel.add(uInfo);
 		
 		//Add unit image panel
 		UnitImagePanel uImg = new UnitImagePanel(player);
-		constraints = new LineConstraints(0.2);
-		controls.add(uImg, constraints);
+		sUPanel.add(uImg);
+		
+		constraints = new LineConstraints(0.4);
+		controls.add(sUPanel, constraints);
 		
 		//Add tabbed info panel
 		MyTabbedPanel infoArea = new MyTabbedPanel();
@@ -88,20 +94,6 @@ public class GameWindow extends JFrame implements WindowListener {
 		controls.add(infoArea, constraints);
 		
 		content.add(controls, BorderLayout.SOUTH);
-		
-		//TODO: have some way to give this information to the various components once the game starts
-		/*int[][] terrain = new int[40][30];
-		Random r = new Random();
-		for(int i = 0; i<terrain.length; i++) {
-			for(int j = 0; j<terrain[i].length; j++) {
-				int rand = r.nextInt(5);
-				if(rand==3)
-					terrain[i][j] = 1;
-				else if(rand==4)
-					terrain[i][j] = 2;
-			}
-		}*/
-		//map.setTerrain(player.getTerrain());
 	}
 	
 	public void windowDeactivated(WindowEvent e) { }

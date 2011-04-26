@@ -3,7 +3,8 @@ package net.quadratum.gui;
 import java.awt.Color;
 
 public interface MessageDisplay {
-	public void newMessage(int id, String str);
+	public void newMessage(int id, String message);
+	public void newMessage(String message);
 	public void clearMessages();
 	
 	public void showMessages();

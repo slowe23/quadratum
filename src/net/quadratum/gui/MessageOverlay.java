@@ -52,6 +52,10 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		newMessage(new Message(message.split("\n"), _graphicsCoordinator.getPlayerColor(id)));
 	}
 	
+	public void newMessage(String message) {
+		newMessage(new Message(message.split("\n"), _graphicsCoordinator.getForegroundColor()));
+	}
+	
 	private void newMessage(Message mess) {
 		final Deque<Message> DQ = _msgs;
 		
