@@ -18,8 +18,8 @@ public class MinimapPanel extends JPanel {
 	private BufferedImage _terrain;  //An image of the map terrain
 	
 	public MinimapPanel(GUIPlayer player, MapView m) {
-		_unitHandler = player.getUnitHandler();
-		_graphicsCoordinator = player.getGraphicsCoordinator();
+		_unitHandler = player._unitHandler;
+		_graphicsCoordinator = player._graphicsCoordinator;
 		
 		_view = m;
 		

@@ -8,15 +8,14 @@ import java.util.*;
 
 public class MapPanel extends JPanel implements MapView, MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
 	
-	private static final int[] SCALES = {12, 24, 36, 48, 96};  //Different scale leves, in pixels per tile
-	private static final int DEFAULT_SCALE = 3;
+	private static final int DEFAULT_SCALE = 3;  //Default scale level
 	
 	private UnitHandler _unitHandler;
 	private GraphicsCoordinator _graphicsCoordinator;
 	private MinimapPanel _minimap;
 	
 	private double _viewX, _viewY;  //Location in map squares currently displayed by the view
-	private int _scale;  //Scale level (index in SCALES)
+	private int _scaleLevel;  //Scale level
 
 	private int[][] _terrain;
 	
@@ -24,10 +23,10 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 	private double _pvx, _pvy;  //The location of the view when the mouse was pressed
 	
 	public MapPanel(GUIPlayer player) {
-		_unitHandler = player.getUnitHandler();
-		_graphicsCoordinator = player.getGraphicsCoordinator();
+		_unitHandler = player._unitHandler;
+		_graphicsCoordinator = player._graphicsCoordinator;
 		
-		_scale = DEFAULT_SCALE;
+		_scaleLevel = DEFAULT_SCALE;
 		
 		_minimap = new MinimapPanel(player, this);
 		
@@ -47,7 +46,7 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 		super.paintComponent(g);
 		
 		if(_terrain!=null) {
-			int scale = SCALES[_scale];
+			int scale = getScale();
 			double vX = getViewX(), vY = getViewY(), vW = getViewWidth(), vH = getViewHeight();
 			int offx = CM.round(-1*vX*scale), offy = CM.round(-1*vY*scale);  //The pixel location of the top left map corner
 			
@@ -83,6 +82,10 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 		_minimap.setTerrain(t);
 	}
 	
+	private int getScale() {
+		return 12*_scaleLevel;
+	}
+	
 	public double getViewX() {
 		return _viewX;
 	}
@@ -90,10 +93,14 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 		return _viewY;
 	}
 	public double getViewWidth() {
-		return getWidth()/((double)(SCALES[_scale]));
+		return getWidth()/((double)(getScale()));
 	}
 	public double getViewHeight() {
-		return getHeight()/((double)(SCALES[_scale]));
+		return getHeight()/((double)(getScale()));
+	}
+	
+	public void setScaleLevel(int scaleLevel) {
+		_scaleLevel = Math.max(1, Math.min(scaleLevel, 8));
 	}
 	
 	public void setViewPos(double x, double y) {
@@ -108,32 +115,32 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 			double vW = getViewWidth(), vH = getViewHeight();
 			int tW = _terrain.length, tH = _terrain[0].length;
 			
-			if(_viewX<-1 && _viewX+vW<tW+1)
-				_viewX = Math.min(tW+1-vW, -1);
-			else if(_viewX+vW>tW+1 && _viewX>-1)
-				_viewX = Math.max(tW+1-vW, -1);
+			if(vW<tW) {
+				if(_viewX<-1)
+					_viewX = -1;
+				else if(_viewX+vW>tW+1)
+					_viewX = tW+1-vW;
+			} else
+				_viewX = (tW-vW)/2.0;
 			
-			if(_viewY<-1 && _viewY+vH<tH+1)
-				_viewY = Math.min(tH+1-vH, -1);
-			else if(_viewY+vH>tH+1 && _viewY>-1)
-				_viewY = Math.max(tH-vH, -1);
+			if(vH<tH) {
+				if(_viewY<-1)
+					_viewY = -1;
+				else if(_viewY+vH>tH+1)
+					_viewY = tH+1-vH;
+			} else
+				_viewY = (tH-vH)/2.0;
 		}
 	}
 	public void mouseEntered(MouseEvent e) { }
 	public void mouseExited(MouseEvent e) { }
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if(_terrain!=null) {
-			int newScale = _scale + e.getWheelRotation();
+			int oldLevel = _scaleLevel;
+			double centerX = _viewX + getViewWidth()/2.0, centerY = _viewY + getViewHeight()/2.0;
 			
-			if(newScale<0)
-				newScale = 0;
-			if(newScale>=SCALES.length)
-				newScale = SCALES.length-1;
-			
-			if(_scale!=newScale) {
-				double centerX = _viewX + getViewWidth()/2.0, centerY = _viewY + getViewHeight()/2.0;
-				_scale = newScale;
-			
+			setScaleLevel(_scaleLevel - e.getWheelRotation());			
+			if(_scaleLevel!=oldLevel) {
 				setViewPos(centerX - getViewWidth()/2.0, centerY - getViewHeight()/2.0);
 				repaint();
 				_minimap.repaint();
@@ -159,7 +166,7 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 	
 	public void mouseDragged(MouseEvent e) {
 		if(_press!=null) {
-			setViewPos(_pvx - (e.getX()-_press.x)/((double)(SCALES[_scale])), _pvy - (e.getY()-_press.y)/((double)(SCALES[_scale])));
+			setViewPos(_pvx - (e.getX()-_press.x)/((double)(getScale())), _pvy - (e.getY()-_press.y)/((double)(getScale())));
 			repaint();
 			_minimap.repaint();
 			

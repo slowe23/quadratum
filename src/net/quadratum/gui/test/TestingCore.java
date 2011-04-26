@@ -6,18 +6,35 @@ import java.util.*;
 
 public class TestingCore implements Core {
 	
+	private Player _player;
+	
 	/**
 	 * Adds a player to the game being run by this Core.
 	 * @param p a player to be added
 	 * @param playerName the player to be added
 	 * @param maxUnits the maximum number of units this palyer can add
 	 */
-	public void addPlayer(Player p, String playerName, int maxUnits) { }
+	public void addPlayer(Player p, String playerName, int maxUnits) {
+		_player = p;
+	}
 	
 	/**
 	 * Starts the game.
 	 */
-	public void start() { }
+	public void start() {
+		_player.start(this, new MapData(createRandomTerrain(), new HashSet<MapPoint>()), 0, 1);
+	}
+	
+	private static int[][] createRandomTerrain() {
+		Random r = new Random();
+		int[][] toReturn = new int[30][40];
+		for(int i = 0; i<toReturn.length; i++) {
+			for(int j = 0; j<toReturn[i].length; j++) {
+				toReturn[i][j] = r.nextInt(16);
+			}
+		}
+		return toReturn;
+	}
 	
 	/**
 	 * Callback that alerts the core when a player is ready to start the game,

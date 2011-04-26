@@ -15,7 +15,7 @@ public class GameWindow extends JFrame implements WindowListener {
 		
 		addWindowListener(this);
 		
-		GameplayHandler gameplayHandler = player.getGameplayHandler();
+		GameplayHandler gameplayHandler = player._gameplayHandler;
 		
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());

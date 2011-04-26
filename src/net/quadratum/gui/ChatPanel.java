@@ -13,7 +13,7 @@ public class ChatPanel extends JPanel implements ActionListener, ItemListener {
 	private JCheckBox _show;
 	
 	public ChatPanel(GUIPlayer player, MessageDisplay message) {
-		_chatHandler = player.getChatHandler();
+		_chatHandler = player._chatHandler;
 		_message = message;
 		
 		setLayout(new BorderLayout());
