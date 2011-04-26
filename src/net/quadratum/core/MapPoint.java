@@ -21,4 +21,13 @@ public class MapPoint {
 		_x = point._x;
 		_y = point._y;
 	}
+	
+	public boolean equals(Object obj)
+	{
+		if(obj instanceof MapPoint && ((MapPoint) obj)._x == _x && ((MapPoint) obj)._y == _y)
+		{
+			return true;
+		}
+		return false;
+	}
 }

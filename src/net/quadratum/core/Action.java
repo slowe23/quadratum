@@ -15,4 +15,15 @@ public class Action {
 		ATTACK,
 		GATHER_RESOURCES;
 	}
+	
+	/**
+	 * Copy constructor for Action.
+	 * @param action the Action to copy
+	 */
+	public Action(Action action)
+	{
+		_action = action._action;
+		_source = new MapPoint(action._source);
+		_dest = new MapPoint(action._dest);
+	}
 }

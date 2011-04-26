@@ -14,7 +14,7 @@ public class Unit {
 	/** The player who owns this Unit. */
 	int _owner;
 	/** Cached stats for this Unit. */
-	Map<String,Integer> _stats;
+	Map<Block.BonusType,Integer> _stats;
 	
 	/**
 	 * Copy constructor for Unit.
@@ -22,14 +22,14 @@ public class Unit {
 	 */
 	public Unit(Unit unit)
 	{
-		_stats = new HashMap<String, Integer>();
+		_stats = new HashMap<Block.BonusType, Integer>();
 		_blocks = new HashMap<MapPoint, Block>();
 		_size = unit._size;
 		_name = new String(unit._name);
 		_owner = unit._owner;
-		for(String key : unit._stats.keySet())
+		for(Block.BonusType key : unit._stats.keySet())
 		{
-			_stats.put(new String(key), new Integer(unit._stats.get(key)));
+			_stats.put(key, new Integer(unit._stats.get(key)));
 		}
 		for(MapPoint key : unit._blocks.keySet())
 		{
