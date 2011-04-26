@@ -41,7 +41,7 @@ public class VirtualCore implements Core {
 
 	@Override
 	public Map<MapPoint, ActionType> getValidActions(Player p, int unitID) {
-		// TODO protocol
+		// TODO protocol/caching
 		return null;
 	}
 
@@ -65,13 +65,13 @@ public class VirtualCore implements Core {
 
 	@Override
 	public int getRemainingUnits(Player p) {
-		// TODO protocol
+		// TODO protocol, perhaps caching?
 		return 0;
 	}
 
 	@Override
 	public Unit getUnit(Player p, int unitID) {
-		// TODO protocol
+		// TODO protocol, caching?
 		return null;
 	}
 
