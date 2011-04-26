@@ -8,24 +8,21 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class GUIPlayer implements Player {
+	private static final Color[] PLAYER_COLORS = {Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.PINK};
+	
 	private Core _core;
 	private int _id;
 	
-	private ChatHandler _chatHandler;
-	private GraphicsCoordinator _graphicsCoordinator;
-	private UnitHandler _unitHandler;
-	private GameplayHandler _gameplayHandler;
+	public final ChatHandler _chatHandler;
+	public final GraphicsCoordinator _graphicsCoordinator;
+	public final UnitHandler _unitHandler;
+	public final GameplayHandler _gameplayHandler;
 	
 	public GUIPlayer() {
 		_chatHandler = new GUIPlayerChatHandler();
 		_graphicsCoordinator = new GUIPlayerGraphicsCoordinator();
 		_unitHandler = new GUIPlayerUnitHandler();
 		_gameplayHandler = new GUIPlayerGameplayHandler();
-	}
-	
-	public void createWindow() {
-		GameWindow window = new GameWindow(this);
-		window.setVisible(true);
 	}
 	
 	/**
@@ -36,6 +33,9 @@ public class GUIPlayer implements Player {
 	 * @param totalPlayers the number of players in the game, including this one
 	 */
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {
+		GameWindow window = new GameWindow(this);
+		window.setVisible(true);
+		
 		_core = core;
 		_id = id;
 		
@@ -99,22 +99,6 @@ public class GUIPlayer implements Player {
 		_chatHandler.getMessage(from, message);
 	}
 	
-	public ChatHandler getChatHandler() {
-		return _chatHandler;
-	}
-	
-	public GraphicsCoordinator getGraphicsCoordinator() {
-		return _graphicsCoordinator;
-	}
-	
-	public UnitHandler getUnitHandler() {
-		return _unitHandler;
-	}
-	
-	public GameplayHandler getGameplayHandler() {
-		return _gameplayHandler;
-	}
-	
 	private class GUIPlayerChatHandler implements ChatHandler {
 		private ChatPanel _chat;
 		
@@ -160,7 +144,10 @@ public class GUIPlayer implements Player {
 		}
 		
 		public Color getPlayerColor(int id) {
-			return Color.RED;
+			if(id>=0 && id < PLAYER_COLORS.length)
+				return PLAYER_COLORS[id];
+			else
+				return Color.GRAY;
 		}
 		
 		public BufferedImage getTerrainTile(int terrainValue, int size) {
@@ -175,7 +162,23 @@ public class GUIPlayer implements Player {
 		}
 		
 		public Color getTerrainColor(int terrainValue) {
-			return Color.GREEN;
+			if(TerrainConstants.isOfType(terrainValue, TerrainConstants.WATER)) {
+				return new Color(0, 0, 127);
+			} else {
+				if(TerrainConstants.isOfType(terrainValue, TerrainConstants.BUNKER)) {
+					return new Color(63, 63, 63);
+				} else {
+					if(TerrainConstants.isOfType(terrainValue, TerrainConstants.MOUNTAIN)) {
+						return new Color(127, 63, 0);
+					} else {
+						if(TerrainConstants.isOfType(terrainValue, TerrainConstants.RESOURCES)) {
+							return new Color(127, 127, 0);
+						} else {
+							return new Color(0, 127, 0);
+						}
+					}
+				}
+			}
 		}
 		
 		public BufferedImage getUnitImage(Unit unit, int blockSize) {

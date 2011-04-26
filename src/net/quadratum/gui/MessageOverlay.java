@@ -22,7 +22,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 	public MessageOverlay(GUIPlayer player) {
 		setOpaque(false);
 		
-		_graphicsCoordinator = player.getGraphicsCoordinator();
+		_graphicsCoordinator = player._graphicsCoordinator;
 		
 		FONT = getFont();
 		FMETR = getFontMetrics(FONT);
@@ -116,7 +116,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 							ny -= FMETR.getHeight();
 						}
 						
-						g.setColor(CM.applyAlpha(_graphicsCoordinator.getBackgroundColor(), 127));
+						g.setColor(_graphicsCoordinator.getBackgroundColor());
 						g.fillRect(0, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight());
 						
 						
@@ -126,6 +126,8 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 							y -= FMETR.getHeight();
 						}
 						
+						g.setColor(_graphicsCoordinator.getForegroundColor());
+						g.drawRect(-1, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight()-1);
 						g.setColor(m._color);
 						g.drawRect(-1, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight()-1);
 						
@@ -210,7 +212,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		
 		public Message(String[] lines, Color color) {
 			_lines = lines;
-			_color = CM.applyAlpha(color, 255);  //Opaque version of the given color
+			_color = CM.applyAlpha(color, 127);  //Translucent version of the given color
 		}
 	}
 }

@@ -12,8 +12,8 @@ public class UnitImagePanel extends JPanel implements MouseListener, MouseMotion
 	private GraphicsCoordinator _graphicsCoordinator;
 	
 	public UnitImagePanel(GUIPlayer player) {
-		_unitHandler = player.getUnitHandler();
-		_graphicsCoordinator = player.getGraphicsCoordinator();
+		_unitHandler = player._unitHandler;
+		_graphicsCoordinator = player._graphicsCoordinator;
 		
 		setBackground(_graphicsCoordinator.getBackgroundColor());
 	}
