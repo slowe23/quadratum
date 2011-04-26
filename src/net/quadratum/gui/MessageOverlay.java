@@ -14,7 +14,8 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 	private static final int MSG_PAD = 5;  //Number of pixels from the edge to pad messages
 	
 	private boolean _showMessages;
-	private Deque<String[]> _msgs; //Messages  //TODO: Make this a fixed-size array with a parallel array of timers
+	
+	private Deque<Message> _msgs; //Messages to display  //TODO: Make this a fixed-size array with a parallel array of timers?
 	
 	public MessageOverlay() {
 		setOpaque(false);
@@ -23,52 +24,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		FMETR = getFontMetrics(FONT);
 		
 		_showMessages = true;
-		_msgs = new LinkedList<String[]>();
-	}
-	
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		
-		g.setFont(FONT);
-		
-		int y = getHeight()-FMETR.getDescent()-MSG_PAD;
-		int w = Math.max(getWidth()/2-2*MSG_PAD, 1);
-		
-		if(_showMessages) {
-			Deque<String[]> msgs = _msgs;  //Get a local reference in case the global one changes
-			synchronized(msgs) {
-				int n = 0;
-				for(String[] ss:msgs) {
-					if(n>=MSG_NUM || y<FMETR.getAscent()+MSG_PAD)
-						break;
-					
-					n++;
-					
-					for(int s = ss.length-1; s>=0 && y>=FMETR.getAscent()+MSG_PAD; s--) {
-						String[] sss = getWrap(ss[s], w);
-						
-						int lines = 0;
-						int max = 0;
-						
-						g.setColor(new Color(255, 255, 255, 255));
-						
-						for(int ssss = sss.length-1; ssss>=0 && y>=FMETR.getAscent()+MSG_PAD; ssss--) {
-							max = Math.max(max, FMETR.stringWidth(sss[ssss]));
-							lines++;
-							
-							g.drawString(sss[ssss], MSG_PAD, y);
-							y -= FMETR.getHeight();
-						}
-						g.setColor(new Color(255, 255, 255, 255));  //TODO: adjust this based on who is sending the message
-						g.drawRect(-1, y+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight()-1);
-						g.setColor(new Color(255, 255, 255, 63));
-						g.fillRect(0, y+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight());
-						
-						y -= MSG_PAD;
-					}
-				}
-			}
-		}
+		_msgs = new LinkedList<Message>();
 	}
 	
 	public void setShowMessages(boolean b) {
@@ -88,12 +44,12 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		return _showMessages;
 	}
 	
-	public void newMessage(String str) {
-		newMessage(str.split("\n"));
+	public void newMessage(String str, Color c) {
+		newMessage(new Message(str.split("\n"), c));
 	}
 	
-	private void newMessage(String[] strs) {
-		final Deque<String[]> DQ = _msgs;
+	private void newMessage(Message mess) {
+		final Deque<Message> DQ = _msgs;
 		
 		javax.swing.Timer t = new javax.swing.Timer(MSG_TIME, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -106,7 +62,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		t.setRepeats(false);
 		
 		synchronized(DQ) {
-			DQ.addFirst(strs);
+			DQ.addFirst(mess);
 			t.start();
 		}
 		
@@ -114,9 +70,62 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 	}
 	
 	public void clearMessages() {
-		_msgs = new LinkedList<String[]>();
+		_msgs = new LinkedList<Message>();
 		
 		repaint();
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		g.setFont(FONT);
+		
+		int y = getHeight()-FMETR.getDescent()-MSG_PAD;
+		int w = Math.max(getWidth()/2-2*MSG_PAD, 1);
+		
+		if(_showMessages) {
+			Deque<Message> msgs = _msgs;  //Get a local reference in case the global one changes
+			synchronized(msgs) {
+				int n = 0;
+				for(Message m:msgs) {
+					String[] ss = m._lines;
+					if(n>=MSG_NUM || y<FMETR.getAscent()+MSG_PAD)
+						break;
+					
+					n++;
+					
+					for(int s = ss.length-1; s>=0 && y>=FMETR.getAscent()+MSG_PAD; s--) {
+						String[] sss = getWrap(ss[s], w);
+						
+						int lines = 0;
+						int max = 0;
+						int ny = y;
+						
+						for(int ssss = sss.length-1; ssss>=0 && ny>=FMETR.getAscent()+MSG_PAD; ssss--) {
+							max = Math.max(max, FMETR.stringWidth(sss[ssss]));
+							lines++;
+							
+							ny -= FMETR.getHeight();
+						}
+						
+						g.setColor(new Color(0, 0, 0, 127));  //Maybe change later
+						g.fillRect(0, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight());
+						
+						
+						g.setColor(new Color(255, 255, 255));
+						for(int ssss = sss.length-1; ssss>=0 && ny>=FMETR.getAscent()+MSG_PAD; ssss--) {
+							g.drawString(sss[ssss], MSG_PAD, y);
+							y -= FMETR.getHeight();
+						}
+						
+						g.setColor(new Color(m._color.getRGB(), false));  //Opaque version of whatever the color was
+						g.drawRect(-1, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight()-1);
+						
+						y -= MSG_PAD;
+					}
+				}
+			}
+		}
 	}
 	
 	private String[] getWrap(String s, int maxw) {
@@ -185,5 +194,15 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 			}
 		}
 		return maxlength;
+	}
+	
+	private static class Message {
+		public final String[] _lines;
+		public final Color _color;
+		
+		public Message(String[] lines, Color color) {
+			_lines = lines;
+			_color = color;
+		}
 	}
 }
