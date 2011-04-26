@@ -14,7 +14,19 @@ public class Unit {
 	/** The player who owns this Unit. */
 	int _owner;
 	/** Cached stats for this Unit. */
-	Map<Block.BonusType,Integer> _stats;
+	Map<Block.BonusType, Integer> _stats;
+	
+	/**
+	 * Constructor for Unit.
+	 */
+	public Unit(String name, int owner)
+	{
+		_name = new String(name);
+		_blocks = new HashMap<MapPoint, Block>();
+		_stats = new HashMap<Block.BonusType, Integer>();
+		_owner = owner;
+		_size = Constants.UNIT_SIZE;
+	}
 	
 	/**
 	 * Copy constructor for Unit.

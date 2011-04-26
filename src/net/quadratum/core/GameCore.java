@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Random;
 
-class GameCore implements Core
+public class GameCore implements Core
 {
 	private int[][] _terrain;
 	private ArrayList<HashSet<MapPoint>> _startingLocations;
@@ -56,10 +56,10 @@ class GameCore implements Core
 	 */
 	public synchronized void addPlayer(Player p, String playerName, int maxUnits)
 	{
-		if(_started == false)
+		if(!_started && _players.size() < Constants.MAX_PLAYERS)
 		{
 			_players.add(p);
-			_playerInformation.add(new PlayerInformation(playerName, maxUnits));
+			_playerInformation.add(new PlayerInformation(new String(playerName), maxUnits));
 		}
 	}
 		
@@ -89,7 +89,7 @@ class GameCore implements Core
 		{
 			// TO DO: add exception to throw
 		}
-		if(_started == false)
+		if(!_started)
 		{
 			_started = true;
 		}
@@ -118,6 +118,10 @@ class GameCore implements Core
 	 */
 	public synchronized void ready(Player p)
 	{
+		if(_turn != -1)
+		{
+			return;
+		}
 		_playerInformation.get(getPlayerId(p))._ready = true;
 		for(int i = 0; i < _playerInformation.size(); i++)
 		{
@@ -157,6 +161,7 @@ class GameCore implements Core
 	{
 		synchronized(_turnLockObject)
 		{
+			coords = new MapPoint(coords);
 			// TODO check turn
 			return false;
 		}
@@ -401,6 +406,7 @@ class GameCore implements Core
 	{
 		synchronized(_chatLockObject)
 		{
+			message = new String(message);
 			int from = getPlayerId(p);
 			for(int i = 0; i < _players.size(); i++)
 			{
@@ -413,17 +419,32 @@ class GameCore implements Core
 	 * Callback for placing a unit.
 	 * @param p the Player
 	 * @param coords the MapPoint at which the unit should be placed
+	 * @param name the name of the unit
 	 * @return true if the unit is placed sucessfully, false otherwise
 	 */
-	// TODO Finish
-	public boolean placeUnit(Player p, MapPoint coords)
+	public boolean placeUnit(Player p, MapPoint coords, String name)
 	{
 		synchronized(_turnLockObject)
 		{
-			// TODO check turn
+			coords = new MapPoint(coords);
+			if(_turn != -1)
+			{
+				return false;
+			}
+			if(getRemainingUnits(p) == 0)
+			{
+				return false;
+			}
+			int player = getPlayerId(p);
+			if(getUnitAtPoint(coords) == -1 && _startingLocations.get(player).contains(coords))
+			{
+				_units.add(new Unit(new String(name), player));
+				_unitInformation.add(new UnitInformation(coords));
+				return true;
+				// TODO add "brain block"
+			}
 			return false;
 		}
-		
 	}
 	
 	/**
@@ -439,6 +460,7 @@ class GameCore implements Core
 	{
 		synchronized(_turnLockObject)
 		{
+			coords = new MapPoint(coords);
 			// TODO check turn
 			return false;
 		}
