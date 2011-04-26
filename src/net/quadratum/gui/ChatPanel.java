@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.awt.*;
 
 public class ChatPanel extends JPanel implements ActionListener, ItemListener {
-	private GUIPlayer _player;
+	private ChatHandler _chatHandler;
 	private MessageDisplay _message;
 	private JTextField _field;
 	private JButton _fieldButton;
@@ -13,7 +13,7 @@ public class ChatPanel extends JPanel implements ActionListener, ItemListener {
 	private JCheckBox _show;
 	
 	public ChatPanel(GUIPlayer player, MessageDisplay message) {
-		_player = player;
+		_chatHandler = player.getChatHandler();
 		_message = message;
 		
 		setLayout(new BorderLayout());
@@ -45,24 +45,25 @@ public class ChatPanel extends JPanel implements ActionListener, ItemListener {
 		textEntryPanel.add(_fieldButton, BorderLayout.EAST);
 		
 		add(textEntryPanel, BorderLayout.SOUTH);
+		
+		_chatHandler.setChatPanel(this);
 	}
 	
 	public void addMessage(int from, String message) {
-		String msg = _player.getPlayerName(from) + ": " + message;
+		String msg = _chatHandler.getPlayerName(from) + ": " + message;
 		
 		synchronized(_area) {
 			if(_area.getText().length()>0)
 				_area.append("\n");
 			_area.append(msg);
-			_message.newMessage(msg, _player.getPlayerColor(from));
+			
+			_message.newMessage(from, msg);
 		}
-		
-		repaint();
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		if(_field.getText().length()>0) {
-			_player.sendChatMessage(_field.getText());
+			_chatHandler.sendMessage(_field.getText());
 			_field.setText("");
 		}
 	}

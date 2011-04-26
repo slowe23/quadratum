@@ -6,19 +6,23 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class MessageOverlay extends JPanel implements MessageDisplay {
+	private GraphicsCoordinator _graphicsCoordinator;
+	
 	private final Font FONT;
 	private final FontMetrics FMETR;
 	
 	private static final int MSG_TIME = 7500;  //Max time in ms to display messages
-	private static final int MSG_NUM = 5;  //Max number of messages to display
+	private static final int MSG_NUM = 10;  //Max number of messages to display
 	private static final int MSG_PAD = 5;  //Number of pixels from the edge to pad messages
 	
 	private boolean _showMessages;
 	
 	private Deque<Message> _msgs; //Messages to display  //TODO: Make this a fixed-size array with a parallel array of timers?
 	
-	public MessageOverlay() {
+	public MessageOverlay(GUIPlayer player) {
 		setOpaque(false);
+		
+		_graphicsCoordinator = player.getGraphicsCoordinator();
 		
 		FONT = getFont();
 		FMETR = getFontMetrics(FONT);
@@ -44,8 +48,8 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		return _showMessages;
 	}
 	
-	public void newMessage(String str, Color c) {
-		newMessage(new Message(str.split("\n"), c));
+	public void newMessage(int id, String message) {
+		newMessage(new Message(message.split("\n"), _graphicsCoordinator.getPlayerColor(id)));
 	}
 	
 	private void newMessage(Message mess) {
@@ -108,17 +112,17 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 							ny -= FMETR.getHeight();
 						}
 						
-						g.setColor(new Color(0, 0, 0, 127));  //Maybe change later
+						g.setColor(CM.applyAlpha(_graphicsCoordinator.getBackgroundColor(), 127));
 						g.fillRect(0, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight());
 						
 						
-						g.setColor(new Color(255, 255, 255));
+						g.setColor(_graphicsCoordinator.getForegroundColor());
 						for(int ssss = sss.length-1; ssss>=0 && ny>=FMETR.getAscent()+MSG_PAD; ssss--) {
 							g.drawString(sss[ssss], MSG_PAD, y);
 							y -= FMETR.getHeight();
 						}
 						
-						g.setColor(new Color(m._color.getRGB(), false));  //Opaque version of whatever the color was
+						g.setColor(m._color);
 						g.drawRect(-1, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight()-1);
 						
 						y -= MSG_PAD;
@@ -202,7 +206,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		
 		public Message(String[] lines, Color color) {
 			_lines = lines;
-			_color = color;
+			_color = CM.applyAlpha(color, 255);  //Opaque version of the given color
 		}
 	}
 }

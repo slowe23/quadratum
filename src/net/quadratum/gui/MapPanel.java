@@ -6,35 +6,36 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
-public class MapPanel extends JPanel implements MapView, MouseListener, MouseMotionListener, ComponentListener {
-	private static final Color[] T_COLS = {new Color(0, 127, 0), new Color(100, 75, 20), new Color(0,0,127)};  //Temporary
+public class MapPanel extends JPanel implements MapView, MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
 	
-	private static final int DEFAULT_SCALE = 50;
+	private static final int[] SCALES = {12, 24, 36, 48, 96};  //Different scale leves, in pixels per tile
+	private static final int DEFAULT_SCALE = 3;
 	
-	private UnitHolder _units;
+	private UnitHandler _unitHandler;
+	private GraphicsCoordinator _graphicsCoordinator;
 	private MinimapPanel _minimap;
 	
 	private double _viewX, _viewY;  //Location in map squares currently displayed by the view
-	private int _scale;  //Pixels per map square  //TODO: zoom
+	private int _scale;  //Scale level (index in SCALES)
 
 	private int[][] _terrain;
 	
 	private Point _press;  //The location where the mouse was pressed (null when the mouse is not currently pressed)
 	private double _pvx, _pvy;  //The location of the view when the mouse was pressed
 	
-	public MapPanel(UnitHolder u) {
-		
-		_units = u;
+	public MapPanel(GUIPlayer player) {
+		_unitHandler = player.getUnitHandler();
+		_graphicsCoordinator = player.getGraphicsCoordinator();
 		
 		_scale = DEFAULT_SCALE;
 		
-		_minimap = new MinimapPanel(this, _units);
+		_minimap = new MinimapPanel(player, this);
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addComponentListener(this);
 		
-		setBackground(Color.BLACK);
+		setBackground(_graphicsCoordinator.getBackgroundColor());
 	}
 	
 	public MinimapPanel getMinimap() {
@@ -45,31 +46,31 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 		super.paintComponent(g);
 		
 		if(_terrain!=null) {
+			int scale = SCALES[_scale];
 			double vX = getViewX(), vY = getViewY(), vW = getViewWidth(), vH = getViewHeight();
+			int offx = CM.round(-1*vX*scale), offy = CM.round(-1*vY*scale);  //The pixel location of the top left map corner
 			
-			int offx = CM.round(-1*vX*_scale), offy = CM.round(-1*vY*_scale);  //The pixel location of the top left map corner
+			//Draw map border
+			g.setColor(_graphicsCoordinator.getNeutralColor());
+			g.drawRect(offx-1, offy-1, scale*_terrain.length+2-1, scale*_terrain[0].length+2-1);
 			
+			//Draw visible map tiles
 			for(int i = (int)vX; i<_terrain.length && i<vX+vW; i++) {
 				for(int j = (int)vY; j<_terrain[i].length && j<vY+vH; j++) {
-					BufferedImage tile = getTerrainTile(_terrain[i][j]);
-					g.drawImage(tile, offx+_scale*i, offy+_scale*j, _scale, _scale, this);
+					BufferedImage tile = _graphicsCoordinator.getTerrainTile(_terrain[i][j], scale);
+					g.drawImage(tile, offx+scale*i, offy+scale*j, scale, scale, this);
 				}
 			}
 			
-			//TODO: draw units
+			//Draw units
+			//TODO
 		} else {
 			//Draw waiting screen
+			g.setColor(_graphicsCoordinator.getForegroundColor());
+			FontMetrics fM = g.getFontMetrics();
+			String waiting = "Waiting for game to start...";
+			g.drawString(waiting, (getWidth()-fM.stringWidth(waiting))/2, (getHeight()-(fM.getAscent()+fM.getDescent()))/2+fM.getAscent());
 		}
-	}
-	
-	private BufferedImage getTerrainTile(int id) {
-		Color c = Color.black;
-		if(id>=0 && id<T_COLS.length)
-			c = T_COLS[id];
-		
-		BufferedImage toRet = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-		toRet.setRGB(0,0,c.getRGB());
-		return toRet;
 	}
 	
 	public void setTerrain(int[][] t) {
@@ -88,10 +89,10 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 		return _viewY;
 	}
 	public double getViewWidth() {
-		return getWidth()/((double)_scale);
+		return getWidth()/((double)(SCALES[_scale]));
 	}
 	public double getViewHeight() {
-		return getHeight()/((double)_scale);
+		return getHeight()/((double)(SCALES[_scale]));
 	}
 	
 	public void setViewPos(double x, double y) {
@@ -99,8 +100,6 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 		_viewY = y;
 		
 		fixViewPos();
-		
-		repaint();
 	}
 	
 	private void fixViewPos() {
@@ -108,37 +107,59 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 			double vW = getViewWidth(), vH = getViewHeight();
 			int tW = _terrain.length, tH = _terrain[0].length;
 			
-			if(_viewX<0 && _viewX+vW<tW)
-				_viewX = Math.min(tW-vW, 0.0);
-			else if(_viewX+vW>tW && _viewX>0)
-				_viewX = Math.max(tW-vW, 0.0);
+			if(_viewX<-1 && _viewX+vW<tW+1)
+				_viewX = Math.min(tW+1-vW, -1);
+			else if(_viewX+vW>tW+1 && _viewX>-1)
+				_viewX = Math.max(tW+1-vW, -1);
 			
-			if(_viewY<0 && _viewY+vH<tH)
-				_viewY = Math.min(tH-vH, 0.0);
-			else if(_viewY+vH>tH && _viewY>0)
-				_viewY = Math.max(tH-vH, 0.0);
+			if(_viewY<-1 && _viewY+vH<tH+1)
+				_viewY = Math.min(tH+1-vH, -1);
+			else if(_viewY+vH>tH+1 && _viewY>-1)
+				_viewY = Math.max(tH-vH, -1);
 		}
-	}
-	
-	public void mouseMoved(MouseEvent e) {
-		
 	}
 	public void mouseEntered(MouseEvent e) { }
 	public void mouseExited(MouseEvent e) { }
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		if(_terrain!=null) {
+			int newScale = _scale + e.getWheelRotation();
+			
+			if(newScale<0)
+				newScale = 0;
+			if(newScale>=SCALES.length)
+				newScale = SCALES.length-1;
+			
+			if(_scale!=newScale) {
+				double centerX = _viewX + getViewWidth()/2.0, centerY = _viewY + getViewHeight()/2.0;
+				_scale = newScale;
+			
+				setViewPos(centerX - getViewWidth()/2.0, centerY - getViewHeight()/2.0);
+				repaint();
+				_minimap.repaint();
+			}
+		}
+	}
 	
 	public void mouseClicked(MouseEvent e) {
-		//TODO
+		//TODO: select the piece clicked on, if one exists
+	}
+	
+	public void mouseMoved(MouseEvent e) {
+		//TODO: implement scroll when mouse is near edge of map
 	}
 	
 	public void mousePressed(MouseEvent e) {
-		_press = new Point(e.getX(), e.getY());
-		_pvx = getViewX();
-		_pvy = getViewY();
+		if(_terrain!=null) {
+			_press = new Point(e.getX(), e.getY());
+			_pvx = getViewX();
+			_pvy = getViewY();
+		}
 	}
 	
 	public void mouseDragged(MouseEvent e) {
 		if(_press!=null) {
-			setViewPos(_pvx - (e.getX()-_press.x)/((double)_scale), _pvy - (e.getY()-_press.y)/((double)_scale));
+			setViewPos(_pvx - (e.getX()-_press.x)/((double)(SCALES[_scale])), _pvy - (e.getY()-_press.y)/((double)(SCALES[_scale])));
+			repaint();
 			_minimap.repaint();
 		}
 	}

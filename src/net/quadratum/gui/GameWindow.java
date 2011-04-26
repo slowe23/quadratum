@@ -8,8 +8,6 @@ import java.awt.event.*;
 import java.util.Random;
 
 public class GameWindow extends JFrame implements WindowListener {
-	private ChatPanel _chat;
-	
 	public GameWindow(GUIPlayer player) {
 		setTitle("Quadratum");
 		setSize(1024, 768);
@@ -30,7 +28,7 @@ public class GameWindow extends JFrame implements WindowListener {
 		mapPane.add(map, new Integer(0));
 		
 		//Add message display
-		MessageOverlay msg = new MessageOverlay();
+		MessageOverlay msg = new MessageOverlay(player);
 		mapPane.add(msg, new Integer(1));
 		
 		content.add(mapPane, BorderLayout.CENTER);
@@ -82,9 +80,9 @@ public class GameWindow extends JFrame implements WindowListener {
 		infoArea.addTab("Objectives", objectives, true);
 		
 		//Add chat tab
-		_chat = new ChatPanel(player, msg);
+		ChatPanel chat = new ChatPanel(player, msg);
 		
-		infoArea.addTab("Chat", _chat);
+		infoArea.addTab("Chat", chat);
 		
 		constraints = new LineConstraints(0.4);
 		controls.add(infoArea, constraints);
@@ -104,10 +102,6 @@ public class GameWindow extends JFrame implements WindowListener {
 			}
 		}*/
 		//map.setTerrain(player.getTerrain());
-	}
-	
-	public ChatPanel getChatPanel() {
-		return _chat;
 	}
 	
 	public void windowDeactivated(WindowEvent e) { }

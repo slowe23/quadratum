@@ -1,6 +1,7 @@
 package net.quadratum.gui;
 
 import javax.swing.*;
+import java.awt.Color;
 
 //Static convenience methods
 public class CM {
@@ -32,5 +33,9 @@ public class CM {
 		JPanel panel = new JPanel();
 		panel.setBorder(BorderFactory.createTitledBorder(title));
 		return panel;
+	}
+	
+	public static Color applyAlpha(Color c, int alpha) {
+		return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
 	}
 }
