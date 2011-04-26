@@ -8,10 +8,7 @@ import java.awt.event.*;
 import java.util.Random;
 
 public class GameWindow extends JFrame implements WindowListener {
-	public static void main(String[] args) {
-		GameWindow g = new GameWindow(new GUIPlayer());
-		g.setVisible(true);
-	}
+	private ChatPanel _chat;
 	
 	public GameWindow(GUIPlayer player) {
 		setTitle("Quadratum");
@@ -85,9 +82,9 @@ public class GameWindow extends JFrame implements WindowListener {
 		infoArea.addTab("Objectives", objectives, true);
 		
 		//Add chat tab
-		ChatPanel chat = new ChatPanel(msg);
+		_chat = new ChatPanel(player, msg);
 		
-		infoArea.addTab("Chat", chat);
+		infoArea.addTab("Chat", _chat);
 		
 		constraints = new LineConstraints(0.4);
 		controls.add(infoArea, constraints);
@@ -109,8 +106,8 @@ public class GameWindow extends JFrame implements WindowListener {
 		//map.setTerrain(player.getTerrain());
 	}
 	
-	private Icon getIcon(String tab) {
-		return null;
+	public ChatPanel getChatPanel() {
+		return _chat;
 	}
 	
 	public void windowDeactivated(WindowEvent e) { }
@@ -121,7 +118,7 @@ public class GameWindow extends JFrame implements WindowListener {
 	public void windowOpened(WindowEvent e) { }
 	
 	public void windowClosing(WindowEvent e) {
-		//TODO:  something
+		//TODO:  Flail around
 		System.exit(0);
 	}
 }
