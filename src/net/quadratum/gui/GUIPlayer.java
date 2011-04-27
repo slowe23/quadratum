@@ -23,7 +23,7 @@ public class GUIPlayer implements Player {
 		_mapData = new MapData();
 		
 		_chatHandler = new ChatHandler(this);
-		_center = new Center(this, _unitsInfo, _mapData);
+		_center = new Center(this, _chatHandler, _unitsInfo, _mapData);
 		
 		_drawingMethods = new DrawingMethods();
 	}

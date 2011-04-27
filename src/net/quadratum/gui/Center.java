@@ -8,6 +8,8 @@ public class Center {
 	private Core _core;
 	private GUIPlayer _player;
 	
+	private ChatHandler _chatHandler;
+	
 	private UnitsInfo _unitsInfo;
 	private MapData _mapData;
 	
@@ -17,8 +19,9 @@ public class Center {
 	private UnitPanel _unitPanel;
 	private BuildPanel _buildPanel;
 	
-	public Center(GUIPlayer player, UnitsInfo unitsInfo, MapData mapData) {
+	public Center(GUIPlayer player, ChatHandler chatHandler, UnitsInfo unitsInfo, MapData mapData) {
 		_player = player;
+		_chatHandler = chatHandler;
 		_unitsInfo = unitsInfo;
 		_mapData = mapData;
 	}
@@ -39,6 +42,7 @@ public class Center {
 		_unitsInfo.start(_core);
 		_mapPanel.start();
 		_unitInfoPanel.start(_core);
+		_chatHandler.start(_core);
 	}
 	
 	public void updateMapData(MapData mapData) {
@@ -48,10 +52,7 @@ public class Center {
 	}
 	
 	public void setPieces(List<Piece> pieces) {
-		if(_buildPanel != null)
-		{
-			_buildPanel.setPieces(pieces);
-		}
+		_buildPanel.setPieces(pieces);
 	}
 	
 	public void update(Map<MapPoint, Integer> units, Action lastAction) {
@@ -67,10 +68,12 @@ public class Center {
 		} else {
 			if(_mapData._placementArea!=null && _mapData._placementArea.contains(point)) {
 				String newUnitName = "Unit "+(new Random().nextInt(Integer.MAX_VALUE));
-				if(_core.placeUnit(_player, point, newUnitName)) {
+				int newUnit;
+				if((newUnit = _core.placeUnit(_player, point, newUnitName))!=-1) {
+					_unitsInfo.add(point, newUnit);
 					_mapData._placementArea.remove(point);
+					unitsUpdated();
 					mapUpdated();
-					//TODO: deal with the aftermath?
 				}
 			} else
 				deselect();

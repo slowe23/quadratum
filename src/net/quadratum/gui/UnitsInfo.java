@@ -13,7 +13,6 @@ public class UnitsInfo {
 	private Map<Integer, Unit> _unitCache;
 	
 	private Integer _selectedID;
-	public Map<MapPoint, Action.ActionType> _selectedActions;
 	
 	public UnitsInfo(GUIPlayer player) {
 		_player = player;
@@ -35,7 +34,6 @@ public class UnitsInfo {
 		
 		if(_selectedID!=null && !(_idMap.containsKey(_selectedID))) {
 			_selectedID = null;
-			_selectedActions = null;
 		}
 	}
 	
@@ -92,33 +90,25 @@ public class UnitsInfo {
 	}
 	
 	public void setSelected(int id) {
-		if(_selectedID==null || _selectedID!=id)
-			_selectedActions = null;
-		
 		_selectedID = id;
 	}
 	
 	public void setSelected(Unit u) {
-		if(u==null) {
-			_selectedActions = null;
+		if(u==null)
 			_selectedID = null;
-		} else
+		else
 			setSelected(u._id);
 	}
 	
 	public void setSelected() {
-		_selectedActions = null;
 		_selectedID = null;
 	}
 	
 	public Map<MapPoint, Action.ActionType> getAvailableActions() {
 		if(_selectedID==null)
-			return new HashMap<MapPoint, Action.ActionType>();
-		else {
-			if(_selectedActions==null)
-				_selectedActions = _core.getValidActions(_player, _selectedID);
-			return _selectedActions;
-		}
+			return new HashMap<MapPoint, Action.ActionType>();  //No actions available
+		else
+			return _core.getValidActions(_player, _selectedID);
 	}
 	
 	//Gets a set of units belonging to the given player, ordered by unit ID

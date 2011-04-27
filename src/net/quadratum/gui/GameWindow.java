@@ -14,7 +14,7 @@ public class GameWindow extends JFrame implements WindowListener {
 	
 	public GameWindow(GUIPlayer player, Center center, ChatHandler chatHandler, DrawingMethods drawingMethods, MapData mapData, UnitsInfo unitsInfo) {
 		setTitle("Quadratum");
-		setSize(1024, 768);
+		setSize(800, 600);
 		setResizable(false);
 		
 		_center = center;
