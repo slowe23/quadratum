@@ -52,7 +52,17 @@ public class ChatPanel extends JPanel implements ActionListener, ItemListener {
 		
 		add(_show, BorderLayout.SOUTH);
 		
+		_field.setEnabled(false);
+		_fieldButton.setEnabled(false);
+		_show.setEnabled(false);
+		
 		_chatHandler.setChatPanel(this);
+	}
+	
+	public void start() {
+		_field.setEnabled(true);
+		_fieldButton.setEnabled(true);
+		_show.setEnabled(true);
 	}
 	
 	public void addMessage(int from, String message) {

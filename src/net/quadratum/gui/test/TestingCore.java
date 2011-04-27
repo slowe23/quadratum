@@ -24,18 +24,30 @@ public class TestingCore implements Core {
 	 */
 	public void start() {
 		_index = new Random().nextInt(8);
-		_player.start(this, new MapData(createRandomTerrain(), new HashSet<MapPoint>()), _index, 8);
+		_player.start(this, createRandomMapData(30, 40), _index, 8);
 	}
 	
-	private static int[][] createRandomTerrain() {
+	private static MapData createRandomMapData(int w, int h) {
+		return new MapData(createRandomTerrain(w, h), createRandomPlacementArea(w, h));
+	}
+	
+	private static int[][] createRandomTerrain(int w, int h) {
 		Random r = new Random();
-		int[][] toReturn = new int[30][40];
+		int[][] toReturn = new int[w][h];
 		for(int i = 0; i<toReturn.length; i++) {
 			for(int j = 0; j<toReturn[i].length; j++) {
 				toReturn[i][j] = r.nextInt(16);
 			}
 		}
 		return toReturn;
+	}
+	
+	private static Set<MapPoint> createRandomPlacementArea(int w, int h) {
+		Random r = new Random();
+		Set<MapPoint> set = new HashSet<MapPoint>();
+		for(int count = 0; count<(w*h)/10; count++)
+			set.add(new MapPoint(r.nextInt(w), r.nextInt(h)));
+		return set;
 	}
 	
 	/**

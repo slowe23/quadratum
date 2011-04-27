@@ -22,6 +22,14 @@ public class UnitHandler {
 		return _selectedUnit;
 	}
 	
+	public MapPoint getUnitLocation(Unit u) {
+		if(u!=null && _units!=null)
+			for(MapPoint point : _units.keySet())
+				if(_units.get(point)==u)
+					return point;
+		return null;
+	}
+	
 	public void setUnits(Map<MapPoint, Unit> units) {
 		_units = units;
 	}

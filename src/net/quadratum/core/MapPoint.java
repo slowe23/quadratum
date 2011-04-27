@@ -21,4 +21,16 @@ public class MapPoint {
 		_x = point._x;
 		_y = point._y;
 	}
+	
+	public int hashCode() {
+		return new java.awt.Point(_x, _y).hashCode();  //Maybe not the best hash but it should be fine for now
+	}
+	
+	public boolean equals(Object o) {
+		if(o==null || !(o instanceof MapPoint))
+			return false;
+		
+		MapPoint m = (MapPoint)o;
+		return _x==m._x && _y==m._y;
+	}
 }

@@ -9,12 +9,12 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class MapPanel extends JPanel implements MapView, MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
-	
 	private static final int DEFAULT_SCALE = 3;  //Default scale level
 	private static final int MIN_SCALE = 2, MAX_SCALE = 8;
 	
 	private UnitHandler _unitHandler;
 	private GraphicsCoordinator _graphicsCoordinator;
+	private GameplayHandler _gameplayHandler;
 	private MinimapPanel _minimap;
 	
 	private double _viewX, _viewY;  //Location in map squares currently displayed by the view
@@ -29,6 +29,7 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 	public MapPanel(GUIPlayer player) {
 		_unitHandler = player._unitHandler;
 		_graphicsCoordinator = player._graphicsCoordinator;
+		_gameplayHandler = player._gameplayHandler;
 		
 		_scaleLevel = DEFAULT_SCALE;
 		
@@ -60,13 +61,16 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 			
 			//Draw visible map tiles
 			for(int i = Math.max(0, (int)vX); i<_terrain.length && i<vX+vW; i++) {
+				int tilex = offx+scale*i;
 				for(int j = Math.max(0, (int)vY); j<_terrain[i].length && j<vY+vH; j++) {
+					int tiley = offy+scale*j;
+					
 					BufferedImage tile = _graphicsCoordinator.getTerrainTile(_terrain[i][j], scale);
-					g.drawImage(tile, offx+scale*i, offy+scale*j, scale, scale, this);
+					g.drawImage(tile, tilex, tiley, scale, scale, this);
 
-					if(_placement!=null && _placement.contains(new MapPoint(i, j))) {
-						g.setColor(new Color(255, 0, 0, 127));
-						g.fillRect(offx+scale*i, offy+scale*j, scale, scale);
+					if(_placement!=null) {
+						BufferedImage mask = _graphicsCoordinator.getTerrainTileMask(scale, _placement.contains(new MapPoint(i, j)));
+						g.drawImage(mask, tilex, tiley, scale, scale, this);
 					}
 				}
 			}
@@ -90,7 +94,6 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 					}
 				}
 			}
-			
 		} else {
 			//Draw waiting screen
 			g.setColor(_graphicsCoordinator.getForegroundColor());
@@ -100,9 +103,53 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 		}
 	}
 	
+	public boolean isOnscreen(double x, double y) {
+		return x>=_viewX && y>=_viewY && x<_viewX+getViewWidth() && y<_viewY+getViewHeight();
+	}
+	
+	public void scrollTo(Action a) {
+		int dx = Math.abs(a._source._x - a._dest._x), dy = Math.abs(a._source._y-a._dest._y);
+		if(dx<=getViewWidth() || dy<=getViewHeight())
+			scrollTo(a._dest);
+		else
+			scrollTo((a._source._x+a._dest._x)/2.0+0.5, (a._source._y+a._dest._y)/2.0+0.5);
+	}
+	
+	public void scrollTo(MapPoint point) {
+		scrollTo(point._x+0.5, point._y+0.5);
+	}
+	
+	public void scrollTo(double x, double y) {
+		if(!(isOnscreen(x, y)))
+			center(x, y);
+	}
+	
+	public void center(MapPoint point) {
+		center(point._x+0.5, point._y+0.5);  //Center of the tile
+	}
+	
+	public void center(double cx, double cy) {
+		setViewPos(cx-getViewWidth()/2.0, cy-getViewHeight()/2.0);
+	}
+	
 	public void start(MapData m) {
 		setTerrain(m._terrain);
+
 		_placement = m._placementArea;
+		_minimap.setPlacementArea(_placement);
+		
+		//Center around placement area
+		int size = _placement.keySet().size();
+		if(size==0) {
+			center(_terrain.length/2.0, _terrain[0].length/2.0);
+		} else {
+			int tpx = 0, tpy = 0;
+			for(MapPoint point : _placement.keySet()) {
+				tpx += point._x;
+				tpy += point._y;
+			}
+			center(tpx/(double)size + 0.5, tpy/(double)size + 0.5);
+		}
 	}
 	
 	public void setTerrain(int[][] t) {
@@ -164,6 +211,12 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 				_viewY = (tH-vH)/2.0;
 		}
 	}
+	
+	public void repaintBoth() {
+		repaint();
+		_minimap.repaint();
+	}
+	
 	public void mouseEntered(MouseEvent e) { }
 	public void mouseExited(MouseEvent e) { }
 	public void mouseWheelMoved(MouseWheelEvent e) {
@@ -173,15 +226,21 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 			
 			setScaleLevel(_scaleLevel - e.getWheelRotation());			
 			if(_scaleLevel!=oldLevel) {
-				setViewPos(centerX - getViewWidth()/2.0, centerY - getViewHeight()/2.0);
-				repaint();
-				_minimap.repaint();
+				center(centerX, centerY);
+				repaintBoth();
 			}
 		}
 	}
 	
 	public void mouseClicked(MouseEvent e) {
-		//TODO: select the piece clicked on, if one exists
+		MapPoint click = new MapPoint((int)(e.getX()/((double)(getScale())) + _viewX), (int)(e.getY()/((double)(getScale())) + _viewY));
+		
+		if(_gameplayHandler.getPhase()==GameplayHandler.PHASE_GAME) {
+			Map<MapPoint, Unit> units = _unitHandler.getUnits();
+			if(units.containsKey(click))
+				_gameplayHandler.select(units.get(click), click);
+		}
+		//TODO: unit actions, place a unit if during the placement phase
 	}
 	
 	public void mouseMoved(MouseEvent e) {
@@ -199,8 +258,7 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 	public void mouseDragged(MouseEvent e) {
 		if(_press!=null) {
 			setViewPos(_pvx - (e.getX()-_press.x)/((double)(getScale())), _pvy - (e.getY()-_press.y)/((double)(getScale())));
-			repaint();
-			_minimap.repaint();
+			repaintBoth();
 			
 			_press = new Point(e.getX(), e.getY());
 			_pvx = getViewX();
@@ -219,7 +277,6 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 	public void componentResized(ComponentEvent e) {
 		if(_terrain!=null)
 			fixViewPos();
-		repaint();
-		_minimap.repaint();
+		repaintBoth();
 	}
 }

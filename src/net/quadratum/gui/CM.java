@@ -1,8 +1,11 @@
 package net.quadratum.gui;
 
+import net.quadratum.core.Unit;
+
 import javax.swing.*;
 import java.awt.Color;
 import javax.swing.border.TitledBorder;
+import java.util.Map;
 
 //Static convenience methods
 public class CM {
@@ -40,9 +43,19 @@ public class CM {
 		return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
 	}
 	
-	public static Color overlay(Color over, Color base) {
-		int alpha = over.getAlpha();
-		int coAlpha = 255 - over.getAlpha();
-		return new Color((over.getRed()*alpha + base.getRed()*coAlpha)/255, (over.getGreen()*alpha + base.getRed()*coAlpha)/255, (over.getBlue()*alpha + base.getBlue()*coAlpha)/255);
+	public static String getUnitDescription(Unit unit) {
+		if(unit==null)
+			return "No unit selected.";
+		else {
+			String description = "";
+			description += "Unit name: "+unit._name+"\n";
+			description += "Owner: "+""+"\n";  //TODO
+			description += "\n";
+			description += "Stats";
+			Map<String, Integer> stats = unit._stats;
+			for(String stat:stats.keySet())
+				description += "\n   "+stat+": "+stats.get(stat);
+			return description;
+		}
 	}
 }

@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class GraphicsCoordinator {
 	private static final Color[] PLAYER_COLORS = {Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.PINK};
-	private static Map<Integer, BufferedImage[]> _mapTileCache = new HashMap<Integer, BufferedImage[]>();
+	private static Map<Integer, BufferedImage[]> _mapTileCache = new HashMap<Integer, BufferedImage[]>();  //TODO: improve this
 
 	public GraphicsCoordinator() { }
 	
@@ -31,6 +31,14 @@ public class GraphicsCoordinator {
 			return PLAYER_COLORS[id];
 		else
 			return Color.GRAY;
+	}
+	
+	public BufferedImage getTerrainTileMask(int size, boolean placement) {
+		BufferedImage mask = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = mask.getGraphics();
+		g.setColor(getTerrainMaskColor(placement));
+		g.fillRect(0, 0, size, size);
+		return mask;
 	}
 	
 	public BufferedImage getTerrainTile(int terrainValue, int size) {
@@ -66,6 +74,13 @@ public class GraphicsCoordinator {
 		}
 		
 		return cache[terrainValue];
+	}
+	
+	public Color getTerrainMaskColor(boolean placement) {
+		if(placement)
+			return new Color(0, 0, 0, 0);
+		else
+			return new Color(0, 0, 0, 127);
 	}
 	
 	public Color getTerrainColor(int terrainValue) {
@@ -158,9 +173,9 @@ public class GraphicsCoordinator {
 			int lrgb = light.getRGB(), drgb = dark.getRGB();
 			for(int x = 0; x<bevelSize; x++) {
 				for(int y = 0; y<bevelSize; y++) {
-					int set = (x<y) ? lrgb : drgb;
+					int set = (x<(bevelSize-1-y)) ? lrgb : drgb;
 					mask.setRGB(size-bevelSize+x, y, set);
-					mask.setRGB(0, size-bevelSize+y, set);	
+					mask.setRGB(x, size-bevelSize+y, set);	
 				}
 			}
 		}
@@ -175,6 +190,6 @@ public class GraphicsCoordinator {
 	}
 	
 	public Color getBlockBaseColor(Block b) {
-		return Color.blue;  //TODO: change
+		return new Color(127, 127, 127);  //TODO: change this
 	}
 }

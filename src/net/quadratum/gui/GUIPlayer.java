@@ -8,7 +8,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class GUIPlayer implements Player {
-	
 	private Core _core;
 	private int _id;
 	
@@ -23,6 +22,7 @@ public class GUIPlayer implements Player {
 		_unitHandler = new UnitHandler();
 		_gameplayHandler = new GameplayHandler(this);
 		_gameplayHandler.setChatHandler(_chatHandler);
+		_gameplayHandler.setUnitHandler(_unitHandler);
 	}
 	
 	/**
@@ -40,7 +40,6 @@ public class GUIPlayer implements Player {
 		_id = id;
 		
 		_gameplayHandler.start(core, mapData);
-		_chatHandler.start(_core);
 	}
 	
 	/**

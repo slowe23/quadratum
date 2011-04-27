@@ -23,7 +23,6 @@ public class GameWindow extends JFrame implements WindowListener {
 		//Add a layered pain containing the map
 		JLayeredPane mapPane = new JLayeredPane();
 		mapPane.setLayout(new FillLayout());
-		mapPane.setBorder(BorderFactory.createLineBorder(Color.WHITE, 5));
 		
 		//Add map display panel
 		MapPanel map = new MapPanel(player);
@@ -54,13 +53,15 @@ public class GameWindow extends JFrame implements WindowListener {
 		//Add unit info panel
 		JPanel uInfo = CM.createTitledPanel("Unit Info");
 		uInfo.setLayout(new FillLayout());
-		uInfo.add(CM.createScrollingTextDisplay());
+		JScrollPane uInfoScroll = CM.createScrollingTextDisplay();
+		gameplayHandler.setUnitInfoArea((JTextArea)(uInfoScroll.getViewport().getView()));
+		uInfo.add(uInfoScroll);
 		sUPanel.add(uInfo);
 		
 		//Add unit image panel
 		UnitImagePanel uImg = new UnitImagePanel(player);
 		sUPanel.add(uImg);
-		
+		gameplayHandler.setUnitImagePanel(uImg);
 		constraints = new LineConstraints(0.4);
 		controls.add(sUPanel, constraints);
 		
@@ -69,7 +70,7 @@ public class GameWindow extends JFrame implements WindowListener {
 		
 		//Add unit tab
 		UnitPanel units = new UnitPanel();
-
+		gameplayHandler.setUnitPanel(units);
 		infoArea.addTab("Units", units);
 		
 		//Add build tab

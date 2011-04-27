@@ -4,9 +4,9 @@ import net.quadratum.core.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.Map;
+import java.util.Set;
 
 public class MinimapPanel extends JPanel {
 	private static final int SCALE = 3;  //Pixels per map square
@@ -16,6 +16,7 @@ public class MinimapPanel extends JPanel {
 	private UnitHandler _unitHandler;  //Contains unit information
 	private GraphicsCoordinator _graphicsCoordinator;  //Contains game-level graphics information
 	private BufferedImage _terrain;  //An image of the map terrain
+	private BufferedImage _placementMask;  //An image of available placement squares
 	
 	public MinimapPanel(GUIPlayer player, MapView m) {
 		_unitHandler = player._unitHandler;
@@ -31,6 +32,17 @@ public class MinimapPanel extends JPanel {
 		for(int i = 0; i<_terrain.getWidth(); i++)
 			for(int j = 0; j<_terrain.getHeight(); j++)
 				_terrain.setRGB(i, j, _graphicsCoordinator.getTerrainColor(terrain[i][j]).getRGB());
+	}
+	
+	public void setPlacementArea(Set<MapPoint> placement) {
+		_placementMask = new BufferedImage(_terrain.getWidth(), _terrain.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		for(int i = 0; i<_placementMask.getWidth(); i++)
+			for(int j = 0; j<_placementMask.getHeight(); j++)
+				_placementMask.setRGB(i, j, _graphicsCoordinator.getTerrainMaskColor(placement.contains(new MapPoint(i, j))).getRGB());
+	}
+	
+	public void clearPlacementArea() {
+		_placementMask = null;
 	}
 	
 	//Gets the amount in pixels to offset the upper left corner of the terrain image from the upper left corner of the minimap panel
@@ -81,14 +93,16 @@ public class MinimapPanel extends JPanel {
 			int offx = off[0], offy = off[1];
 			
 			g.drawImage(_terrain, offx, offy, SCALE*_terrain.getWidth(), SCALE*_terrain.getHeight(), this);
+			if(_placementMask!=null)
+				g.drawImage(_placementMask, offx, offy, SCALE*_terrain.getWidth(), SCALE*_terrain.getHeight(), this);
 			g.setColor(_graphicsCoordinator.getNeutralColor());
 			g.drawRect(offx-1, offy-1, SCALE*_terrain.getWidth()+2-1, SCALE*_terrain.getHeight()+2-1);
-			
-			Unit selected = _unitHandler.getSelectedUnit();
 			
 			///Draw dots for the units
 			Map<MapPoint, Unit> units = _unitHandler.getUnits();
 			if(units!=null) {
+				Unit selected = _unitHandler.getSelectedUnit();
+				
 				for(MapPoint p : units.keySet()) {
 					Unit unit = units.get(p);
 					g.setColor(_graphicsCoordinator.getPlayerColor(unit._owner));
