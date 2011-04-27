@@ -14,7 +14,7 @@ public class MainTest implements Main {
 		TestAI_MTC ai = new TestAI_MTC();
 		GameCore core = new GameCore(new MainTest(), "null", new CheckWinner(), new ArrayList<Piece>());
 		core.addPlayer(player, "Test Player", 10);
-		core.addPlayer(player, "AI Player", 10);
+		core.addPlayer(ai, "AI Player", 10);
 		core.start();
 	}
 
