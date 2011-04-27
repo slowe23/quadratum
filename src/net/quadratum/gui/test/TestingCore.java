@@ -133,7 +133,7 @@ public class TestingCore implements Core {
 	 */
 	public int placeUnit(Player p, MapPoint coords, String name) {
 		if(_toPlace==0 || _units.containsKey(coords))
-			return false;
+			return -1;
 		
 		_units.put(coords, new Unit(name, _index, _toPlace));
 		_toPlace--;
