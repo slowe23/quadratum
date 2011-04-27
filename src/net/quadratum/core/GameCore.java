@@ -3,6 +3,7 @@ package net.quadratum.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.io.*;
 
 import net.quadratum.main.Main;
 
@@ -20,7 +21,7 @@ public class GameCore implements Core
 	private int _turn; // -1 = not started, -2 = game over
 	private boolean _started;
 	private Object _chatLockObject, _turnLockObject;
-	private OutputStream _log;
+	private Writer _log;
 	
 	/**
 	 * Constructor for GameCore.
@@ -41,6 +42,14 @@ public class GameCore implements Core
 		_started = false;
 		_chatLockObject = new Object();
 		_turnLockObject = new Object();
+		try
+		{
+			_log = new FileWriter("log.txt");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		readMap(map);
 	}
 	
@@ -901,21 +910,28 @@ public class GameCore implements Core
 	 */
 	private void log(String message, int level)
 	{
-		if(Constants.DEBUG_LEVEL == -1)
+		try
 		{
-			return;
+			if(Constants.DEBUG_LEVEL == -1)
+			{
+				return;
+			}
+			if(level > Constants.DEBUG_LEVEL)
+			{
+				if(level == 2)
+				{
+					_log.write("WARNING: ");
+				}
+				else if(level == 3)
+				{
+					_log.write("ERROR: ");
+				}
+				_log.write(message + "\n");
+			}
 		}
-		if(level > Constants.DEBUG_LEVEL)
+		catch(Exception e)
 		{
-			if(level == 2)
-			{
-				System.out.print("WARNING: ");
-			}
-			else if(level == 3)
-			{
-				System.out.print("ERROR: ");
-			}
-			System.out.println(message);
+			e.printStackTrace();
 		}
 	}
 }
