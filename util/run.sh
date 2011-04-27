@@ -1,1 +1,1 @@
-java -cp src net.quadratum.main.MainTest
+java -cp src net.quadratum.main.test.MainTest

@@ -1,4 +1,4 @@
-package net.quadratum.main;
+package net.quadratum.main.test;
 
 import net.quadratum.gui.*;
 import net.quadratum.core.*;
