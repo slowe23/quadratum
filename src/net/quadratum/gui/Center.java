@@ -52,7 +52,12 @@ public class Center {
 	}
 	
 	public void setPieces(List<Piece> pieces) {
-		_buildPanel.setPieces(pieces);
+		try {
+			_buildPanel.setPieces(pieces);
+		} catch(NullPointerException n) {
+			System.out.println("This is a bug that needs fixing:");
+			n.printStackTrace();
+		}
 	}
 	
 	public void update(Map<MapPoint, Integer> units, Action lastAction) {
@@ -70,7 +75,7 @@ public class Center {
 				String newUnitName = "Unit "+(new Random().nextInt(Integer.MAX_VALUE));
 				int newUnit;
 				if((newUnit = _core.placeUnit(_player, point, newUnitName))!=-1) {
-					_unitsInfo.add(point, newUnit);
+					_unitsInfo.addUnit(point, newUnit);
 					_mapData._placementArea.remove(point);
 					unitsUpdated();
 					mapUpdated();
