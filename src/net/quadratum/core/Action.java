@@ -13,6 +13,7 @@ public class Action {
 	public enum ActionType {
 		MOVE,
 		ATTACK,
+		UNIT_DIED,
 		GATHER_RESOURCES;
 	}
 	
@@ -25,5 +26,18 @@ public class Action {
 		_action = action._action;
 		_source = new MapPoint(action._source);
 		_dest = new MapPoint(action._dest);
+	}
+	
+	/**
+	 * Constructor for Action.
+	 * @param action the type of action
+	 * @param source the source of the action
+	 * @param dest the destination of the action
+	 */
+	public Action(ActionType action, MapPoint source, MapPoint dest)
+	{
+		_action = action;
+		source = new MapPoint(source);
+		dest = new MapPoint(dest);
 	}
 }

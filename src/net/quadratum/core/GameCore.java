@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Random;
 
-class GameCore implements Core
+public class GameCore implements Core
 {
 	private int[][] _terrain;
 	private ArrayList<HashSet<MapPoint>> _startingLocations;
@@ -15,7 +15,7 @@ class GameCore implements Core
 	private ArrayList<PlayerInformation> _playerInformation;
 	private ArrayList<Piece> _pieces;
 	private WinCondition _winCondition;
-	private int _turn;
+	private int _turn; // -1 = not started, -2 = game over
 	private boolean _started;
 	private Object _chatLockObject, _turnLockObject;
 	
@@ -56,10 +56,10 @@ class GameCore implements Core
 	 */
 	public synchronized void addPlayer(Player p, String playerName, int maxUnits)
 	{
-		if(_started == false)
+		if(!_started && _players.size() < Constants.MAX_PLAYERS)
 		{
 			_players.add(p);
-			_playerInformation.add(new PlayerInformation(playerName, maxUnits));
+			_playerInformation.add(new PlayerInformation(new String(playerName), maxUnits));
 		}
 	}
 		
@@ -89,7 +89,7 @@ class GameCore implements Core
 		{
 			// TO DO: add exception to throw
 		}
-		if(_started == false)
+		if(!_started)
 		{
 			_started = true;
 		}
@@ -107,6 +107,7 @@ class GameCore implements Core
 			{
 				tempPieces.add(new Piece(_pieces.get(j)));
 			}
+			// TODO add thread here
 			_players.get(i).start(this, tempMap, i, _players.size());
 			_players.get(i).updatePieces(_pieces);
 		}
@@ -118,6 +119,10 @@ class GameCore implements Core
 	 */
 	public synchronized void ready(Player p)
 	{
+		if(_turn > -1)
+		{
+			return;
+		}
 		_playerInformation.get(getPlayerId(p))._ready = true;
 		for(int i = 0; i < _playerInformation.size(); i++)
 		{
@@ -152,13 +157,71 @@ class GameCore implements Core
 	 * @param coords the point at which the action should be taken
 	 * @return true if the action has been taken, false if otherwise
 	 */
-	// TODO Finish
 	public synchronized boolean unitAction(Player p, int unitId, MapPoint coords)
 	{
 		synchronized(_turnLockObject)
 		{
-			// TODO check turn
-			return false;
+			int player = getPlayerId(p);
+			if(_turn != player)
+			{
+				return false;
+			}
+			if(unitId < 0 || unitId >= _units.size())
+			{
+				return false;
+			}
+			if(_units.get(unitId)._owner != player)
+			{
+				return false;
+			}
+			coords = new MapPoint(coords);
+			// TODO add real attacking
+			HashSet<MapPoint> valid;
+			MapPoint oldCoords = new MapPoint(_unitInformation.get(unitId)._position);
+			if(getUnitAtPoint(coords) == -1) // Movement
+			{
+				if(_unitInformation.get(unitId)._hasMoved)
+				{
+					return false;
+				}
+				valid = getAreaForUnit(unitId, 0);
+				if(!valid.contains(coords))
+				{
+					return false;
+				}
+				if(getUnitAtPoint(coords) != -1)
+				{
+					return false;
+				}
+				_unitInformation.get(unitId)._hasMoved = true;
+				_unitInformation.get(unitId)._position = coords;
+				updateMaps(new Action(Action.ActionType.MOVE, oldCoords, coords));
+			}
+			else // Attacking
+			{
+				if(_unitInformation.get(unitId)._hasAttacked)
+				{
+					return false;
+				}
+				valid = getAreaForUnit(unitId, 1);
+				if(!valid.contains(coords))
+				{
+					return false;
+				}
+				int unit = getUnitAtPoint(coords);
+				if(unit == -1)
+				{
+					return false;
+				}
+				if(_units.get(unit)._owner == player)
+				{
+					return false;
+				}
+				_unitInformation.get(unitId)._hasAttacked = true;
+				_unitInformation.get(unit)._position = new MapPoint(-1, -1);
+				updateMaps(new Action(Action.ActionType.UNIT_DIED, coords, coords));
+			}
+			return true;
 		}
 	}
 	
@@ -256,11 +319,12 @@ class GameCore implements Core
 			{
 				if(getVisible(i).contains(action._dest))
 				{
+					// TODO create new _source for attacks that the player can't see
 					_players.get(i).updateMap(generateMapForPlayer(i), new Action(action));
 				}
 				else
 				{
-					// TODO generate new _dest if player can see _course but not _dest (find the closest point in the visible area) 
+					// TODO generate new _dest if player can see _source but not _dest (find the closest point in the visible area) 
 					_players.get(i).updateMap(generateMapForPlayer(i), null);
 				}
 			}
@@ -348,10 +412,15 @@ class GameCore implements Core
 			{
 				_turn = 0;
 			}
-			if(!_playerInformation.get(_turn)._quit && !_playerInformation.get(_turn)._lost)
+			if(_playerInformation.get(_turn)._quit || _playerInformation.get(_turn)._lost)
 			{
-				return;
+				continue;
 			}
+			for(int j = 0; j < _players.size(); j++)
+			{
+				_players.get(j).updateTurn(_turn);
+			}
+			// TODO add thread here
 			_players.get(_turn).turnStart();
 		}
 		// If we have reached here, the game should be over...
@@ -364,7 +433,7 @@ class GameCore implements Core
 	 */
 	private void endGame(int winner)
 	{
-		_turn = -1;
+		_turn = -21;
 		for(int i = 0; i < _players.size(); i++)
 		{
 			if(!_playerInformation.get(i)._quit)
@@ -401,6 +470,7 @@ class GameCore implements Core
 	{
 		synchronized(_chatLockObject)
 		{
+			message = new String(message);
 			int from = getPlayerId(p);
 			for(int i = 0; i < _players.size(); i++)
 			{
@@ -413,17 +483,32 @@ class GameCore implements Core
 	 * Callback for placing a unit.
 	 * @param p the Player
 	 * @param coords the MapPoint at which the unit should be placed
+	 * @param name the name of the unit
 	 * @return true if the unit is placed sucessfully, false otherwise
 	 */
-	// TODO Finish
-	public boolean placeUnit(Player p, MapPoint coords)
+	public boolean placeUnit(Player p, MapPoint coords, String name)
 	{
 		synchronized(_turnLockObject)
 		{
-			// TODO check turn
+			coords = new MapPoint(coords);
+			if(_turn != -1)
+			{
+				return false;
+			}
+			if(getRemainingUnits(p) == 0)
+			{
+				return false;
+			}
+			int player = getPlayerId(p);
+			if(getUnitAtPoint(coords) == -1 && _startingLocations.get(player).contains(coords))
+			{
+				_units.add(new Unit(new String(name), player));
+				_unitInformation.add(new UnitInformation(coords));
+				return true;
+				// TODO add "brain block"
+			}
 			return false;
 		}
-		
 	}
 	
 	/**
@@ -434,13 +519,46 @@ class GameCore implements Core
 	 * @param coords the coordinates in the unit to place the piece
 	 * @return true if the piece is added sucessfuly, false otherwise
 	 */
-	// TODO Finish
 	public synchronized boolean updateUnit(Player p, int unitId, int pieceId, MapPoint coords)
 	{
 		synchronized(_turnLockObject)
 		{
-			// TODO check turn
-			return false;
+			if(_turn != -1)
+			{
+				return false;
+			}
+			if(pieceId < 0 || pieceId >= _pieces.size() || unitId < 0 || unitId >= _units.size())
+			{
+				return false;
+			}
+			int player = getPlayerId(p);
+			Piece piece = _pieces.get(pieceId);
+			Unit unit = _units.get(unitId);
+			if(unit._owner != player)
+			{
+				return false;
+			}
+			if(piece._cost > _playerInformation.get(player)._resources)
+			{
+				return false;
+			}
+			coords = new MapPoint(coords);
+			for(MapPoint key : piece._blocks.keySet())
+			{
+				if(unit._blocks.containsKey(new MapPoint(coords._x + key._x, coords._y + key._y)))
+				{
+					return false;
+				}
+				if((coords._x + key._x) < 0 || (coords._x + key._x) >= Constants.UNIT_SIZE && (coords._y + key._y) < 0 || (coords._y + key._y) >= Constants.UNIT_SIZE)
+				{
+					return false;
+				}
+			}
+			for(MapPoint key : piece._blocks.keySet())
+			{
+				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), new Block(piece._blocks.get(key)));
+			}
+			return true;
 		}
 	}
 	
@@ -512,7 +630,7 @@ class GameCore implements Core
 	 * @param u the Unit
 	 * @return the MapPoints that the unit can act upon/see
 	 */
-	// TODO add support for sight blocks
+	// TODO add support for sight blocks and special movement blocks/terrain
 	private HashSet<MapPoint> getAreaForUnit(int u, int type)
 	{
 		int radius;
@@ -534,7 +652,7 @@ class GameCore implements Core
 		{
 			for(int y = info._position._y - radius; y < (info._position._y + radius + 1); y++)
 			{
-				if(x > 0 && y > 0 && x < _terrain.length && y < _terrain[0].length) // Check to make sure the point is on the board
+				if(x >= 0 && y >= 0 && x < _terrain.length && y < _terrain[0].length) // Check to make sure the point is on the board
 				{
 					if((Math.abs(info._position._x - x) + Math.abs(info._position._y - y)) < radius)
 					{
