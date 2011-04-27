@@ -79,7 +79,11 @@ public class Center {
 					_mapData._placementArea.remove(point);
 					unitsUpdated();
 					mapUpdated();
+					if(_mapData._placementArea.size()==0 || _core.getRemainingUnits(_player)==0)
+						placementDone();
 				}
+			} else if(_unitsInfo.getAvailableActions().containsKey(point)) {
+				_core.unitAction(_player, _unitsInfo.getSelectedID(), point);
 			} else
 				deselect();
 		}
