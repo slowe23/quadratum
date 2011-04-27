@@ -69,9 +69,9 @@ public interface Core {
 	 * @param p the Player itself
 	 * @param coords the coordinates at which a player is placing the unit
 	 * @param name the name of the Unit
-	 * @return true if the placement succeeded, false otherwise
+	 * @return -1 if the unit could not be place, the unit id otherwise
 	 */
-	boolean placeUnit(Player p, MapPoint coords, String name);
+	int placeUnit(Player p, MapPoint coords, String name);
 	
 	/**
 	 * Returns the number of units left to place for the given player
