@@ -147,6 +147,8 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 	
 	public void center(double cx, double cy) {
 		setViewPos(cx-getViewWidth()/2.0, cy-getViewHeight()/2.0);
+		repaint();
+		_minimap.repaint();
 	}
 	
 	public void start() {
@@ -162,6 +164,8 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 			}
 			center(tpx/(double)size + 0.5, tpy/(double)size + 0.5);
 		}
+		
+		_minimap.predrawMapData(_mapData);
 		
 		repaint();
 		_minimap.repaint();
