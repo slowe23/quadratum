@@ -9,6 +9,9 @@ public class TestingCore implements Core {
 	private Player _player;
 	private int _index;
 	
+	private Map<MapPoint, Unit> _units;
+	private int _toPlace;
+	
 	/**
 	 * Adds a player to the game being run by this Core.
 	 * @param p a player to be added
@@ -17,6 +20,8 @@ public class TestingCore implements Core {
 	 */
 	public void addPlayer(Player p, String playerName, int maxUnits) {
 		_player = p;
+		_units = new HashMap<MapPoint, Unit>();
+		_toPlace = 3;
 	}
 	
 	/**
@@ -45,8 +50,10 @@ public class TestingCore implements Core {
 	private static Set<MapPoint> createRandomPlacementArea(int w, int h) {
 		Random r = new Random();
 		Set<MapPoint> set = new HashSet<MapPoint>();
-		for(int count = 0; count<(w*h)/10; count++)
-			set.add(new MapPoint(r.nextInt(w), r.nextInt(h)));
+		int cornerX = r.nextInt(w-(w/10)), cornerY = r.nextInt(h-(h/10));
+		for(int x = 0; x<w/10; x++)
+			for(int y = 0; y<h/10; y++)
+				set.add(new MapPoint(cornerX+x, cornerY+y));
 		return set;
 	}
 	
@@ -56,7 +63,9 @@ public class TestingCore implements Core {
 	 * placed.
 	 * @param p the Player itself who is now ready
 	 */
-	public void ready(Player p) { }
+	public void ready(Player p) {
+		_player.updateTurn(_index);
+	}
 	
 	/**
 	 * Callback which alerts the core when a player is done with their turn.
@@ -92,7 +101,10 @@ public class TestingCore implements Core {
 	 * Callback that alerts the core that a player has left the game.
 	 * @param p the Player itself
 	 */
-	public void quit(Player p) { }
+	public void quit(Player p) {
+		System.out.println("Quit");
+		System.exit(0);
+	}
 	
 	/**
 	 * Callback that alerts the core that a chat message should be sent
@@ -107,10 +119,16 @@ public class TestingCore implements Core {
 	 * Callback that alerts the core that a player is placing a unit.
 	 * @param p the Player itself
 	 * @param coords the coordinates at which a player is placing the unit
+	 * @param name the name of the unit to place
 	 * @return true if the placement succeeded, false otherwise
 	 */
-	public boolean placeUnit(Player p, MapPoint coords) {
-		return false;
+	public boolean placeUnit(Player p, MapPoint coords, String name) {
+		if(_toPlace==0 || _units.containsKey(coords))
+			return false;
+		
+		_units.put(coords, new Unit(name, _index));
+		_toPlace--;
+		return true;
 	}
 	
 	/**
@@ -118,7 +136,7 @@ public class TestingCore implements Core {
 	 * @param p the Player itself
 	 */
 	public int getRemainingUnits(Player p) {
-		return 0;
+		return _toPlace;
 	}
 	
 	/**
@@ -158,11 +176,5 @@ public class TestingCore implements Core {
 	 */
 	public int getResources(Player p) {
 		return 0;
-	}
-
-	@Override
-	public boolean placeUnit(Player p, MapPoint coords, String name) {
-		// TODO ?
-		return false;
 	}
 }

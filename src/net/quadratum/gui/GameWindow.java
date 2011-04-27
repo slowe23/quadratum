@@ -8,29 +8,30 @@ import java.awt.event.*;
 import java.util.Random;
 
 public class GameWindow extends JFrame implements WindowListener {
-	public GameWindow(GUIPlayer player) {
+	private final Center _center;
+	
+	public GameWindow(GUIPlayer player, Center center, ChatHandler chatHandler, DrawingMethods drawingMethods, MapData mapData, UnitsInfo unitsInfo) {
 		setTitle("Quadratum");
 		setSize(1024, 768);
 		setResizable(false);
 		
-		addWindowListener(this);
+		_center = center;
 		
-		GameplayHandler gameplayHandler = player._gameplayHandler;
+		addWindowListener(this);
 		
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
 		
-		//Add a layered pain containing the map
+		//Add a layered pane containing the map
 		JLayeredPane mapPane = new JLayeredPane();
 		mapPane.setLayout(new FillLayout());
 		
 		//Add map display panel
-		MapPanel map = new MapPanel(player);
-		gameplayHandler.setMapPanel(map);
+		MapPanel map = new MapPanel(center, unitsInfo, mapData, drawingMethods);
 		mapPane.add(map, new Integer(0));
 		
 		//Add message display
-		MessageOverlay msg = new MessageOverlay(player);
+		MessageOverlay msg = new MessageOverlay(drawingMethods);
 		mapPane.add(msg, new Integer(1));
 		
 		content.add(mapPane, BorderLayout.CENTER);
@@ -47,21 +48,18 @@ public class GameWindow extends JFrame implements WindowListener {
 		controls.add(minimap, constraints);
 		
 		//Add selected unit panel
-		JPanel sUPanel = CM.createTitledPanel("Selected Unit");
+		JPanel sUPanel = new JPanel();
+		sUPanel.setBorder(StaticMethods.getTitleBorder("Selected Unit"));
 		sUPanel.setLayout(new LineLayout(LineLayout.LEFT_TO_RIGHT));
 		
 		//Add unit info panel
-		JPanel uInfo = CM.createTitledPanel("Unit Info");
-		uInfo.setLayout(new FillLayout());
-		JScrollPane uInfoScroll = CM.createScrollingTextDisplay();
-		gameplayHandler.setUnitInfoArea((JTextArea)(uInfoScroll.getViewport().getView()));
-		uInfo.add(uInfoScroll);
+		UnitInfoPanel uInfo = new UnitInfoPanel(unitsInfo);
 		sUPanel.add(uInfo);
 		
 		//Add unit image panel
-		UnitImagePanel uImg = new UnitImagePanel(player);
+		UnitImagePanel uImg = new UnitImagePanel(unitsInfo, drawingMethods);
 		sUPanel.add(uImg);
-		gameplayHandler.setUnitImagePanel(uImg);
+		
 		constraints = new LineConstraints(0.4);
 		controls.add(sUPanel, constraints);
 		
@@ -70,31 +68,29 @@ public class GameWindow extends JFrame implements WindowListener {
 		
 		//Add unit tab
 		UnitPanel units = new UnitPanel();
-		gameplayHandler.setUnitPanel(units);
 		infoArea.addTab("Units", units);
 		
 		//Add build tab
 		BuildPanel build = new BuildPanel();
-
 		infoArea.addTab("Build", build);
 		
 		//Add objectives tab
-		JPanel objectives = CM.createTitledPanel("Game Objectives");
+		JPanel objectives = new JPanel();
+		objectives.setBorder(StaticMethods.getTitleBorder("Game Objectives"));
 		objectives.setLayout(new FillLayout());
-		
-		objectives.add(CM.createScrollingTextDisplay());
-		
+		objectives.add(StaticMethods.createScrollingTextDisplay());
 		infoArea.addTab("Objectives", objectives, true);
 		
 		//Add chat tab
-		ChatPanel chat = new ChatPanel(player, msg);
-		
+		ChatPanel chat = new ChatPanel(chatHandler, msg);
 		infoArea.addTab("Chat", chat);
 		
 		constraints = new LineConstraints(0.4);
 		controls.add(infoArea, constraints);
 		
 		content.add(controls, BorderLayout.SOUTH);
+		
+		center.setComponents(map, uInfo, uImg, units, build);
 	}
 	
 	public void windowDeactivated(WindowEvent e) { }
@@ -105,7 +101,7 @@ public class GameWindow extends JFrame implements WindowListener {
 	public void windowOpened(WindowEvent e) { }
 	
 	public void windowClosing(WindowEvent e) {
-		//TODO:  Flail around
-		System.exit(0);
+		_center.closing();
+		setVisible(false);
 	}
 }

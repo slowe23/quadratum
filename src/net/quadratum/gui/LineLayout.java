@@ -215,10 +215,10 @@ public class LineLayout implements LayoutManager2 {
 				curWeight += w.weight;
 				int quran;
 				if(_horizontal) {
-					quran = minx + CM.round(width*curWeight/totalWeight);
+					quran = minx + StaticMethods.round(width*curWeight/totalWeight);
 					w.component.setBounds(prev, miny, quran-prev, height);
 				} else {
-					quran = miny + CM.round(height*curWeight/totalWeight);
+					quran = miny + StaticMethods.round(height*curWeight/totalWeight);
 					w.component.setBounds(minx, prev, width, quran-prev);
 				}
 				prev = quran;
