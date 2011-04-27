@@ -121,7 +121,8 @@ public class GameCore implements Core
 	{
 		if(_players.size() == 0)
 		{
-			// TO DO: add exception to throw
+			log("Tried to start game with 0 players", 3);
+			return;
 		}
 		if(!_started)
 		{
@@ -129,6 +130,7 @@ public class GameCore implements Core
 		}
 		else
 		{
+			log("start() was called but the game had already started", 2);
 			return;
 		}
 		MapData tempMap;
@@ -146,6 +148,7 @@ public class GameCore implements Core
 			playerStartThread.start();
 			_players.get(i).updatePieces(tempPieces);
 		}
+		log("start() has been called, starting unit placement phase", 1);
 		// Send a welcome message, can be removed
 		sendChatMessage("Welcome to Quadratum!");
 	}
@@ -156,20 +159,23 @@ public class GameCore implements Core
 	 */
 	public synchronized void ready(Player p)
 	{
+		int player = getPlayerId(p);
 		if(_turn > -1)
 		{
+			log("Player " + player + " called ready() but the game had already started", 2);
 			return;
 		}
-		_playerInformation.get(getPlayerId(p))._ready = true;
+		_playerInformation.get(player)._ready = true;
 		for(int i = 0; i < _playerInformation.size(); i++)
 		{
-			if(!_playerInformation.get(i)._ready)
+			if(!_playerInformation.get(i)._ready && !_playerInformation.get(i)._quit)
 			{
+				log("Player " + player + " called ready()", 1);
 				return;
 			}
 		}
-		_turn = 0;
-		_players.get(0).turnStart();
+		log("Player " + player + " called ready() and every other player was ready, starting game", 1);
+		nextTurn();
 	}
 	
 	/**
@@ -180,9 +186,15 @@ public class GameCore implements Core
 	{
 		synchronized(_turnLockObject)
 		{
-			if(getPlayerId(p) == _turn)
+			int player = getPlayerId(p);
+			if(player == _turn)
 			{
+				log("Player " + player + " called endTurn(), moving on to next turn", 1);
 				nextTurn();
+			}
+			else
+			{
+				log("Player " + player + " called endTurn() but it was not their turn", 2);
 			}
 		}
 	}
@@ -194,78 +206,88 @@ public class GameCore implements Core
 	 * @param coords the point at which the action should be taken
 	 * @return true if the action has been taken, false if otherwise
 	 */
+	// TODO finish
 	public boolean unitAction(Player p, int unitId, MapPoint coords)
 	{
-		log("herp", 2);
 		// TODO logging in this function and then all functions above
 		synchronized(_turnLockObject)
 		{
-			log("derp", 2);
 			int player = getPlayerId(p);
 			if(_turn != player)
 			{
+				log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but it was not their turn\n"
+					+ "\tTurn: " + _turn, 2);
 				return false;
 			}
 			if(unitId < 0 || unitId >= _units.size())
 			{
+				log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but they used an invalid unitId", 2);
 				return false;
 			}
-			if(_units.get(unitId)._owner != player)
+			int owner = _units.get(unitId)._owner;
+			if(owner != player)
 			{
+				log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but they did not own the unit\n"
+					+ "\tOwner: " + owner, 2);
 				return false;
 			}
 			if(_unitInformation.get(unitId)._position.equals(new MapPoint(-1, -1)))
 			{
+				log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but the unit was dead", 2);
 				return false;
 			}
 			coords = new MapPoint(coords);
 			// TODO add real attacking
 			HashSet<MapPoint> valid;
 			MapPoint oldCoords = new MapPoint(_unitInformation.get(unitId)._position);
-			if(getUnitAtPoint(coords) == -1) // Movement
+			int unit = getUnitAtPoint(coords);
+			if(unit == -1) // Movement
 			{
 				if(_unitInformation.get(unitId)._hasMoved)
 				{
+					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but the unit had already moved", 2);
 					return false;
 				}
 				valid = getAreaForUnit(unitId, 0);
 				if(!valid.contains(coords))
 				{
-					return false;
-				}
-				if(getUnitAtPoint(coords) != -1)
-				{
+					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but did provide a valid movement coordinate\n"
+						+ "\tValid: " + valid, 2);
 					return false;
 				}
 				_unitInformation.get(unitId)._hasMoved = true;
 				_unitInformation.get(unitId)._position = coords;
 				updateMaps(new Action(Action.ActionType.MOVE, oldCoords, coords));
-				log("Unit moved from " + oldCoords + " to " + coords, 2);
+				log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ")\n"
+					+ "\tAction taken: move\n"
+					+ "\tFrom: " + oldCoords, 1);
 			}
 			else // Attacking
 			{
 				if(_unitInformation.get(unitId)._hasAttacked)
 				{
+					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but the unit had already attacked", 2);
 					return false;
 				}
 				valid = getAreaForUnit(unitId, 1);
 				if(!valid.contains(coords))
 				{
-					return false;
-				}
-				int unit = getUnitAtPoint(coords);
-				if(unit == -1)
-				{
+					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but did provide a valid attack coordinate\n"
+						+ "\tValid: " + valid, 2);
 					return false;
 				}
 				if(_units.get(unit)._owner == player)
 				{
+					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but tried to attack a unit that they owned\n"
+						+ "\tUnit at coords: " + unit, 2);
 					return false;
 				}
 				_unitInformation.get(unitId)._hasAttacked = true;
 				_unitInformation.get(unit)._position = new MapPoint(-1, -1);
 				updateMaps(new Action(Action.ActionType.UNIT_DIED, coords, coords));
-				log("Unit died!", 2);
+				log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ")\n"
+					+ "\tAction taken: attack\n"
+					+ "\tFrom: " + oldCoords, 1);
 			}
 			return true;
 		}
@@ -277,35 +299,39 @@ public class GameCore implements Core
 	 * @param unitId the unit's id
 	 * @return a map of MapPoints to Action.ActionTypes that represents what actions can be taken where
 	 */
+	// TODO finish
+	// TODO add support for different types of terrain
 	public HashMap<MapPoint, Action.ActionType> getValidActions(Player p, int unitId)
 	{
 		int player = getPlayerId(p);
 		if(unitId < 0 || unitId >= _units.size() || _units.get(unitId)._owner != player || _turn != player)
 		{
-			log("Player " + player + " called getValidActions(unitId: " + unitId + ") but they did not own the unit, it was an invalid unit, or it was not their turn", 2);
+			String toLog;
+			toLog = "Player " + player + " called getValidActions(unitId: " + unitId + ") but they did not own the unit, it was an invalid unit, or it was not their turn\n";
 			if(unitId >= 0 && unitId < _units.size())
 			{
-				log("\tOwner: " + _units.get(unitId)._owner, 2);
+				toLog += "\tOwner: " + _units.get(unitId)._owner + "\n";
 			}
 			else
 			{
-				log("\tOwner: (none)", 2);
+				toLog += "\tOwner: (none)\n";
 			}
-			log("\tTurn: " + _turn, 2);
-			log("\tAnswer: null", 2);
+			toLog += "\tTurn: " + _turn + "\n";
+			toLog += "\tAnswer: null";
+			log(toLog, 2);
 			return null;
 		}
 		if(_unitInformation.get(unitId)._position.equals(new MapPoint(-1, -1)))
 		{
-			log("Player " + player + " called getValidActions(unitId: " + unitId + ") but the unit was dead", 2);
-			log("\tAnswer: null", 2);
+			log("Player " + player + " called getValidActions(unitId: " + unitId + ") but the unit was dead\n"
+				+ "\tAnswer: null", 2);
 			return null;
 		}
 		HashMap<MapPoint, Action.ActionType> actions = new HashMap<MapPoint, Action.ActionType>();
 		if(_unitInformation.get(unitId)._hasMoved && _unitInformation.get(unitId)._hasAttacked)
 		{
-			log("Player " + player + " called getValidActions(unitId: " + unitId + ") but the unit had already attacked/moved", 1);
-			log("\tAnswer: (empty map)", 1);
+			log("Player " + player + " called getValidActions(unitId: " + unitId + ") but the unit had already attacked/moved\n"
+				+ "\tAnswer: (empty map)", 1);
 			return actions;
 		}
 		else
@@ -332,8 +358,8 @@ public class GameCore implements Core
 					}
 				}
 			}
-			log("Player " + player + " called getValidActions(unitId: " + unitId + ")", 1);
-			log("\tAnswer: " + actions, 1);
+			log("Player " + player + " called getValidActions(unitId: " + unitId + ")\n"
+				+ "\tAnswer: " + actions, 1);
 			return actions;
 		}
 	}
@@ -374,7 +400,7 @@ public class GameCore implements Core
 				units.put(new MapPoint(_unitInformation.get(i)._position), new Integer(i));
 			}
 		}
-		log("\tGeneratedmap for player " + player + ": " + units, 1);
+		log("\tGenerated map for player " + player + ": " + units, 1);
 		return units;
 	}
 	
@@ -412,13 +438,17 @@ public class GameCore implements Core
 		synchronized(_turnLockObject)
 		{
 			int player = getPlayerId(p);
-			log("Player " + player + " has quit", 0);
+			log("Player " + player + " has quit", 1);
 			_playerInformation.get(player)._lost = true;
 			_playerInformation.get(player)._quit = true;
 			if(_turn == player)
 			{
 				log("\tMoving on to next turn", 1);
 				nextTurn();
+			}
+			else
+			{
+				log("Player " + player + " has quit", 1);
 			}
 		}
 	}
@@ -527,9 +557,8 @@ public class GameCore implements Core
 				_players.get(i).end(new GameStats(winner));
 			}
 		}
-		log("GAME OVER", 1);
-		log("Player " + winner + " won!", 1);
-		
+		log("GAME OVER\n"
+			+ "Player " + winner + " won!", 1);
 		// Return control to the main class.
 		_main.returnControl();
 	}
@@ -546,8 +575,8 @@ public class GameCore implements Core
 			{
 				_players.get(i).chatMessage(-1, new String(message));
 			}
-			log("System chat message", 1);
-			log("\tMessage: " + message, 1);
+			log("System chat message\n"
+				+ "\tMessage: " + message, 1);
 		}
 	}
 	
@@ -568,8 +597,8 @@ public class GameCore implements Core
 				{
 					_players.get(i).chatMessage(from, new String(message));
 				}
-				log("Chat message from player " + from, 1);
-				log("\tMessage: " + message, 1);
+				log("Chat message from player " + from + "\n"
+					+ "\tMessage: " + message, 1);
 			}
 		}
 		else
@@ -585,6 +614,7 @@ public class GameCore implements Core
 	 * @param name the name of the unit
 	 * @return true if the unit is placed sucessfully, false otherwise
 	 */
+	// TODO finish
 	public boolean placeUnit(Player p, MapPoint coords, String name)
 	{
 		synchronized(_turnLockObject)
@@ -593,15 +623,15 @@ public class GameCore implements Core
 			int player = getPlayerId(p);
 			if(_turn != -1)
 			{
-				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but the game had started", 2);
-				log("\tTurn: " + _turn, 2);
-				log("\tAnswer: false", 2);
+				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but the game had started\n"
+					+ "\tTurn: " + _turn + "\n"
+					+ "\tAnswer: false", 2);
 				return false;
 			}
 			if(getRemainingUnits(p) == 0)
 			{
-				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but did not have any units remaining to be placed", 2);
-				log("\tAnswer: false", 2);
+				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but did not have any units remaining to be placed\n"
+					+ "\tAnswer: false", 2);
 				return false;
 			}
 			if(getUnitAtPoint(coords) == -1 && _startingLocations.get(player).contains(coords))
@@ -609,16 +639,16 @@ public class GameCore implements Core
 				_units.add(new Unit(new String(name), player));
 				_unitInformation.add(new UnitInformation(coords));
 				updateMaps(new Action(Action.ActionType.UNIT_CREATED, coords, coords));
-				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ")", 1);
-				log("\tAnswer: true", 1);
+				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ")\n"
+					+ "\tAnswer: true", 1);
 				return true;
 				// TODO add "brain block"
 			}
 			else
 			{
-				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but tried to place a unit in an invalid location", 2);
-				log("\tUnit at point: " + getUnitAtPoint(coords), 2);
-				log("\tAnswer: false", 2);
+				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but tried to place a unit in an invalid location\n"
+					+ "\tUnit at point: " + getUnitAtPoint(coords) + "\n"
+					+ "\tAnswer: false", 2);
 				return false;
 			}
 		}
@@ -640,56 +670,55 @@ public class GameCore implements Core
 			coords = new MapPoint(coords);
 			if(_turn != -1 && _turn != player)
 			{
-				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but it was not their turn", 2);
-				log("\tTurn was: " + _turn, 2);
-				log("\tAnswer: false", 2);
+				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but it was not their turn\n"
+					+ "\tTurn was: " + _turn + "\n"
+					+ "\tAnswer: false", 2);
 				return false;
 			}
 			if(pieceId < 0 || pieceId >= _pieces.size() || unitId < 0 || unitId >= _units.size())
 			{
-				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but there was an invalid piece or unit id", 2);
-				log("\tAnswer: false", 2);
+				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but there was an invalid piece or unit id\n"
+					+ "\tAnswer: false", 2);
 				return false;
 			}
 			Piece piece = _pieces.get(pieceId);
 			Unit unit = _units.get(unitId);
 			if(unit._owner != player)
 			{
-				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but they did not own the unit", 2);
-				log("\tAnswer: false", 2);
+				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but they did not own the unit\n"
+					+ "\tAnswer: false", 2);
 				return false;
 			}
 			int resources = _playerInformation.get(player)._resources;
 			if(piece._cost > resources)
 			{
-				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but they have enough resources", 2);
-				log("\tResources: " + resources, 2);
-				log("\tAnswer: false", 2);
+				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but they have enough resources\n"
+					+ "\tResources: " + resources + "\n"
+					+ "\tAnswer: false", 2);
 				return false;
 			}
 			for(MapPoint key : piece._blocks.keySet())
 			{
 				if(unit._blocks.containsKey(new MapPoint(coords._x + key._x, coords._y + key._y)))
 				{
-					log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but there was a collision", 2);
-					log("\tCollision location on the unit: " + (new MapPoint(coords._x + key._x, coords._y + key._y)), 2);
-					log("\tAnswer: false", 2);
+					log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but there was a collision\n"
+						+ "\tCollision location on the unit: " + (new MapPoint(coords._x + key._x, coords._y + key._y)) + "\n"
+						+ "\tAnswer: false", 2);
 					return false;
 				}
 				if((coords._x + key._x) < 0 || (coords._x + key._x) >= Constants.UNIT_SIZE && (coords._y + key._y) < 0 || (coords._y + key._y) >= Constants.UNIT_SIZE)
 				{
-					log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but piece went out of bounds", 2);
-					log("\tLocation out of bounds: " + (new MapPoint(coords._x + key._x, coords._y + key._y)), 2);
-					log("\tAnswer: false", 2);
-					return false;
+					log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but piece went out of bounds\n"
+						+ "\tLocation out of bounds: " + (new MapPoint(coords._x + key._x, coords._y + key._y)) + "\n"
+						+ "\tAnswer: false", 2);
 				}
 			}
 			for(MapPoint key : piece._blocks.keySet())
 			{
 				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), new Block(piece._blocks.get(key)));
 			}
-			log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") ", 1);
-			log("\tAnswer: true", 1);
+			log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ")\n"
+				+ "\tAnswer: true", 1);
 			return true;
 		}
 	}
@@ -710,8 +739,8 @@ public class GameCore implements Core
 		{
 			name = new String(_playerInformation.get(player)._name);
 		}
-		log("Player " + player + " called getPlayerName(player: " + player + ")", 1);
-		log("\tAnswer: " + name, 1);
+		log("Player " + player + " called getPlayerName(player: " + player + ")\n"
+			+ "\tAnswer: " + name, 1);
 		return name;
 	}
 	
@@ -723,8 +752,8 @@ public class GameCore implements Core
 	public int getResources(Player p)
 	{
 		int resources = _playerInformation.get(getPlayerId(p))._resources;
-		log("Player " + getPlayerId(p) + " called getResources()", 1);
-		log("\tAnswer: " + resources, 1);
+		log("Player " + getPlayerId(p) + " called getResources()\n"
+			+ "\tAnswer: " + resources, 1);
 		return resources;
 	}
 	
@@ -747,8 +776,8 @@ public class GameCore implements Core
 			log("Player " + getPlayerId(p) + " called getUnit(unitId: " + unitId + ") on a unit that did belong to them", 2);
 			return null;
 		}
-		log("Player " + getPlayerId(p) + " called getUnit(unitId: " + unitId + ")", 1);
-		log("\tAnswer: (success)", 1);
+		log("Player " + getPlayerId(p) + " called getUnit(unitId: " + unitId + ")\n"
+			+ "\tAnswer: (success)", 1);
 		return unit;
 		
 	}
@@ -773,8 +802,8 @@ public class GameCore implements Core
 				}
 			}
 		}
-		log("getVisible(player: " + player + ")", 1);
-		log("\tAnswer was: " + visible, 1);
+		log("getVisible(player: " + player + ")\n"
+			+ "\tAnswer was: " + visible, 1);
 		return visible;
 	}
 	
@@ -814,8 +843,8 @@ public class GameCore implements Core
 				}
 			}
 		}
-		log("getAreaForUnit(u: " + u + ", type: " + type + ")", 1);
-		log("\tAnswer was: " + visible, 1);
+		log("getAreaForUnit(u: " + u + ", type: " + type + ")\n"
+			+ "\tAnswer was: " + visible, 1);
 		return visible;
 	}
 	
@@ -836,8 +865,8 @@ public class GameCore implements Core
 			}
 		}
 		int remaining = _playerInformation.get(player)._maxUnits - built;
-		log("Player " + player + " called getRemainingUnits()", 1);
-		log("\tAnswer was: " + remaining, 1);
+		log("Player " + player + " called getRemainingUnits()\n"
+			+ "\tAnswer was: " + remaining, 1);
 		return remaining;
 	}
 	
