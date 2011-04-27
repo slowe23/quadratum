@@ -90,10 +90,23 @@ public class GameCore implements Core
 		{
 			_players.add(p);
 			_playerInformation.add(new PlayerInformation(new String(playerName), maxUnits));
+			log("Added player\n"
+				+ "\tNumber: " + (_players.size() - 1) + "\n"
+				+ "\tName: " + playerName + "\n"
+				+ "\tMax Units: " + maxUnits, 1);
 		}
 		else
 		{
-			// TODO log
+			if(_started)
+			{
+				log("Tried to add a player but the game has already started", 2);
+			}
+			else
+			{
+				log("Tried to add more than the max number of players\n"
+					+ "\tPlayers: " + _players.size() + "\n"
+					+ "\tMax players: " + Constants.MAX_PLAYERS, 2);
+			}
 		}
 	}
 		
@@ -121,6 +134,7 @@ public class GameCore implements Core
 	{
 		if(_players.size() == 0)
 		{
+			// TODO add eception to throw
 			log("Tried to start game with 0 players", 3);
 			return;
 		}
