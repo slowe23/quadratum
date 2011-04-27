@@ -1,12 +1,17 @@
 package net.quadratum.gui;
 
+import java.awt.Color;
+import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.TitledBorder;
+
 import net.quadratum.core.Block.BonusType;
 import net.quadratum.core.Unit;
-
-import javax.swing.*;
-import java.awt.Color;
-import javax.swing.border.TitledBorder;
-import java.util.Map;
 
 //Static convenience methods
 public class CM {

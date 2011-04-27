@@ -1,8 +1,8 @@
 package net.quadratum.core;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Unit implements Serializable {
 		

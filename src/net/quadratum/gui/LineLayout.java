@@ -1,7 +1,13 @@
 package net.quadratum.gui;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.LayoutManager2;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 //References: http://www.javaspecialists.eu/archive/Issue010.html
 //            http://download.oracle.com/javase/tutorial/uiswing/layout/custom.html

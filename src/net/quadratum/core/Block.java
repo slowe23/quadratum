@@ -1,7 +1,7 @@
 package net.quadratum.core;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Block {
 

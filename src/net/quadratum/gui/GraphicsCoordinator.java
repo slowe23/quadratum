@@ -1,12 +1,17 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Polygon;
 import java.awt.image.BufferedImage;
-
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
+import net.quadratum.core.Block;
+import net.quadratum.core.MapPoint;
+import net.quadratum.core.Piece;
+import net.quadratum.core.TerrainConstants;
+import net.quadratum.core.Unit;
 
 public class GraphicsCoordinator {
 	private static final Color[] PLAYER_COLORS = {Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.PINK};

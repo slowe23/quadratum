@@ -1,6 +1,5 @@
 package net.quadratum.core;
 
-import java.lang.Thread;
 
 public class PlayerStartThread extends Thread
 {

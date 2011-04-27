@@ -1,9 +1,7 @@
 package net.quadratum.gui.test;
 
+import net.quadratum.core.Core;
 import net.quadratum.gui.GUIPlayer;
-import net.quadratum.core.*;
-
-import java.util.HashSet;
 
 public class GUITests {
 

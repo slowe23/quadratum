@@ -1,8 +1,17 @@
 package net.quadratum.gui.test;
 
-import net.quadratum.core.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
-import java.util.*;
+import net.quadratum.core.Action;
+import net.quadratum.core.Core;
+import net.quadratum.core.MapData;
+import net.quadratum.core.MapPoint;
+import net.quadratum.core.Player;
+import net.quadratum.core.Unit;
 
 public class TestingCore implements Core {
 	

@@ -1,12 +1,13 @@
 package net.quadratum.gui.test;
 
-import net.quadratum.gui.LineLayout;
-import net.quadratum.gui.LineConstraints;
-
-import java.awt.Container;
-import javax.swing.*;
 import java.awt.Color;
-import java.awt.Insets;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import net.quadratum.gui.LineConstraints;
+import net.quadratum.gui.LineLayout;
 
 //A simple visual test of the LineLayout class
 public class LineLayoutTest {
