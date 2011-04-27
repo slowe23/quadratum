@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.quadratum.core.Action;
+import net.quadratum.core.Action.ActionType;
 import net.quadratum.core.Core;
 import net.quadratum.core.GameStats;
 import net.quadratum.core.MapData;
@@ -53,7 +54,7 @@ public abstract class AIPlayer implements Player {
 		// AIs should keep track of their own units.
 		if (lastAction == null) {
 			return;
-		} else if (lastAction._action == Action.ActionType.UNIT_CREATED) {
+		} else if (lastAction._action == ActionType.UNIT_CREATED) {
 			_unitIDs.clear();
 			for (int i : units.values()) {
 				if (_core.getUnit(this,i) != null) {
