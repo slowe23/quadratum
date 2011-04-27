@@ -206,6 +206,10 @@ public class GameCore implements Core
 			{
 				return false;
 			}
+			if(_unitInformation.get(unitId)._position.equals(new MapPoint(-1, -1)))
+			{
+				return false;
+			}
 			coords = new MapPoint(coords);
 			// TODO add real attacking
 			HashSet<MapPoint> valid;
@@ -267,6 +271,10 @@ public class GameCore implements Core
 	{
 		int player = getPlayerId(p);
 		if(unitId < 0 || unitId >= _units.size() || _units.get(unitId)._owner != player || _turn != player)
+		{
+			return null;
+		}
+		if(_unitInformation.get(unitId)._position.equals(new MapPoint(-1, -1)))
 		{
 			return null;
 		}
@@ -437,6 +445,11 @@ public class GameCore implements Core
 			endGame(winner);
 			return;
 		}
+		for(int i = 0; i < _unitInformation.size(); i++)
+		{
+			_unitInformation.get(i)._hasMoved = false;
+			_unitInformation.get(i)._hasAttacked = false;
+		}
 		for(int i = 0; i < _players.size() - 1; i++)
 		{
 			_turn++;
@@ -452,7 +465,6 @@ public class GameCore implements Core
 			{
 				_players.get(j).updateTurn(_turn);
 			}
-			// TODO add thread here
 			TurnStartThread turnStartThread = new TurnStartThread(_players.get(_turn));
 			turnStartThread.start();
 			break;
@@ -549,6 +561,7 @@ public class GameCore implements Core
 			{
 				_units.add(new Unit(new String(name), player));
 				_unitInformation.add(new UnitInformation(coords));
+				updateMaps(new Action(Action.ActionType.UNIT_CREATED, coords, coords));
 				return true;
 				// TODO add "brain block"
 			}
@@ -572,27 +585,27 @@ public class GameCore implements Core
 			coords = new MapPoint(coords);
 			if(_turn != -1 && _turn != player)
 			{
-				log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but it was not their turn", 2);
+				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but it was not their turn", 2);
 				log("\tTurn was: " + _turn, 2);
 				return false;
 				// TODO finish logging
 			}
 			if(pieceId < 0 || pieceId >= _pieces.size() || unitId < 0 || unitId >= _units.size())
 			{
-				log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but there was an invalid piece or unit id", 2);
+				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but there was an invalid piece or unit id", 2);
 				return false;
 			}
 			Piece piece = _pieces.get(pieceId);
 			Unit unit = _units.get(unitId);
 			if(unit._owner != player)
 			{
-				log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but they did not own the unit", 2);
+				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but they did not own the unit", 2);
 				return false;
 			}
 			int resources = _playerInformation.get(player)._resources;
 			if(piece._cost > resources)
 			{
-				log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but they have enough resources", 2);
+				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but they have enough resources", 2);
 				log("\tResources: " + resources, 2);
 				return false;
 			}
@@ -600,13 +613,13 @@ public class GameCore implements Core
 			{
 				if(unit._blocks.containsKey(new MapPoint(coords._x + key._x, coords._y + key._y)))
 				{
-					log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but there was a collision", 2);
+					log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but there was a collision", 2);
 					log("\tCollision location on the unit: " + (new MapPoint(coords._x + key._x, coords._y + key._y)), 2);
 					return false;
 				}
 				if((coords._x + key._x) < 0 || (coords._x + key._x) >= Constants.UNIT_SIZE && (coords._y + key._y) < 0 || (coords._y + key._y) >= Constants.UNIT_SIZE)
 				{
-					log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but piece went out of bounds", 2);
+					log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but piece went out of bounds", 2);
 					log("\tLocation out of bounds: " + (new MapPoint(coords._x + key._x, coords._y + key._y)), 2);
 					return false;
 				}
@@ -615,7 +628,7 @@ public class GameCore implements Core
 			{
 				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), new Block(piece._blocks.get(key)));
 			}
-			log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") ", 1);
+			log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") ", 1);
 			log("\tAnswer: true", 1);
 			return true;
 		}
@@ -629,7 +642,7 @@ public class GameCore implements Core
 	public String getPlayerName(int player)
 	{
 		String name = new String(_playerInformation.get(player)._name);
-		log("Player " + player + "called getPlayerName(player: " + player + ")", 1);
+		log("Player " + player + " called getPlayerName(player: " + player + ")", 1);
 		log("\tAnswer: " + name, 1);
 		return name;
 	}
@@ -642,7 +655,7 @@ public class GameCore implements Core
 	public int getResources(Player p)
 	{
 		int resources = _playerInformation.get(getPlayerId(p))._resources;
-		log("Player " + getPlayerId(p) + "called getResources()", 1);
+		log("Player " + getPlayerId(p) + " called getResources()", 1);
 		log("\tAnswer: " + resources, 1);
 		return resources;
 	}
@@ -657,16 +670,16 @@ public class GameCore implements Core
 	{
 		if(unitId >= _units.size() && unitId < 0)
 		{
-			log("Player " + getPlayerId(p) + "called getUnit(unitId: " + unitId + ") on a unit that did not exist", 2);
+			log("Player " + getPlayerId(p) + " called getUnit(unitId: " + unitId + ") on a unit that did not exist", 2);
 			return null;
 		}
 		Unit unit = new Unit(_units.get(unitId));
 		if(!getVisible(getPlayerId(p)).contains(_unitInformation.get(unitId)._position))
 		{
-			log("Player " + getPlayerId(p) + "called getUnit(unitId: " + unitId + ") on a unit that did belong to them", 2);
+			log("Player " + getPlayerId(p) + " called getUnit(unitId: " + unitId + ") on a unit that did belong to them", 2);
 			return null;
 		}
-		log("Player " + getPlayerId(p) + "called getUnit(unitId: " + unitId + ")", 1);
+		log("Player " + getPlayerId(p) + " called getUnit(unitId: " + unitId + ")", 1);
 		log("\tAnswer: (success)", 1);
 		return unit;
 		
@@ -708,7 +721,7 @@ public class GameCore implements Core
 		int radius;
 		if(type == 0) // Movement area
 		{
-			radius = 3;
+			radius = 100; // TODO change when not testing
 		}
 		else if(type == 1) // Attack area
 		{
