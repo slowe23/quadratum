@@ -20,6 +20,7 @@ public class GameCore implements Core
 	private int _turn; // -1 = not started, -2 = game over
 	private boolean _started;
 	private Object _chatLockObject, _turnLockObject;
+	private OutputStream _log;
 	
 	/**
 	 * Constructor for GameCore.
@@ -659,7 +660,7 @@ public class GameCore implements Core
 			}
 			if(getUnitAtPoint(coords) == -1 && _startingLocations.get(player).contains(coords))
 			{
-				_units.add(new Unit(new String(name), player, _units.size() - 1));
+				_units.add(new Unit(new String(name), player, _units.size()));
 				_unitInformation.add(new UnitInformation(coords));
 				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ")\n"
 					+ "\tAnswer: " + (_units.size() - 1), 1);
