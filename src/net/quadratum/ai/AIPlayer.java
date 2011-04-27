@@ -51,7 +51,9 @@ public abstract class AIPlayer implements Player {
 	@Override
 	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
 		// AIs should keep track of their own units.
-		if (lastAction._action == Action.ActionType.UNIT_CREATED) {
+		if (lastAction == null) {
+			return;
+		} else if (lastAction._action == Action.ActionType.UNIT_CREATED) {
 			_unitIDs.clear();
 			for (int i : units.values()) {
 				if (_core.getUnit(this,i) != null) {
