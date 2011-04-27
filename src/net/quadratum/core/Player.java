@@ -35,7 +35,7 @@ public interface Player {
 	/**
 	 * Notifies the player that their turn has started.
 	 */
-//	public void turnStart();  //Replaced by updateTurn
+	public void turnStart();
 	
 	/**
 	 * Updates the map data. Currently unused but should be supported for future flexibility

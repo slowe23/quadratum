@@ -71,10 +71,21 @@ public class GUIPlayer implements Player {
 	}
 	
 	/**
-	 * Notifies the player that their turn has started.
+	 * Notifies the player that it is his turn.
 	 */
 	public void turnStart() {
-		//TODO
+		//TODO don't remove this, Alex is using it
+		
+	}
+	
+	
+	/**
+	 * Notifies the player that the turn has changed.
+	 * @param turn the player whose turn it is
+	 */
+	public void updateTurn(int id) {
+		//TODO this should be used to change the GUI, not to notify the player
+		//that it is his own turn.
 	}
 	
 	/**
@@ -84,6 +95,8 @@ public class GUIPlayer implements Player {
 	public void updateMapData(MapData mapData) {
 		//TODO
 	}
+	
+	
 	
 	/**
 	 * Updates the position of units on the map.
@@ -103,8 +116,5 @@ public class GUIPlayer implements Player {
 		_chatHandler.getMessage(from, message);
 	}
 
-	@Override
-	public void updateTurn(int turn) {
-		//TODO
-	}
+	
 }

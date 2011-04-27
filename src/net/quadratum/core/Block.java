@@ -11,15 +11,35 @@ public class Block {
 	public int _health, _totalHealth;
 	
 	public enum BonusType {
-		ATTACK,
-		RANGE,
-		DEFENSE,
-		MOVEMENT,
-		SIGHT,
-		WATER_MOVEMENT,
-		CLOAK,
-		JUMP
+		ATTACK("Attack", false),
+		RANGE("Range", false),
+		DEFENSE("Defense", false),
+		MOVEMENT("Movement", false),
+		SIGHT("Sight", false),
+		WATER_MOVEMENT("Water Movement", true),
+		CLOAK("Cloaking", true),
+		JUMP("Jump", true);
 		// TODO add more
+		
+		private final String _name;
+		private final boolean _isAbility;
+		BonusType(String name, boolean isAbility) {
+			_name = name;
+			_isAbility = isAbility;
+		}
+		
+		public String toString() {
+			return _name;
+		}
+		
+		//Represents whether this bonus should be displayed as an ability or a stat
+		public boolean isAbility() {
+			return _isAbility;
+		}
+		
+		public boolean isStat() {
+			return !_isAbility;
+		}
 	}
 	
 	/**
