@@ -1,10 +1,16 @@
 package net.quadratum.core;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.HashMap;
 
-public class Unit {
+public class Unit implements Serializable {
 		
+	/**
+	 * Serialization ID
+	 */
+	private static final long serialVersionUID = 8546407195685197582L;
+	
 	/** Width and height of the Unit. */
 	int _size;
 	/** Name of the Unit. */
