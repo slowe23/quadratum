@@ -131,13 +131,13 @@ public class TestingCore implements Core {
 	 * @param name the name of the unit to place
 	 * @return true if the placement succeeded, false otherwise
 	 */
-	public boolean placeUnit(Player p, MapPoint coords, String name) {
+	public int placeUnit(Player p, MapPoint coords, String name) {
 		if(_toPlace==0 || _units.containsKey(coords))
 			return false;
 		
-		_units.put(coords, new Unit(name, _index));
+		_units.put(coords, new Unit(name, _index, _toPlace));
 		_toPlace--;
-		return true;
+		return _toPlace+1;
 	}
 	
 	/**
