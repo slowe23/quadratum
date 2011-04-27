@@ -3,7 +3,7 @@ package net.quadratum.gui;
 import net.quadratum.core.Core;
 
 public class ChatHandler {
-	private GUIPlayer _player;
+	private GUIPlayer _player;  //The nominal sender of messages
 	private Core _core;
 	
 	private ChatPanel _chat;
@@ -13,10 +13,7 @@ public class ChatHandler {
 	}
 	
 	public void setChatPanel(ChatPanel chien) {
-		if(_chat==null)
-			_chat = chien;
-		else
-			throw new RuntimeException("ChatHandler.setChatPanel(ChatPanel) should only be called once.");
+		_chat = chien;
 	}
 	
 	public void start(Core core) {
@@ -24,29 +21,19 @@ public class ChatHandler {
 		_chat.start();
 	}
 	
-	public void sendMessage(String message) {
-		if(_core!=null)
-			_core.sendChatMessage(_player, message);
+	public void incomingMessage(int id, String message) {
+		_chat.addMessage(id, message);
 	}
 	
-	public void getMessage(int id, String message) {
-		if(_chat!=null) {
-			_chat.addMessage(id, message);
-			_chat.repaint();
-		}
+	public void outgoingMessage(String message) {
+		_core.sendChatMessage(_player, message);
 	}
 	
-	public void sendInternalMessage(String message) {
-		if(_chat!=null) {
-			_chat.addMessage(message);
-			_chat.repaint();
-		}
+	public void lateralMessage(String message) {
+		_chat.addMessage(message);
 	}
 	
 	public String getPlayerName(int id) {
-		if(_core!=null)
-			return _core.getPlayerName(id);
-		else
-			return "";
+		return _core.getPlayerName(id);
 	}
 }
