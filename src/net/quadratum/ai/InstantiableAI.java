@@ -1,6 +1,5 @@
-package net.quadratum.main;
+package net.quadratum.ai;
 
-import net.quadratum.ai.AIPlayer;
 
 public class InstantiableAI extends AIPlayer {
 

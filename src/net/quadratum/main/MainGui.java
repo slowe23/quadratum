@@ -3,6 +3,7 @@ package net.quadratum.main;
 import javax.swing.*;
 
 import net.quadratum.ai.AIPlayer;
+import net.quadratum.ai.InstantiableAI;
 import net.quadratum.core.*;
 import net.quadratum.gui.GUIPlayer;
 
@@ -121,7 +122,7 @@ public class MainGui extends JFrame
 		
 		pieces = new ArrayList<Piece>();
 		
-		GameCore gc = new GameCore(map, wc, pieces);
+		GameCore gc = new GameCore(this, map, wc, pieces);
 		//then create GuiPlayer and AIPlayer
 		Player human = new GUIPlayer();
 		Player ai = new InstantiableAI();
@@ -160,7 +161,7 @@ public class MainGui extends JFrame
 	
 	private void startCampaignGame(int level) {
 		//level can be some other unique campaign level identifier
-		//@STUBBED
+		// TODO STUBBED
 	}
 	
 	
