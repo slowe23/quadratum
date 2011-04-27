@@ -1,9 +1,14 @@
 package net.quadratum.gui.test;
 
-import net.quadratum.gui.MyTabbedPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import net.quadratum.gui.MyTabbedPanel;
 
 public class MyTabbedPanelTest {
 	public static void main(String[] args) {

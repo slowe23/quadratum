@@ -1,11 +1,16 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+
+import javax.swing.JPanel;
+
+import net.quadratum.core.Block;
+import net.quadratum.core.MapPoint;
+import net.quadratum.core.Unit;
 
 public class UnitImagePanel extends JPanel implements MouseListener, MouseMotionListener {
 	private UnitHandler _unitHandler;

@@ -1,8 +1,11 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
-
 import javax.swing.JTextArea;
+
+import net.quadratum.core.Core;
+import net.quadratum.core.MapData;
+import net.quadratum.core.MapPoint;
+import net.quadratum.core.Unit;
 
 public class GameplayHandler {
 	public static final int PHASE_WAIT = 0, PHASE_PLACE = 1, PHASE_GAME = 2, PHASE_STATS = 3;

@@ -2,7 +2,6 @@ package net.quadratum.network;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -16,9 +15,9 @@ import net.quadratum.core.Action;
 import net.quadratum.core.Core;
 import net.quadratum.core.GameStats;
 import net.quadratum.core.MapData;
+import net.quadratum.core.MapPoint;
 import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
-import net.quadratum.core.MapPoint;
 import net.quadratum.core.Unit;
 import net.quadratum.util.Serializer;
 

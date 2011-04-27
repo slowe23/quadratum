@@ -1,11 +1,15 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
+import net.quadratum.core.Action;
+import net.quadratum.core.Core;
+import net.quadratum.core.GameStats;
+import net.quadratum.core.MapData;
+import net.quadratum.core.MapPoint;
+import net.quadratum.core.Piece;
+import net.quadratum.core.Player;
 
 public class GUIPlayer implements Player {
 	private Core _core;
@@ -67,10 +71,21 @@ public class GUIPlayer implements Player {
 	}
 	
 	/**
-	 * Notifies the player that their turn has started.
+	 * Notifies the player that it is his turn.
 	 */
 	public void turnStart() {
-		//TODO
+		//TODO don't remove this, Alex is using it
+		
+	}
+	
+	
+	/**
+	 * Notifies the player that the turn has changed.
+	 * @param turn the player whose turn it is
+	 */
+	public void updateTurn(int id) {
+		//TODO this should be used to change the GUI, not to notify the player
+		//that it is his own turn.
 	}
 	
 	/**
@@ -80,6 +95,8 @@ public class GUIPlayer implements Player {
 	public void updateMapData(MapData mapData) {
 		//TODO
 	}
+	
+	
 	
 	/**
 	 * Updates the position of units on the map.
@@ -99,8 +116,5 @@ public class GUIPlayer implements Player {
 		_chatHandler.getMessage(from, message);
 	}
 
-	@Override
-	public void updateTurn(int turn) {
-		//TODO
-	}
+	
 }
