@@ -859,7 +859,7 @@ public class GameCore implements Core
 		}
 		else // Visible area
 		{
-			radius = 100; // TODO change when not testing
+			radius = 1000; // TODO change when not testing
 		}
 		UnitInformation info = _unitInformation.get(u);
 		HashSet<MapPoint> visible = new HashSet<MapPoint>();
