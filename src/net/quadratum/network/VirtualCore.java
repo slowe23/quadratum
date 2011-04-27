@@ -123,7 +123,7 @@ public class VirtualCore extends Thread implements Core {
 		}
 		// protocol: <validactions \t> id \t mapobject
 		String[] s = getResponse("validactions");
-		return (HashMap<MapPoint,ActionType>) Serializer.getObject(s[2].getBytes());
+		return (HashMap<MapPoint,ActionType>) Serializer.getObject(s[2]);
 	}
 
 	@Override
@@ -191,7 +191,7 @@ public class VirtualCore extends Thread implements Core {
 		}
 		// protocol: <unit \t> id \t unitobject
 		String[] s = getResponse("unit");
-		return (Unit) Serializer.getObject(s[1].getBytes());
+		return (Unit) Serializer.getObject(s[1]);
 	}
 
 	@Override
@@ -282,7 +282,7 @@ public class VirtualCore extends Thread implements Core {
 			// The game has started.
 			int id = -1, numplayers = 1;
 			// protocol: start \t mdobject \t id \t numplayers
-			MapData md = Serializer.getObject(parts[1].getBytes());
+			MapData md = Serializer.getObject(parts[1]);
 			try {
 				id = Integer.parseInt(parts[2]);
 				numplayers = Integer.parseInt(parts[3]);
@@ -294,12 +294,12 @@ public class VirtualCore extends Thread implements Core {
 			// The game is telling the player what pieces they are
 			// allowed to have.
 			// protocol: updatepieces \t listobject
-			ArrayList<Piece> p = Serializer.getObject(parts[1].getBytes());
+			ArrayList<Piece> p = Serializer.getObject(parts[1]);
 			_localPlayer.updatePieces(p);
 		} else if (parts[0].equals("end")) {
 			// The game has ended.
 			// protocol: end \t statsobject
-			_localPlayer.end((GameStats) Serializer.getObject(parts[1].getBytes()));
+			_localPlayer.end((GameStats) Serializer.getObject(parts[1]));
 		} else if (parts[0].equals("lost")) {
 			// This player has just lost.
 			_localPlayer.lost();
@@ -309,12 +309,12 @@ public class VirtualCore extends Thread implements Core {
 		} else if (parts[0].equals("mapdata")) {
 			// The host is sending new map data.
 			// protocol: mapdata \t mdobject
-			_localPlayer.updateMapData((MapData)Serializer.getObject(parts[1].getBytes()));
+			_localPlayer.updateMapData((MapData)Serializer.getObject(parts[1]));
 		} else if (parts[0].equals("updatemap")) {
 			// The host is sending new information about units and actions.
 			// protocol: updatemap \t mapobject \t actobject
-			HashMap<MapPoint,Integer> map = Serializer.getObject(parts[1].getBytes());
-			Action act = Serializer.getObject(parts[2].getBytes());
+			HashMap<MapPoint,Integer> map = Serializer.getObject(parts[1]);
+			Action act = Serializer.getObject(parts[2]);
 			_localPlayer.updateMap(map,act);
 		} else if (parts[0].equals("chat")) {
 			// A chat message was sent.

@@ -7,7 +7,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
 public class Serializer {
+	
+	static BASE64Encoder _enc = new BASE64Encoder();
+	static BASE64Decoder _dec = new BASE64Decoder();
 	
 	/**
 	 * Gets a byte array from an object.
@@ -24,6 +30,16 @@ public class Serializer {
 			e.printStackTrace();
 		}
 		return stream.toByteArray();
+	}
+	
+	/**
+	 * Gets a Base64 encoded string from an object.
+	 * @param <T> the type of the object, must extend Serializable
+	 * @param t the object to get an encoded string for
+	 * @return a string representing this object.
+	 */
+	public static <T extends Serializable> String getEncodedString(T t) {
+		return _enc.encode(getByteArray(t));
 	}
 	
 	/**
@@ -44,5 +60,20 @@ public class Serializer {
 			e.printStackTrace();
 		}
 		return t;
+	}
+	
+	/**
+	 * Gets an object from a Base64 encoded string.
+	 * @param <T> the type of the object, must extend Serializable.
+	 * @param s the string to get an object from
+	 * @return the object represented by the given string.
+	 */
+	public static <T extends Serializable> T getObject(String s) {
+		try {
+			return getObject(_dec.decodeBuffer(s));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
