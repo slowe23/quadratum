@@ -142,6 +142,8 @@ public class GameCore implements Core
 			playerStartThread.start();
 			_players.get(i).updatePieces(tempPieces);
 		}
+		// Send a welcome message, can be removed
+		sendChatMessage("Welcome to Quadratum!");
 	}
 	
 	/**
@@ -190,7 +192,7 @@ public class GameCore implements Core
 	 */
 	public boolean unitAction(Player p, int unitId, MapPoint coords)
 	{
-		// TODO logging in this function and then all funtions above
+		// TODO logging in this function and then all functions above
 		synchronized(_turnLockObject)
 		{
 			int player = getPlayerId(p);
@@ -402,7 +404,7 @@ public class GameCore implements Core
 		synchronized(_turnLockObject)
 		{
 			int player = getPlayerId(p);
-			log("Player " + player + " has quit");
+			log("Player " + player + " has quit", 0);
 			_playerInformation.get(player)._lost = true;
 			_playerInformation.get(player)._quit = true;
 			if(_turn == player)
