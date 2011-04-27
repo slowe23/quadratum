@@ -1,5 +1,6 @@
 package net.quadratum.gui;
 
+import net.quadratum.core.Block.BonusType;
 import net.quadratum.core.Unit;
 import net.quadratum.core.Block;
 import net.quadratum.core.Block.*;

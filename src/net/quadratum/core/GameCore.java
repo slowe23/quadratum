@@ -88,6 +88,10 @@ public class GameCore implements Core
 			_players.add(p);
 			_playerInformation.add(new PlayerInformation(new String(playerName), maxUnits));
 		}
+		else
+		{
+			// TODO log
+		}
 	}
 		
 	/**
@@ -454,6 +458,7 @@ public class GameCore implements Core
 			break;
 		}
 		// If we have reached here, the game should be over...
+		log("Everyone has lost, ending game...", 1);
 		endGame(-1);
 	}
 	
@@ -463,14 +468,16 @@ public class GameCore implements Core
 	 */
 	private void endGame(int winner)
 	{
-		_turn = -21;
+		_turn = -2;
 		for(int i = 0; i < _players.size(); i++)
 		{
 			if(!_playerInformation.get(i)._quit)
 			{
-				_players.get(i).end(new GameStats());
+				_players.get(i).end(new GameStats(winner));
 			}
 		}
+		log("GAME OVER", 1);
+		log("Player " + winner + " won!", 1);
 	}
 	
 	/**
@@ -479,15 +486,14 @@ public class GameCore implements Core
 	 */
 	private void sendChatMessage(String message)
 	{
-		if(message.length() > 0)
+		synchronized(_chatLockObject)
 		{
-			synchronized(_chatLockObject)
+			for(int i = 0; i < _players.size(); i++)
 			{
-				for(int i = 0; i < _players.size(); i++)
-				{
-					_players.get(i).chatMessage(-1, new String(message));
-				}
+				_players.get(i).chatMessage(-1, new String(message));
 			}
+			log("System chat message", 1);
+			log("\tMessage: " + message, 1);
 		}
 	}
 	
@@ -498,14 +504,23 @@ public class GameCore implements Core
 	 */
 	public void sendChatMessage(Player p, String message)
 	{
-		synchronized(_chatLockObject)
+		if(message.length() > 0)
 		{
-			message = new String(message);
-			int from = getPlayerId(p);
-			for(int i = 0; i < _players.size(); i++)
+			synchronized(_chatLockObject)
 			{
-				_players.get(i).chatMessage(from, new String(message));
+				message = new String(message);
+				int from = getPlayerId(p);
+				for(int i = 0; i < _players.size(); i++)
+				{
+					_players.get(i).chatMessage(from, new String(message));
+				}
+				log("Chat message from player " + from, 1);
+				log("\tMessage: " + message, 1);
 			}
+		}
+		else
+		{
+			log("Player " + getPlayerId(p) + " tried to send an empty message", 1);
 		}
 	}
 	
@@ -521,6 +536,7 @@ public class GameCore implements Core
 		synchronized(_turnLockObject)
 		{
 			coords = new MapPoint(coords);
+			int player = getPlayerId(p);
 			if(_turn != -1)
 			{
 				return false;
@@ -529,7 +545,6 @@ public class GameCore implements Core
 			{
 				return false;
 			}
-			int player = getPlayerId(p);
 			if(getUnitAtPoint(coords) == -1 && _startingLocations.get(player).contains(coords))
 			{
 				_units.add(new Unit(new String(name), player));
@@ -554,36 +569,45 @@ public class GameCore implements Core
 		synchronized(_turnLockObject)
 		{
 			int player = getPlayerId(p);
+			coords = new MapPoint(coords);
 			if(_turn != -1 && _turn != player)
 			{
-				log("Player " + getPlayerId(p) + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but it was not their turn", 2);
+				log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but it was not their turn", 2);
 				log("\tTurn was: " + _turn, 2);
 				return false;
 				// TODO finish logging
 			}
 			if(pieceId < 0 || pieceId >= _pieces.size() || unitId < 0 || unitId >= _units.size())
 			{
+				log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but there was an invalid piece or unit id", 2);
 				return false;
 			}
 			Piece piece = _pieces.get(pieceId);
 			Unit unit = _units.get(unitId);
 			if(unit._owner != player)
 			{
+				log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but they did not own the unit", 2);
 				return false;
 			}
-			if(piece._cost > _playerInformation.get(player)._resources)
+			int resources = _playerInformation.get(player)._resources;
+			if(piece._cost > resources)
 			{
+				log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but they have enough resources", 2);
+				log("\tResources: " + resources, 2);
 				return false;
 			}
-			coords = new MapPoint(coords);
 			for(MapPoint key : piece._blocks.keySet())
 			{
 				if(unit._blocks.containsKey(new MapPoint(coords._x + key._x, coords._y + key._y)))
 				{
+					log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but there was a collision", 2);
+					log("\tCollision location on the unit: " + (new MapPoint(coords._x + key._x, coords._y + key._y)), 2);
 					return false;
 				}
 				if((coords._x + key._x) < 0 || (coords._x + key._x) >= Constants.UNIT_SIZE && (coords._y + key._y) < 0 || (coords._y + key._y) >= Constants.UNIT_SIZE)
 				{
+					log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but piece went out of bounds", 2);
+					log("\tLocation out of bounds: " + (new MapPoint(coords._x + key._x, coords._y + key._y)), 2);
 					return false;
 				}
 			}
@@ -591,6 +615,8 @@ public class GameCore implements Core
 			{
 				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), new Block(piece._blocks.get(key)));
 			}
+			log("Player " + player + "called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") ", 1);
+			log("\tAnswer: true", 1);
 			return true;
 		}
 	}
