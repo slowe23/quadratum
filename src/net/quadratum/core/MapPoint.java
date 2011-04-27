@@ -35,4 +35,9 @@ public class MapPoint {
 		}
 		return false;
 	}
+	
+	public String toString()
+	{
+		return "(" + _x + ", " + _y + ")";
+	}
 }

@@ -38,8 +38,7 @@ public interface Player {
 	public void turnStart();
 	
 	/**
-	 * Updates the map data
-	 * @note Currently unused but should be supported for future flexibility
+	 * Updates the map data. Currently unused but should be supported for future flexibility
 	 */
 	public void updateMapData(MapData mapData);
 	
