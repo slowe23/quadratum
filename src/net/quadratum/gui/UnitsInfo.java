@@ -48,6 +48,10 @@ public class UnitsInfo {
 		_unitCache.clear();
 	}
 	
+	public int getSelectedID() {
+		return _selectedID;
+	}
+	
 	public Unit getSelected() {
 		if(_selectedID==null)
 			return null;

@@ -19,6 +19,7 @@ public class TestingCore implements Core {
 	private int _index;
 	
 	private Map<MapPoint, Unit> _units;
+	private Unit[] _uC;
 	private int _toPlace;
 	
 	/**
@@ -31,6 +32,7 @@ public class TestingCore implements Core {
 		_player = p;
 		_units = new HashMap<MapPoint, Unit>();
 		_toPlace = 3;
+		_uC = new Unit[_toPlace];
 	}
 	
 	/**
@@ -135,9 +137,10 @@ public class TestingCore implements Core {
 		if(_toPlace==0 || _units.containsKey(coords))
 			return -1;
 		
-		_units.put(coords, new Unit(name, _index, _toPlace));
 		_toPlace--;
-		return _toPlace+1;
+		_uC[_toPlace] = new Unit(name, _index, _toPlace);
+		_units.put(coords, _uC[_toPlace]);
+		return _toPlace;
 	}
 	
 	/**
@@ -154,7 +157,10 @@ public class TestingCore implements Core {
 	 * @param unitID The unit in question's id
 	 */
 	public Unit getUnit(Player p, int unitID) {
-		return null;
+		if(unitID>=0 && unitID<_uC.length)
+			return _uC[unitID];
+		else
+			return null;
 	}
 	
 	/**
