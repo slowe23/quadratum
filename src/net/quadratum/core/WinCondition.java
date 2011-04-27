@@ -15,7 +15,7 @@ public interface WinCondition {
 	/**
 	 * Determines if a player has lost the game.
 	 * @param units The map of points to units for this player.
-	 * @param player Information The information of player who we are checking.
+	 * @param playerInformation The information of player who we are checking.
 	 * @return true if the player has lost, false otherwise.
 	 */
     boolean hasPlayerLost(Map<MapPoint,Unit> units, PlayerInformation playerInformation);

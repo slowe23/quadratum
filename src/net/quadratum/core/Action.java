@@ -10,11 +10,11 @@ public class Action implements Serializable {
 	private static final long serialVersionUID = -5076267909701737339L;
 	
 	/** The type of action that was performed. */
-	ActionType _action;
+	public ActionType _action;
 	/** The source point this action was performed from. */
-	MapPoint _source;
+	public MapPoint _source;
 	/** The destination point this action was performed at. */
-	MapPoint _dest;
+	public MapPoint _dest;
 	
 	// TODO should this get moved to a separate class?
 	public enum ActionType {
@@ -30,9 +30,7 @@ public class Action implements Serializable {
 	 */
 	public Action(Action action)
 	{
-		_action = action._action;
-		_source = new MapPoint(action._source);
-		_dest = new MapPoint(action._dest);
+		this(action._action, action._source, action._dest);
 	}
 	
 	/**

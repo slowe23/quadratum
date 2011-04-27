@@ -38,8 +38,7 @@ public interface Player {
 	public void turnStart();
 	
 	/**
-	 * Updates the map data
-	 * @note Currently unused but should be supported for future flexibility
+	 * Updates the map data. Currently unused but should be supported for future flexibility
 	 */
 	public void updateMapData(MapData mapData);
 	
@@ -51,7 +50,7 @@ public interface Player {
 	public void updateMap(Map<MapPoint, Integer> units, Action lastAction);
 	
 	/**
-	 * Notifies the player of a chat message.
+	 * Notifies the player of a chat message (can be from self).
 	 * @param from the ID of the player who this message was sent by.
 	 * @param message the message that is being sent.
 	 */

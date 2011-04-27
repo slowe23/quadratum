@@ -27,12 +27,12 @@ public class MapPoint {
 		return _x << 16 ^ _y;
 	}
 	
-	public boolean equals(Object obj)
+	public boolean equals(Object obj) {
+		return (obj instanceof MapPoint && ((MapPoint) obj)._x == _x && ((MapPoint) obj)._y == _y);
+	}
+	
+	public String toString()
 	{
-		if(obj instanceof MapPoint && ((MapPoint) obj)._x == _x && ((MapPoint) obj)._y == _y)
-		{
-			return true;
-		}
-		return false;
+		return "(" + _x + ", " + _y + ")";
 	}
 }

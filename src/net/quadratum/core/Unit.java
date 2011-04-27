@@ -12,15 +12,20 @@ public class Unit implements Serializable {
 	private static final long serialVersionUID = 8546407195685197582L;
 	
 	/** Width and height of the Unit. */
-	int _size;
+	public int _size;
+	
 	/** Name of the Unit. */
-	String _name;
+	public String _name;
+	
 	/** Blocks this Unit contains. */
-	Map<MapPoint, Block> _blocks;
+	public Map<MapPoint, Block> _blocks;
+	
 	/** The player who owns this Unit. */
-	int _owner;
+	public int _owner;
+	
 	/** Cached stats for this Unit. */
 	Map<Block.BonusType, Integer> _stats;
+	
 	/**
 	 * Constructor for Unit.
 	 */
