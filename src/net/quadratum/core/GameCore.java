@@ -525,7 +525,7 @@ public class GameCore implements Core
 			// Generate list of units
 			for(int j = 0; j < _units.size(); j++)
 			{
-				if(_units.get(j)._owner == i)
+				if(_units.get(j)._owner == i && !_unitInformation.get(j)._position.equals(new MapPoint(-1, -1)))
 				{
 					units.put(new MapPoint(_unitInformation.get(j)._position), new Unit(_units.get(j)));
 				}
@@ -901,8 +901,8 @@ public class GameCore implements Core
 				}
 			}
 		}
-		log("getAreaForUnit(u: " + u + ", type: " + type + ")\n"
-			+ "\tAnswer was: " + visible, 1);
+		/*log("getAreaForUnit(u: " + u + ", type: " + type + ")\n"
+			+ "\tAnswer was: " + visible, 1);*/
 		return visible;
 	}
 	
