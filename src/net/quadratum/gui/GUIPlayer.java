@@ -66,10 +66,12 @@ public class GUIPlayer implements Player {
 		//TODO
 	}
 	
+	
 	/**
-	 * Notifies the player that their turn has started.
+	 * Notifies the player that the turn has changed.
+	 * @param turn the player whose turn it is
 	 */
-	public void turnStart() {
+	public void updateTurn(int id) {
 		//TODO
 	}
 	

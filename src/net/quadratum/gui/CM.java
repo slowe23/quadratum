@@ -1,6 +1,8 @@
 package net.quadratum.gui;
 
 import net.quadratum.core.Unit;
+import net.quadratum.core.Block;
+import net.quadratum.core.Block.*;
 
 import javax.swing.*;
 import java.awt.Color;
@@ -50,11 +52,23 @@ public class CM {
 			String description = "";
 			description += "Unit name: "+unit._name+"\n";
 			description += "Owner: "+""+"\n";  //TODO
+			
 			description += "\n";
+			
 			description += "Stats";
-			Map<String, Integer> stats = unit._stats;
-			for(String stat:stats.keySet())
-				description += "\n   "+stat+": "+stats.get(stat);
+			Map<BonusType, Integer> stats = unit._stats;
+			for(BonusType stat:stats.keySet())
+				if(stat.isStat())
+					description += "\n   "+stat+": "+stats.get(stat);
+			description += "\n";
+			
+			description += "\n";
+			
+			description += "Abilities";
+			for(BonusType stat:stats.keySet())
+				if(stat.isAbility() && stats.get(stat)>0)
+					description += "\n   "+stat;
+			
 			return description;
 		}
 	}
