@@ -5,31 +5,16 @@ import java.util.Map;
 
 public interface Player {
 
-	/**
-	 * Notifies the player that there is a new game.
-	 * @param core the game core
-	 * @param id the ID for this Player
-	 * @param mapData the MapData this game is using.
-	 * @param totalPlayers the number of players in the game, including this one
-	 */
+	/** Notifies the player that there is a new game. */
 	public void start(Core core, MapData mapData, int id, int totalPlayers);
 	
-	/**
-	 * Notifies the player of the pieces that are now available
-	 *
-	 * @param pieces the Pieces that are available for use.
-	 */
+	/** Notifies the player of the pieces that are now available */
 	public void updatePieces(List<Piece> pieces);
 	
-	/**
-	 * Notifies the player that the game has ended.
-	 * @param stats Game stats for the game that was just played.
-	 */
+	/** Notifies the player that the game has ended. */
 	public void end(GameStats stats);
 	
-	/**
-	 * Notifies the player that he has lost.
-	 */
+	/** Notifies the player that he has lost. */
 	public void lost();
 	
 	/**
@@ -42,23 +27,15 @@ public interface Player {
 	 */
 	public void updateMapData(MapData mapData);
 	
-	/**
-	 * Updates the position of units on the map.
-	 * @param units new positions of units.
-	 * @param lastAction The action that caused this update
-	 */
+	/** Updates the position of units on the map. */
 	public void updateMap(Map<MapPoint, Integer> units, Action lastAction);
 	
-	/**
-	 * Notifies the player of a chat message (can be from self).
-	 * @param from the ID of the player who this message was sent by.
-	 * @param message the message that is being sent.
-	 */
+	/** Notifies the player of a chat message (can be from self). */
 	public void chatMessage(int from, String message);
 	
 	/**
 	 * Notifies the player that the turn has changed.
-	 * @param turn the player whose turn it is
+	 * @param turn ???
 	 */
 	public void updateTurn(int turn);
 }

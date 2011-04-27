@@ -35,6 +35,12 @@ public class MapData implements Serializable {
 		}
 	}
 	
+	//Construct a map data with null contents
+	public MapData() {
+		_terrain = null;
+		_placementArea = null;
+	}
+	
 	/** Terrain of the map. */
 	public int[][] _terrain;
 	
