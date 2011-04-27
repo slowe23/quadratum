@@ -75,7 +75,7 @@ public class Center {
 				String newUnitName = "Unit "+(new Random().nextInt(Integer.MAX_VALUE));
 				int newUnit;
 				if((newUnit = _core.placeUnit(_player, point, newUnitName))!=-1) {
-					_unitsInfo.add(point, newUnit);
+					_unitsInfo.addUnit(point, newUnit);
 					_mapData._placementArea.remove(point);
 					unitsUpdated();
 					mapUpdated();
