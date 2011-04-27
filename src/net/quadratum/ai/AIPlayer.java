@@ -1,5 +1,6 @@
 package net.quadratum.ai;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,13 +15,16 @@ import net.quadratum.core.Player;
 public abstract class AIPlayer implements Player {
 	
 	/** Core that this AIPlayer belongs to. */
-	Core _core;
+	protected Core _core;
 	/** Map terrain. */
-	int[][] _terrain;
+	protected int[][] _terrain;
 	/** Player ID. */
-	int _id;
+	protected int _id;
 	/** Total number of players. */
-	int _totalPlayers;
+	protected int _totalPlayers;
+	
+	/** Unit IDs */
+	List<Integer> _unitIDs;
 
 	@Override
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {
@@ -28,6 +32,8 @@ public abstract class AIPlayer implements Player {
 		_terrain = mapData._terrain;
 		_id = id;
 		_totalPlayers = totalPlayers;
+		
+		_unitIDs = new ArrayList<Integer>();
 	}
 
 	@Override
@@ -43,7 +49,18 @@ public abstract class AIPlayer implements Player {
 	public void updateMapData(MapData mapData) { }
 
 	@Override
-	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) { }
+	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
+		// AIs should keep track of their own units.
+		if (lastAction._action == Action.ActionType.UNIT_CREATED) {
+			_unitIDs.clear();
+			for (int i : units.values()) {
+				if (_core.getUnit(this,i) != null) {
+					// this AI owns this unit
+					_unitIDs.add(i);
+				}
+			}
+		}
+	}
 
 	@Override
 	public void chatMessage(int from, String message) { }

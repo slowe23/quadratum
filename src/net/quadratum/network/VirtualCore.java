@@ -251,6 +251,12 @@ public class VirtualCore extends Thread implements Core {
 		return i;
 	}
 	
+	/**
+	 * Gets a response out of the map. Makes sure that no synchronization
+	 * issues occur. Deletes the data of the response afterwards.
+	 * @param resp the response's key
+	 * @return the data provided in the response
+	 */
 	private String[] getResponse(String resp) {
 		String[] s = null;
 		boolean done = false;
@@ -265,6 +271,10 @@ public class VirtualCore extends Thread implements Core {
 		return s;
 	}
 	
+	/**
+	 * Processes the message that is given.
+	 * @param message a message from the host.
+	 */
 	private void process(String message) {
 		String[] parts = message.split("\t");
 		// Look at the first part of the incoming message
