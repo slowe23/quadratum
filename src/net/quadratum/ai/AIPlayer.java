@@ -21,6 +21,8 @@ public abstract class AIPlayer implements Player {
 	int _id;
 	/** Total number of players. */
 	int _totalPlayers;
+	
+	/** Unit IDs */
 
 	@Override
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {
@@ -43,7 +45,12 @@ public abstract class AIPlayer implements Player {
 	public void updateMapData(MapData mapData) { }
 
 	@Override
-	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) { }
+	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
+		if (lastAction._action == Action.ActionType.MOVE) { 
+			// should actually be unit_created
+			
+		}
+	}
 
 	@Override
 	public void chatMessage(int from, String message) { }
