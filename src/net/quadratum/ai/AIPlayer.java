@@ -27,7 +27,7 @@ public abstract class AIPlayer implements Player {
 	@Override
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {
 		_core = core;
-		_terrain = mapData.getTerrain();
+		_terrain = mapData._terrain;
 		_id = id;
 		_totalPlayers = totalPlayers;
 	}

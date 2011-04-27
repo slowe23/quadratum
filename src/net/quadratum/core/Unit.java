@@ -24,7 +24,7 @@ public class Unit implements Serializable {
 	public int _owner;
 	
 	/** Cached stats for this Unit. */
-	Map<Block.BonusType, Integer> _stats;
+	public Map<Block.BonusType, Integer> _stats;
 	
 	/**
 	 * Constructor for Unit.

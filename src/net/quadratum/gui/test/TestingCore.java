@@ -159,4 +159,10 @@ public class TestingCore implements Core {
 	public int getResources(Player p) {
 		return 0;
 	}
+
+	@Override
+	public boolean placeUnit(Player p, MapPoint coords, String name) {
+		// TODO ?
+		return false;
+	}
 }
