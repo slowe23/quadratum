@@ -61,12 +61,33 @@ public class GameCore implements Core
 	private void readMap(String map)
 	{
 		// TODO read real map data
+		double random;
 		_terrain = new int[100][100];
 		for(int i = 0; i < 100; i++)
 		{
 			for(int j = 0; j < 100; j++)
 			{
-				_terrain[i][j] = 0;
+				random = Math.random() * 10;
+				if(random < 5)
+				{
+					_terrain[i][j] = TerrainConstants.LAND;
+				}
+				else if(random < 6.5)
+				{
+					_terrain[i][j] = TerrainConstants.WATER;
+				}
+				else if(random < 8)
+				{
+					_terrain[i][j] = TerrainConstants.MOUNTAIN;
+				}
+				else if(random < 9)
+				{
+					_terrain[i][j] = TerrainConstants.BUNKER;
+				}
+				else
+				{
+					_terrain[i][j] = TerrainConstants.RESOURCES;
+				}
 			}
 		}
 		HashSet<MapPoint> startingLocations = new HashSet<MapPoint>();
