@@ -1,5 +1,6 @@
 package net.quadratum.ai;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ public abstract class AIPlayer implements Player {
 	int _totalPlayers;
 	
 	/** Unit IDs */
+	List<Integer> _unitIDs;
 
 	@Override
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {
@@ -30,6 +32,8 @@ public abstract class AIPlayer implements Player {
 		_terrain = mapData._terrain;
 		_id = id;
 		_totalPlayers = totalPlayers;
+		
+		_unitIDs = new ArrayList<Integer>();
 	}
 
 	@Override
@@ -46,9 +50,15 @@ public abstract class AIPlayer implements Player {
 
 	@Override
 	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
-		if (lastAction._action == Action.ActionType.MOVE) { 
-			// should actually be unit_created
-			
+		// AIs should keep track of their own units.
+		if (lastAction._action == Action.ActionType.UNIT_CREATED) {
+			_unitIDs.clear();
+			for (int i : units.values()) {
+				if (_core.getUnit(this,i) != null) {
+					// this AI owns this unit
+					_unitIDs.add(i);
+				}
+			}
 		}
 	}
 
