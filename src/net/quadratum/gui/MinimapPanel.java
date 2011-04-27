@@ -12,37 +12,27 @@ public class MinimapPanel extends JPanel {
 	private static final int SCALE = 3;  //Pixels per map square
 	private static final int BORDER = 5;
 	
-	private MapView _view;  //Contains information about currently visible map region
-	private UnitHandler _unitHandler;  //Contains unit information
-	private GraphicsCoordinator _graphicsCoordinator;  //Contains game-level graphics information
-	private BufferedImage _terrain;  //An image of the map terrain
-	private BufferedImage _placementMask;  //An image of available placement squares
+	private MapView _mapView;
+	private UnitsInfo _unitsInfo;
 	
-	public MinimapPanel(GUIPlayer player, MapView m) {
-		_unitHandler = player._unitHandler;
-		_graphicsCoordinator = player._graphicsCoordinator;
+	private DrawingMethods _drawingMethods;
+	
+	private BufferedImage _terrainImg;  //A predrawn image of the map terrain
+	
+	public MinimapPanel(MapView mapView, UnitsInfo unitsInfo, DrawingMethods drawingMethods) {
+		_mapView = mapView;
 		
-		_view = m;
+		_unitsInfo = unitsInfo;
+		_drawingMethods = drawingMethods;
 		
-		setBackground(_graphicsCoordinator.getBackgroundColor());
+		setBackground(_drawingMethods.BACKGROUND_COLOR);
 	}
 	
-	public void setTerrain(int[][] terrain) {
-		_terrain = new BufferedImage(terrain.length, terrain[0].length, BufferedImage.TYPE_INT_ARGB);
-		for(int i = 0; i<_terrain.getWidth(); i++)
-			for(int j = 0; j<_terrain.getHeight(); j++)
-				_terrain.setRGB(i, j, _graphicsCoordinator.getTerrainColor(terrain[i][j]).getRGB());
-	}
-	
-	public void setPlacementArea(Set<MapPoint> placement) {
-		_placementMask = new BufferedImage(_terrain.getWidth(), _terrain.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		for(int i = 0; i<_placementMask.getWidth(); i++)
-			for(int j = 0; j<_placementMask.getHeight(); j++)
-				_placementMask.setRGB(i, j, _graphicsCoordinator.getTerrainMaskColor(placement.contains(new MapPoint(i, j))).getRGB());
-	}
-	
-	public void clearPlacementArea() {
-		_placementMask = null;
+	public void predrawMapData(MapData mapData) {
+		_terrainImg = new BufferedImage(mapData._terrain.length, mapData._terrain[0].length, BufferedImage.TYPE_INT_ARGB);
+		for(int i = 0; i<_terrainImg.getWidth(); i++)
+			for(int j = 0; j<_terrainImg.getHeight(); j++)
+				_terrainImg.setRGB(i, j, _drawingMethods.getTerrainColor(mapData._terrain[i][j]).getRGB());
 	}
 	
 	//Gets the amount in pixels to offset the upper left corner of the terrain image from the upper left corner of the minimap panel
@@ -50,14 +40,14 @@ public class MinimapPanel extends JPanel {
 		int offx, offy;
 		
 		int w_width = getWidth()-2*BORDER, w_height = getHeight()-2*BORDER;
-		int t_width = SCALE*(_terrain.getWidth()+2), t_height = SCALE*(_terrain.getHeight()+2);
-		double v_width = SCALE*_view.getViewWidth(), v_height = SCALE*_view.getViewHeight();
-		double v_x = SCALE*_view.getViewX(), v_y = SCALE*_view.getViewY();
+		int t_width = SCALE*(_terrainImg.getWidth()+2), t_height = SCALE*(_terrainImg.getHeight()+2);
+		double v_width = SCALE*_mapView.getViewWidth(), v_height = SCALE*_mapView.getViewHeight();
+		double v_x = SCALE*_mapView.getViewX(), v_y = SCALE*_mapView.getViewY();
 		
 		if(t_width<= w_width) {
-			offx = CM.round((w_width-t_width)/2.0);
+			offx = StaticMethods.round((w_width-t_width)/2.0);
 		} else {
-			offx = CM.round((w_width-v_width)/2.0-v_x);
+			offx = StaticMethods.round((w_width-v_width)/2.0-v_x);
 			if(offx>0)
 				offx = 0;
 			if(offx+t_width<w_width)
@@ -65,9 +55,9 @@ public class MinimapPanel extends JPanel {
 		}
 		
 		if(t_height <= w_height) {
-			offy = CM.round((w_height-t_height)/2.0);
+			offy = StaticMethods.round((w_height-t_height)/2.0);
 		} else {
-			offy = CM.round((w_height-v_height)/2.0-v_y);
+			offy = StaticMethods.round((w_height-v_height)/2.0-v_y);
 			if(offy>0)
 				offy = 0;
 			if(offy+t_height<w_height)
@@ -87,38 +77,33 @@ public class MinimapPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		if(_terrain!=null) {
+		if(_terrainImg!=null) {
 			int[] off = calcOffset();
-			
 			int offx = off[0], offy = off[1];
 			
-			g.drawImage(_terrain, offx, offy, SCALE*_terrain.getWidth(), SCALE*_terrain.getHeight(), this);
-			if(_placementMask!=null)
-				g.drawImage(_placementMask, offx, offy, SCALE*_terrain.getWidth(), SCALE*_terrain.getHeight(), this);
-			g.setColor(_graphicsCoordinator.getNeutralColor());
-			g.drawRect(offx-1, offy-1, SCALE*_terrain.getWidth()+2-1, SCALE*_terrain.getHeight()+2-1);
+			g.drawImage(_terrainImg, offx, offy, SCALE*_terrainImg.getWidth(), SCALE*_terrainImg.getHeight(), this);
+			g.setColor(_drawingMethods.NEUTRAL_COLOR);
+			g.drawRect(offx-1, offy-1, SCALE*_terrainImg.getWidth()+2-1, SCALE*_terrainImg.getHeight()+2-1);
 			
-			///Draw dots for the units
-			Map<MapPoint, Unit> units = _unitHandler.getUnits();
-			if(units!=null) {
-				Unit selected = _unitHandler.getSelectedUnit();
+			///Draw in the units
+			Set<MapPoint> points = _unitsInfo.getPoints();
+			for(MapPoint p : points) {
+				int x = offx + SCALE*p._x;
+				int y = offy + SCALE*p._y;
 				
-				for(MapPoint p : units.keySet()) {
-					Unit unit = units.get(p);
-					g.setColor(_graphicsCoordinator.getPlayerColor(unit._owner));
-					int x = offx + SCALE*p._x;
-					int y = offy + SCALE*p._y;
-					g.fillRect(x, y, SCALE, SCALE);
-					
-					if(unit==selected) {
-						g.setColor(_graphicsCoordinator.getForegroundColor());
-						g.drawRect(x-1, y-1, SCALE+2-1, SCALE+2-1);
-					}
+				Unit unit = _unitsInfo.getUnit(p);
+				
+				g.setColor(_drawingMethods.getPlayerColor(unit._owner));
+				g.fillRect(x, y, SCALE, SCALE);
+				
+				if(_unitsInfo.isSelected(unit)) {
+					g.setColor(_drawingMethods.FOREGROUND_COLOR);
+					g.drawRect(x-1, y-1, SCALE+2-1, SCALE+2-1);
 				}
 			}
 			
 			//Draw the border
-			g.setColor(CM.applyAlpha(_graphicsCoordinator.getBackgroundColor(), 127));
+			g.setColor(StaticMethods.applyAlpha(_drawingMethods.BACKGROUND_COLOR, 127));
 			g.fillRect(0,0,getWidth(), BORDER);
 			g.fillRect(0,getHeight()-BORDER,getWidth(), BORDER);
 			
@@ -126,8 +111,8 @@ public class MinimapPanel extends JPanel {
 			g.fillRect(getWidth()-BORDER, BORDER, BORDER, getHeight()-2*BORDER);
 			
 			//Draw a box around the currently visible area
-			g.setColor(_graphicsCoordinator.getForegroundColor());
-			g.drawRect(offx+CM.round(SCALE*_view.getViewX())-1, offy+CM.round(SCALE*_view.getViewY())-1, CM.round(SCALE*_view.getViewWidth())+2-1, CM.round(SCALE*_view.getViewHeight())+2-1);
+			g.setColor(_drawingMethods.FOREGROUND_COLOR);
+			g.drawRect(offx+StaticMethods.round(SCALE*_mapView.getViewX())-1, offy+StaticMethods.round(SCALE*_mapView.getViewY())-1, StaticMethods.round(SCALE*_mapView.getViewWidth())+2-1, StaticMethods.round(SCALE*_mapView.getViewHeight())+2-1);
 		}
 	}
 }

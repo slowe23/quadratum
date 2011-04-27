@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class MessageOverlay extends JPanel implements MessageDisplay {
-	private GraphicsCoordinator _graphicsCoordinator;
+	private DrawingMethods _drawingMethods;
 	
 	private final Font FONT;
 	private final FontMetrics FMETR;
@@ -17,12 +17,12 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 	
 	private boolean _showMessages;
 	
-	private Deque<Message> _msgs; //Messages to display  //TODO: Make this a fixed-size array with a parallel array of timers?
+	private Deque<Message> _msgs; //Messages to display
 	
-	public MessageOverlay(GUIPlayer player) {
+	public MessageOverlay(DrawingMethods drawingMethods) {
 		setOpaque(false);
 		
-		_graphicsCoordinator = player._graphicsCoordinator;
+		_drawingMethods = drawingMethods;
 		
 		FONT = getFont();
 		FMETR = getFontMetrics(FONT);
@@ -49,11 +49,11 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 	}
 	
 	public void newMessage(int id, String message) {
-		newMessage(new Message(message.split("\n"), _graphicsCoordinator.getPlayerColor(id)));
+		newMessage(new Message(message.split("\n"), _drawingMethods.getPlayerColor(id)));
 	}
 	
 	public void newMessage(String message) {
-		newMessage(new Message(message.split("\n"), _graphicsCoordinator.getForegroundColor()));
+		newMessage(new Message(message.split("\n"), _drawingMethods.FOREGROUND_COLOR));
 	}
 	
 	private void newMessage(Message mess) {
@@ -116,17 +116,17 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 							ny -= FMETR.getHeight();
 						}
 						
-						g.setColor(_graphicsCoordinator.getBackgroundColor());
+						g.setColor(_drawingMethods.BACKGROUND_COLOR);
 						g.fillRect(0, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight());
 						
 						
-						g.setColor(_graphicsCoordinator.getForegroundColor());
+						g.setColor(_drawingMethods.FOREGROUND_COLOR);
 						for(int ssss = sss.length-1; ssss>=0 && ny>=FMETR.getAscent()+MSG_PAD; ssss--) {
 							g.drawString(sss[ssss], MSG_PAD, y);
 							y -= FMETR.getHeight();
 						}
 						
-						g.setColor(_graphicsCoordinator.getForegroundColor());
+						g.setColor(_drawingMethods.FOREGROUND_COLOR);
 						g.drawRect(-1, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight()-1);
 						g.setColor(m._color);
 						g.drawRect(-1, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight()-1);
@@ -212,7 +212,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		
 		public Message(String[] lines, Color color) {
 			_lines = lines;
-			_color = CM.applyAlpha(color, 127);  //Translucent version of the given color
+			_color = StaticMethods.applyAlpha(color, 127);  //Translucent version of the given color
 		}
 	}
 }

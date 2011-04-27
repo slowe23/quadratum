@@ -17,6 +17,9 @@ public class Unit implements Serializable {
 	/** Name of the Unit. */
 	public String _name;
 	
+	/** Unit ID - stays constant over the whole game, is used to identify/refer to a unit */
+	public int _id;
+	
 	/** Blocks this Unit contains. */
 	public Map<MapPoint, Block> _blocks;
 	
@@ -57,5 +60,14 @@ public class Unit implements Serializable {
 		{
 			_blocks.put(new MapPoint(key), new Block(unit._blocks.get(key)));
 		}
+	}
+	
+	/** Tests whether the two objects represent the same unit */
+	public boolean equals(Object o) {
+		return (o instanceof Unit) && (_id == ((Unit)o)._id);
+	}
+	
+	public int hashCode() {
+		return new Integer(_id).hashCode();
 	}
 }
