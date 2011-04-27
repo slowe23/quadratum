@@ -66,10 +66,10 @@ public class GameCore implements Core
 	{
 		// TODO read real map data
 		double random;
-		_terrain = new int[100][100];
-		for(int i = 0; i < 100; i++)
+		_terrain = new int[30][30];
+		for(int i = 0; i < 30; i++)
 		{
-			for(int j = 0; j < 100; j++)
+			for(int j = 0; j < 30; j++)
 			{
 				random = Math.random() * 10;
 				if(random < 5)
@@ -104,9 +104,9 @@ public class GameCore implements Core
 		}
 		_startingLocations.add(startingLocations);
 		startingLocations = new HashSet<MapPoint>();
-		for(int i = 90; i < 100; i++)
+		for(int i = 20; i < 30; i++)
 		{
-			for(int j = 90; j < 100; j++)
+			for(int j = 20; j < 30; j++)
 			{
 				startingLocations.add(new MapPoint(i, j));
 			}
