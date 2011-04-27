@@ -7,7 +7,7 @@ import net.quadratum.core.PlayerInformation;
 import net.quadratum.core.Unit;
 import net.quadratum.core.WinCondition;
 
-public class CheckWinner implements WinCondition
+public class CheckWinnerTest implements WinCondition
 {
 	public boolean hasPlayerWon(Map<MapPoint, Unit> units, PlayerInformation playerInformation)
 	{
