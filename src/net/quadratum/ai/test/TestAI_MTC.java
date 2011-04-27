@@ -40,7 +40,7 @@ public class TestAI_MTC extends AIPlayer {
 			// place the unit... counts backwards?
 			_core.placeUnit(this, placement, "Dude #"+_core.getRemainingUnits(this));
 		}
-		_core.ready(this);
+		// _core.ready(this);
 	}
 
 	@Override

@@ -70,7 +70,7 @@ public class Serializer {
 	 */
 	public static <T extends Serializable> T getObject(String s) {
 		try {
-			return (T)getObject(_dec.decodeBuffer(s));
+			return Serializer.<T>getObject(_dec.decodeBuffer(s));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
