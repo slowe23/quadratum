@@ -629,7 +629,7 @@ public class GameCore implements Core
 	 * @return true if the unit is placed sucessfully, false otherwise
 	 */
 	// TODO finish
-	public boolean placeUnit(Player p, MapPoint coords, String name)
+	public int placeUnit(Player p, MapPoint coords, String name)
 	{
 		synchronized(_turnLockObject)
 		{
@@ -639,31 +639,30 @@ public class GameCore implements Core
 			{
 				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but the game had started\n"
 					+ "\tTurn: " + _turn + "\n"
-					+ "\tAnswer: false", 2);
-				return false;
+					+ "\tAnswer: -1", 2);
+				return -1;
 			}
 			if(getRemainingUnits(p) == 0)
 			{
 				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but did not have any units remaining to be placed\n"
 					+ "\tAnswer: false", 2);
-				return false;
+				return -1;
 			}
 			if(getUnitAtPoint(coords) == -1 && _startingLocations.get(player).contains(coords))
 			{
 				_units.add(new Unit(new String(name), player));
 				_unitInformation.add(new UnitInformation(coords));
-				updateMaps(new Action(Action.ActionType.UNIT_CREATED, coords, coords));
 				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ")\n"
-					+ "\tAnswer: true", 1);
-				return true;
+					+ "\tAnswer: " + (_units.size() - 1), 1);
+				return _units.size() - 1;
 				// TODO add "brain block"
 			}
 			else
 			{
 				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but tried to place a unit in an invalid location\n"
 					+ "\tUnit at point: " + getUnitAtPoint(coords) + "\n"
-					+ "\tAnswer: false", 2);
-				return false;
+					+ "\tAnswer: -1", 2);
+				return -1;
 			}
 		}
 	}
