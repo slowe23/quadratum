@@ -10,12 +10,12 @@ public interface Core {
 	 * @param playerName the player to be added
 	 * @param maxUnits the maximum number of units this palyer can add
 	 */
-	void addPlayer(Player p, String playerName, int maxUnits);
+	public void addPlayer(Player p, String playerName, int maxUnits);
 	
 	/**
 	 * Starts the game.
 	 */
-	void start();
+	public void start();
 	
 	/**
 	 * Callback that alerts the core when a player is ready to start the game,
@@ -23,13 +23,13 @@ public interface Core {
 	 * placed.
 	 * @param p the Player itself who is now ready
 	 */
-	void ready(Player p);
+	public void ready(Player p);
 	
 	/**
 	 * Callback which alerts the core when a player is done with their turn.
 	 * @param p the Player itself who is now done
 	 */
-	void endTurn(Player p);
+	public void endTurn(Player p);
 	
 	/**
 	 * Callback which lets the core know that a player wants to make a unit
@@ -40,7 +40,7 @@ public interface Core {
 	 * the action itself will be inferred from this and the map
 	 * @return true if the action succeeded, false if the action was invalid.
 	 */
-	boolean unitAction(Player p, int unitID, MapPoint coords);
+	public boolean unitAction(Player p, int unitID, MapPoint coords);
 	
 	/**
 	 * Gets the valid actions for the given player's given unit.
@@ -49,20 +49,20 @@ public interface Core {
 	 * @return a Map of locations to the action that can be taken at that location,
 	 * or null if the given unit has already acted.
 	 */
-	Map<MapPoint,Action.ActionType> getValidActions(Player p, int unitID);
+	public Map<MapPoint,Action.ActionType> getValidActions(Player p, int unitID);
 	
 	/**
 	 * Callback that alerts the core that a player has left the game.
 	 * @param p the Player itself
 	 */
-	void quit(Player p);
+	public void quit(Player p);
 	
 	/**
 	 * Callback that alerts the core that a chat message should be sent
 	 * @param p the Player itself who sent the message - can be this
 	 * @param message the message that is being sent
 	 */
-	void sendChatMessage(Player p, String message);
+	public void sendChatMessage(Player p, String message);
 	
 	/**
 	 * Callback that alerts the core that a player is placing a unit.
@@ -77,14 +77,14 @@ public interface Core {
 	 * Returns the number of units left to place for the given player
 	 * @param p the Player itself
 	 */
-	int getRemainingUnits(Player p);
+	public int getRemainingUnits(Player p);
 	
 	/**
 	 * Returns the unit with the given ID
 	 * @param p the Player itself
 	 * @param unitID The unit in question's id
 	 */
-	Unit getUnit(Player p, int unitID);
+	public Unit getUnit(Player p, int unitID);
 	
 	/**
 	 * Callback that alerts the core that a player is placing the given
@@ -96,17 +96,17 @@ public interface Core {
 	 * @param coords The coordinates in the unit where the piece should be placed
 	 * @return true if the update succeeded, false otherwise
 	 */
-	boolean updateUnit(Player p, int unitID, int pieceID, MapPoint coords);
+	public boolean updateUnit(Player p, int unitID, int pieceID, MapPoint coords);
 	
 	/**
 	 * Returns the name of a player
 	 * @param player the id of the player (i.e. 1-n where n is the number of players, not the player's secret id)
 	 */
-	String getPlayerName(int player);
+	public String getPlayerName(int player);
 	
 	/**
 	 * Get's a player's resources.
 	 * @param p the Player itself
 	 */
-	int getResources(Player p);
+	public int getResources(Player p);
 }

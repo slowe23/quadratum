@@ -6,11 +6,11 @@ import java.util.HashMap;
 public class Block {
 
 	/** Bonuses given by this Block. */
-	Map<BonusType,Integer> _bonuses;
+	public Map<BonusType,Integer> _bonuses;
 	/** Health points this Block has. */
-	int _health, _totalHealth;
+	public int _health, _totalHealth;
 	
-	enum BonusType {
+	public enum BonusType {
 		ATTACK,
 		RANGE,
 		DEFENSE,
