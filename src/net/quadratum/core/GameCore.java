@@ -44,7 +44,11 @@ public class GameCore implements Core
 		_turnLockObject = new Object();
 		try
 		{
-			_log = new FileWriter("log.txt");
+			if (Constants.DEBUG_TO_FILE) {
+				_log = new FileWriter("log.txt");
+			} else {
+				_log = new OutputStreamWriter(System.out);
+			}
 		}
 		catch(Exception e)
 		{
@@ -613,14 +617,6 @@ public class GameCore implements Core
 		}
 		log("GAME OVER\n"
 			+ "Player " + winner + " won!", 1);
-		try
-		{
-			_log.close();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
 		// Return control to the main class.
 		_main.returnControl();
 	}
@@ -905,8 +901,8 @@ public class GameCore implements Core
 				}
 			}
 		}
-		/*log("getAreaForUnit(u: " + u + ", type: " + type + ")\n"
-			+ "\tAnswer was: " + visible, 1);*/
+		log("getAreaForUnit(u: " + u + ", type: " + type + ")\n"
+			+ "\tAnswer was: " + visible, 1);
 		return visible;
 	}
 	
