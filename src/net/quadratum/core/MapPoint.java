@@ -22,15 +22,17 @@ public class MapPoint {
 		_y = point._y;
 	}
 	
+	@Override
 	public int hashCode() {
-		return new java.awt.Point(_x, _y).hashCode();  //Maybe not the best hash but it should be fine for now
+		return _x << 16 ^ _y;
 	}
 	
-	public boolean equals(Object o) {
-		if(o==null || !(o instanceof MapPoint))
-			return false;
-		
-		MapPoint m = (MapPoint)o;
-		return _x==m._x && _y==m._y;
+	public boolean equals(Object obj) {
+		return (obj instanceof MapPoint && ((MapPoint) obj)._x == _x && ((MapPoint) obj)._y == _y);
+	}
+	
+	public String toString()
+	{
+		return "(" + _x + ", " + _y + ")";
 	}
 }
