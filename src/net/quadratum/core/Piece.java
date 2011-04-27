@@ -1,10 +1,10 @@
 package net.quadratum.core;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Piece {
-	
+
 	/** The Blocks that make up this Piece. */
 	public Map<MapPoint,Block> _blocks;
 	
