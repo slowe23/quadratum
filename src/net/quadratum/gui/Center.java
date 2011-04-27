@@ -47,6 +47,16 @@ public class Center {
 		mapUpdated();
 	}
 	
+	public void setPieces(List<Piece> pieces) {
+		_buildPanel.setPieces(pieces);
+	}
+	
+	public void update(Map<MapPoint, Integer> units, Action lastAction) {
+		_unitsInfo.setUnits(units);
+		unitsUpdated();
+		_mapPanel.scrollTo(lastAction);
+	}
+	
 	//Respond to a user's click on the given tile
 	public void click(MapPoint point) {
 		if(_unitsInfo.hasUnit(point)) {

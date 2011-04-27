@@ -1,5 +1,7 @@
 package net.quadratum.gui;
 
+import net.quadratum.core.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +44,7 @@ public class GUIPlayer implements Player {
 	
 	/** Notifies the player of the pieces that are now available */
 	public void updatePieces(List<Piece> pieces) {
-		//TDOO
+		_center.setPieces(pieces);
 	}
 	
 	/** Updates the map data. Currently unused but should be supported for future flexibility */
@@ -52,11 +54,13 @@ public class GUIPlayer implements Player {
 	
 	/** Updates the position of units on the map. */
 	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
-		//TDOO
+		_center.update(units, lastAction);
 	}
 	
 	/** Notifies the player that their turn has started. */
-	public void turnStart();
+	public void turnStart() {
+		//TODO
+	}
 	
 	/** Notifies the player that the turn has changed. */
 	public void updateTurn(int turn) {

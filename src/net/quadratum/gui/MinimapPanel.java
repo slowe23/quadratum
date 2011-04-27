@@ -7,8 +7,7 @@ import java.util.Set;
 
 import javax.swing.JPanel;
 
-import net.quadratum.core.MapPoint;
-import net.quadratum.core.Unit;
+import net.quadratum.core.*;
 
 public class MinimapPanel extends JPanel {
 	private static final int SCALE = 3;  //Pixels per map square
