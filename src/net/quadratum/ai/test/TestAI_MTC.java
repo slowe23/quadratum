@@ -26,8 +26,9 @@ public class TestAI_MTC extends AIPlayer {
 		_center = new MapPoint(_terrain.length/2,_terrain[0].length/2);
 		
 		// Unit placement
+		int rand, unitID;
 		while (_core.getRemainingUnits(this) > 0) {
-			int rand = (int)(Math.random()*locs.size());
+			rand = (int)(Math.random()*locs.size());
 			MapPoint placement = null;
 			for (Iterator<MapPoint> iter = locs.iterator(); iter.hasNext(); 
 					placement = iter.next()) {
@@ -38,7 +39,11 @@ public class TestAI_MTC extends AIPlayer {
 				rand--;
 			}
 			// place the unit... counts backwards?
-			_core.placeUnit(this, placement, "Dude #"+_core.getRemainingUnits(this));
+			unitID = _core.placeUnit(this, placement, "Dude #"+_core.getRemainingUnits(this));
+			
+			if (unitID != -1) {
+				_unitIDs.add(unitID);
+			}
 		}
 		_core.ready(this);
 	}

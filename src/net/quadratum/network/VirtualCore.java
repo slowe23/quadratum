@@ -123,7 +123,7 @@ public class VirtualCore extends Thread implements Core {
 		}
 		// protocol: <validactions \t> id \t mapobject
 		String[] s = getResponse("validactions");
-		return (HashMap<MapPoint,ActionType>) Serializer.getObject(s[2]);
+		return Serializer.<HashMap<MapPoint,ActionType>>getObject(s[2]);
 	}
 
 	@Override
@@ -145,21 +145,21 @@ public class VirtualCore extends Thread implements Core {
 	}
 
 	@Override
-	public boolean placeUnit(Player p, MapPoint coords, String name) {
+	public int placeUnit(Player p, MapPoint coords, String name) {
 		try {
 			_out.write("placeunit\t"+coords._x+"\t"+coords._y+"\t"+name+"\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// protocol: <unitplaced \t> success
+		// protocol: <unitplaced \t> id
 		String[] s = getResponse("unitplaced");
-		boolean b = false;
+		int id = -1;
 		try {
-			b = Boolean.parseBoolean(s[0]);
+			id = Integer.parseInt(s[0]);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
-		return b;
+		return id;
 	}
 
 	@Override
