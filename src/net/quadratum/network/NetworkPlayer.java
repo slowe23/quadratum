@@ -123,6 +123,11 @@ public class NetworkPlayer extends Thread implements Player {
 		}
 	}
 	
+	@Override
+	public void updateTurn(int turn) {
+		// TODO update turn
+	}
+	
 	/**
 	 * Process the message that is given.
 	 * @param message the message sent from the client.
@@ -169,11 +174,11 @@ public class NetworkPlayer extends Thread implements Player {
 		} else if (parts[0].equals("placeunit")) {
 			// The player is placing a unit.
 			boolean success = false;
-			// protocol: placeunit \t x \t y
+			// protocol: placeunit \t x \t y \t name
 			try {
 				int x = Integer.parseInt(parts[1]);
 				int y = Integer.parseInt(parts[2]);
-				success = _core.placeUnit(this, new MapPoint(x,y));
+				success = _core.placeUnit(this, new MapPoint(x,y), parts[3]);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}

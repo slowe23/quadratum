@@ -136,9 +136,9 @@ public class VirtualCore extends Thread implements Core {
 	}
 
 	@Override
-	public boolean placeUnit(Player p, MapPoint coords) {
+	public boolean placeUnit(Player p, MapPoint coords, String name) {
 		try {
-			_out.write("placeunit\t"+coords._x+"\t"+coords._y+"\n");
+			_out.write("placeunit\t"+coords._x+"\t"+coords._y+"\t"+name+"\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
