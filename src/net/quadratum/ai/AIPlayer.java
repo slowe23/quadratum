@@ -1,8 +1,12 @@
 package net.quadratum.ai;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.quadratum.core.Action;
 import net.quadratum.core.Core;
@@ -33,7 +37,7 @@ public abstract class AIPlayer implements Player {
 		_id = id;
 		_totalPlayers = totalPlayers;
 		
-		_unitIDs = new ArrayList<Integer>();
+		_unitIDs = new LinkedList<Integer>();
 	}
 
 	@Override
@@ -49,7 +53,18 @@ public abstract class AIPlayer implements Player {
 	public void updateMapData(MapData mapData) { }
 
 	@Override
-	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) { }
+	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
+		if (lastAction._action == Action.ActionType.UNIT_DIED) {
+			int id = -1;
+			Collection<Integer> allIDs = units.values();
+			for (Iterator<Integer> iter = _unitIDs.iterator(); iter.hasNext(); 
+					id = iter.next()) {
+				if (id != -1 && !allIDs.contains(id)) {
+					iter.remove();
+				}
+			}
+		}
+	}
 
 	@Override
 	public void chatMessage(int from, String message) { }
