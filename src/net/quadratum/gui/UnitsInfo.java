@@ -109,10 +109,10 @@ public class UnitsInfo {
 	}
 	
 	public Map<MapPoint, Action.ActionType> getAvailableActions() {
-		if(_selectedID==null)
-			return new HashMap<MapPoint, Action.ActionType>();  //No actions available
-		else
+		if(_selectedID!=null && getSelected()._owner==_player.getID())
 			return _core.getValidActions(_player, _selectedID);
+		else
+			return new HashMap<MapPoint, Action.ActionType>();
 	}
 	
 	//Gets a set of units belonging to the given player, ordered by unit ID
