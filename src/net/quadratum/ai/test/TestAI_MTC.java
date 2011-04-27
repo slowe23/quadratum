@@ -52,13 +52,11 @@ public class TestAI_MTC extends AIPlayer {
 	public void turnStart() {
 		for (int id : _unitIDs) {
 			// Give it a little time to think.
-			/*
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			*/
 			// Get the valid actions.
 			Map<MapPoint,ActionType> map = _core.getValidActions(this,id);
 			if (map == null) {
