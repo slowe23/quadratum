@@ -1,5 +1,6 @@
 package net.quadratum.gui;
 
+import net.quadratum.core.Block.BonusType;
 import net.quadratum.core.Unit;
 
 import javax.swing.*;
@@ -52,8 +53,8 @@ public class CM {
 			description += "Owner: "+""+"\n";  //TODO
 			description += "\n";
 			description += "Stats";
-			Map<String, Integer> stats = unit._stats;
-			for(String stat:stats.keySet())
+			Map<BonusType, Integer> stats = unit._stats;
+			for(BonusType stat : stats.keySet())
 				description += "\n   "+stat+": "+stats.get(stat);
 			return description;
 		}

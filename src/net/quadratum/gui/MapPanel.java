@@ -139,12 +139,12 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 		_minimap.setPlacementArea(_placement);
 		
 		//Center around placement area
-		int size = _placement.keySet().size();
+		int size = _placement.size();
 		if(size==0) {
 			center(_terrain.length/2.0, _terrain[0].length/2.0);
 		} else {
 			int tpx = 0, tpy = 0;
-			for(MapPoint point : _placement.keySet()) {
+			for(MapPoint point : _placement) {
 				tpx += point._x;
 				tpy += point._y;
 			}
