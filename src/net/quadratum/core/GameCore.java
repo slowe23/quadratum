@@ -44,7 +44,11 @@ public class GameCore implements Core
 		_turnLockObject = new Object();
 		try
 		{
-			_log = new FileWriter("log.txt");
+			if (Constants.DEBUG_TO_FILE) {
+				_log = new FileWriter("log.txt");
+			} else {
+				_log = new OutputStreamWriter(System.out);
+			}
 		}
 		catch(Exception e)
 		{
