@@ -177,10 +177,10 @@ public class GameCore implements Core
 			coords = new MapPoint(coords);
 			// TODO add real attacking
 			HashSet<MapPoint> valid;
-			MapPoint oldCoords = new MapPoint(_unitInformation.get(i)._position);
+			MapPoint oldCoords = new MapPoint(_unitInformation.get(unitId)._position);
 			if(getUnitAtPoint(coords) == -1) // Movement
 			{
-				if(_unitInformation.get(i)._hasMoved)
+				if(_unitInformation.get(unitId)._hasMoved)
 				{
 					return false;
 				}
@@ -193,13 +193,13 @@ public class GameCore implements Core
 				{
 					return false;
 				}
-				_unitInformation.get(i)._hasMoved = true;
-				_unitInformation.get(i)._position = coords;
+				_unitInformation.get(unitId)._hasMoved = true;
+				_unitInformation.get(unitId)._position = coords;
 				updateMaps(new Action(Action.ActionType.MOVE, oldCoords, coords));
 			}
 			else // Attacking
 			{
-				if(_unitInformation.get(i)._hasAttacked)
+				if(_unitInformation.get(unitId)._hasAttacked)
 				{
 					return false;
 				}
@@ -217,11 +217,10 @@ public class GameCore implements Core
 				{
 					return false;
 				}
-				_unitInformation.get(i)._hasAttacked = true;
+				_unitInformation.get(unitId)._hasAttacked = true;
 				_unitInformation.get(unit)._position = new MapPoint(-1, -1);
 				updateMaps(new Action(Action.ActionType.UNIT_DIED, coords, coords));
 			}
-			updateMaps();
 			return true;
 		}
 	}
@@ -524,7 +523,7 @@ public class GameCore implements Core
 	{
 		synchronized(_turnLockObject)
 		{
-			if(turn != -1)
+			if(_turn != -1)
 			{
 				return false;
 			}

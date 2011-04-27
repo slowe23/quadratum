@@ -34,7 +34,7 @@ public class Action {
 	 * @param source the source of the action
 	 * @param dest the destination of the action
 	 */
-	public Action(ActionType action, MapPoint source, MapPointdest)
+	public Action(ActionType action, MapPoint source, MapPoint dest)
 	{
 		_action = action;
 		source = new MapPoint(source);
