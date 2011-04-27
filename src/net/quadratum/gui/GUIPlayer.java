@@ -98,4 +98,9 @@ public class GUIPlayer implements Player {
 	public void chatMessage(int from, String message) {
 		_chatHandler.getMessage(from, message);
 	}
+
+	@Override
+	public void updateTurn(int turn) {
+		//TODO
+	}
 }
