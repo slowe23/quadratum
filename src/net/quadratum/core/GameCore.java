@@ -824,8 +824,9 @@ public class GameCore implements Core
 				}
 			}
 		}
-		log("getVisible(player: " + player + ")\n"
-			+ "\tAnswer was: " + visible, 1);
+		/*log("getVisible(player: " + player + ")\n"
+			+ "\tAnswer was: " + visible, 1);*/
+			// TODO add back in when we are generating less data
 		return visible;
 	}
 	
