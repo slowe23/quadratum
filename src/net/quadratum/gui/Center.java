@@ -48,7 +48,10 @@ public class Center {
 	}
 	
 	public void setPieces(List<Piece> pieces) {
-		_buildPanel.setPieces(pieces);
+		if(_buildPanel != null)
+		{
+			_buildPanel.setPieces(pieces);
+		}
 	}
 	
 	public void update(Map<MapPoint, Integer> units, Action lastAction) {

@@ -22,7 +22,10 @@ public class ChatHandler {
 	}
 	
 	public void incomingMessage(int id, String message) {
-		_chat.addMessage(id, message);
+		if(_chat != null)
+		{
+			_chat.addMessage(id, message);
+		}
 	}
 	
 	public void outgoingMessage(String message) {
