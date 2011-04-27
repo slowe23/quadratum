@@ -12,6 +12,8 @@ import javax.swing.border.TitledBorder;
 
 import net.quadratum.core.Block.BonusType;
 import net.quadratum.core.Unit;
+import net.quadratum.core.Block;
+import net.quadratum.core.Block.*;
 
 //Static convenience methods
 public class CM {
@@ -56,11 +58,23 @@ public class CM {
 			String description = "";
 			description += "Unit name: "+unit._name+"\n";
 			description += "Owner: "+""+"\n";  //TODO
+			
 			description += "\n";
+			
 			description += "Stats";
 			Map<BonusType, Integer> stats = unit._stats;
-			for(BonusType stat : stats.keySet())
-				description += "\n   "+stat+": "+stats.get(stat);
+			for(BonusType stat:stats.keySet())
+				if(stat.isStat())
+					description += "\n   "+stat+": "+stats.get(stat);
+			description += "\n";
+			
+			description += "\n";
+			
+			description += "Abilities";
+			for(BonusType stat:stats.keySet())
+				if(stat.isAbility() && stats.get(stat)>0)
+					description += "\n   "+stat;
+			
 			return description;
 		}
 	}
