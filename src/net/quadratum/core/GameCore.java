@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import net.quadratum.main.Main;
+
 public class GameCore implements Core
 {
+	private Main _main;
 	private int[][] _terrain;
 	private ArrayList<HashSet<MapPoint>> _startingLocations;
 	private ArrayList<Unit> _units;
@@ -23,8 +26,9 @@ public class GameCore implements Core
 	 * @param map the map file name
 	 * @param winCondition the win condition
 	 */
-	public GameCore(String map, WinCondition winCondition, ArrayList<Piece> pieces)
+	public GameCore(Main m, String map, WinCondition winCondition, ArrayList<Piece> pieces)
 	{
+		_main = m;
 		_startingLocations = new ArrayList<HashSet<MapPoint>>();
 		_units = new ArrayList<Unit>();
 		_unitInformation = new ArrayList<UnitInformation>();
@@ -525,6 +529,9 @@ public class GameCore implements Core
 		}
 		log("GAME OVER", 1);
 		log("Player " + winner + " won!", 1);
+		
+		// Return control to the main class.
+		_main.returnControl();
 	}
 	
 	/**
