@@ -52,7 +52,12 @@ public class Center {
 	}
 	
 	public void setPieces(List<Piece> pieces) {
-		_buildPanel.setPieces(pieces);
+		try {
+			_buildPanel.setPieces(pieces);
+		} catch(NullPointerException n) {
+			System.out.println("This is a bug that needs fixing:");
+			n.printStackTrace();
+		}
 	}
 	
 	public void update(Map<MapPoint, Integer> units, Action lastAction) {
