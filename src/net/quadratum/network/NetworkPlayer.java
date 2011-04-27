@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,30 +51,29 @@ public class NetworkPlayer extends Thread implements Player {
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {
 		_core = core;
 		_playerID = id;
-		// TODO protocol
-		
+		try {
+			_out.write("start\t"+new String(Serializer.getByteArray(mapData))+
+					"\t"+id+"\t"+totalPlayers+"\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void updatePieces(List<Piece> pieces) {
+		// Copy to ArrayList because List does not implement Serializable.
+		ArrayList<Piece> p = new ArrayList<Piece>(pieces);
 		try {
-			_out.write("updatepieces");
-			for (Piece p : pieces) {
-				// TODO find out some concise way to represent a piece
-			}
-			_out.write("\n");
+			_out.write("updatepieces\t"+new String(Serializer.getByteArray(p))+"\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	@Override
 	public void end(GameStats stats) {
-		// TODO GameStats is currently empty, but when it gets
-		// some meat, send that over
 		try {
-			_out.write("end\n");
+			_out.write("end\t"+new String(Serializer.getByteArray(stats))+"\n");
 			_sockToPlayer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -110,8 +111,15 @@ public class NetworkPlayer extends Thread implements Player {
 
 	@Override
 	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
-		// TODO protocol
-		
+		// Copy this to a HashMap because the Map interface does not
+		// implement Serializable directly.
+		HashMap<MapPoint,Integer> map = new HashMap<MapPoint,Integer>(units);
+		try {
+			_out.write("updatemap\t"+new String(Serializer.getByteArray(map))+"\t"
+					+new String(Serializer.getByteArray(lastAction))+"\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -125,7 +133,11 @@ public class NetworkPlayer extends Thread implements Player {
 	
 	@Override
 	public void updateTurn(int turn) {
-		// TODO update turn
+		try {
+			_out.write("updateturn\t"+turn+"\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -161,9 +173,22 @@ public class NetworkPlayer extends Thread implements Player {
 			}
 		} else if (parts[0].equals("getvalidactions")) {
 			// The player is requesting valid actions.
-			// This might be left out, since the VC should
-			// cache this information and a new cache should
-			// be sent if an invalid move is made.
+			int id = -1;
+			// protocol: getvalidactions \t unitid
+			try {
+				id = Integer.parseInt(parts[1]);
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}
+			HashMap<MapPoint, Action.ActionType> map = 
+				new HashMap<MapPoint, Action.ActionType>(
+						_core.getValidActions(this,id));
+			// Write the data...
+			try {
+				_out.write("validactions\t"+id+"\t"+new String(Serializer.getByteArray(map))+"\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else if (parts[0].equals("quit")) {
 			// The player has quit.
 			_core.quit(this);
@@ -199,15 +224,21 @@ public class NetworkPlayer extends Thread implements Player {
 			}
 		} else if (parts[0].equals("getunit")) {
 			// The player wants to get a particular unit.
-			Unit u;
+			Unit u = null;
+			int id = -1;
 			// protocol: getunit \t id
 			try {
-				int id = Integer.parseInt(parts[1]);
+				id = Integer.parseInt(parts[1]);
 				u = _core.getUnit(this, id);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
-			// TODO send back value of u
+			// Write the unit back across the wire...
+			try {
+				_out.write("unit\t"+id+"\t"+Serializer.getByteArray(u)+"\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else if (parts[0].equals("updateunit")) {
 			// The player wants to update a unit with a piece.
 			boolean success = false;

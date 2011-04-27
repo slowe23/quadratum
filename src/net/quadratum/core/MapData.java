@@ -7,6 +7,11 @@ import java.util.HashSet;
 public class MapData implements Serializable {
 	
 	/**
+	 * Serialization ID
+	 */
+	private static final long serialVersionUID = -6370513093568134333L;
+
+	/**
 	 * Constructor for MapData.
 	 * @param terrain the terrain
 	 * @param placementLocations possible unit placement locations

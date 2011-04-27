@@ -1,7 +1,14 @@
 package net.quadratum.core;
 
-public class Action {
+import java.io.Serializable;
 
+public class Action implements Serializable {
+
+	/**
+	 * Serialization ID
+	 */
+	private static final long serialVersionUID = -5076267909701737339L;
+	
 	/** The type of action that was performed. */
 	ActionType _action;
 	/** The source point this action was performed from. */
