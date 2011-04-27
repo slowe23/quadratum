@@ -15,7 +15,6 @@ public class Unit {
 	int _owner;
 	/** Cached stats for this Unit. */
 	Map<Block.BonusType, Integer> _stats;
-	
 	/**
 	 * Constructor for Unit.
 	 */
