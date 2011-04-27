@@ -40,4 +40,12 @@ public class MapData implements Serializable {
 	
 	/** Coordinates where a Player can place units. */
 	Set<MapPoint> _placementArea;
+	
+	public int[][] getTerrain() {
+		return _terrain;
+	}
+	
+	public Set<MapPoint> getPlacementArea() {
+		return _placementArea;
+	}
 }
