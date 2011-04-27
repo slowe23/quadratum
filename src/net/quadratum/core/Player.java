@@ -55,5 +55,11 @@ public interface Player {
 	 * @param from the ID of the player who this message was sent by.
 	 * @param message the message that is being sent.
 	 */
-	public void chatMessage(int from, String message);	
+	public void chatMessage(int from, String message);
+	
+	/**
+	 * Notifies the player that the turn has changed.
+	 * @param turn the player whose turn it is
+	 */
+	public void updateTurn(int turn);
 }
