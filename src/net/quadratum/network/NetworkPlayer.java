@@ -52,7 +52,7 @@ public class NetworkPlayer extends Thread implements Player {
 		_core = core;
 		_playerID = id;
 		try {
-			_out.write("start\t"+new String(Serializer.getByteArray(mapData))+
+			_out.write("start\t"+Serializer.getEncodedString(mapData)+
 					"\t"+id+"\t"+totalPlayers+"\n");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -64,7 +64,7 @@ public class NetworkPlayer extends Thread implements Player {
 		// Copy to ArrayList because List does not implement Serializable.
 		ArrayList<Piece> p = new ArrayList<Piece>(pieces);
 		try {
-			_out.write("updatepieces\t"+new String(Serializer.getByteArray(p))+"\n");
+			_out.write("updatepieces\t"+Serializer.getEncodedString(p)+"\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -73,7 +73,7 @@ public class NetworkPlayer extends Thread implements Player {
 	@Override
 	public void end(GameStats stats) {
 		try {
-			_out.write("end\t"+new String(Serializer.getByteArray(stats))+"\n");
+			_out.write("end\t"+Serializer.getEncodedString(stats)+"\n");
 			_sockToPlayer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -103,7 +103,7 @@ public class NetworkPlayer extends Thread implements Player {
 	@Override
 	public void updateMapData(MapData mapData) {
 		try {
-			_out.write("mapdata\t"+new String(Serializer.getByteArray(mapData))+"\n");
+			_out.write("mapdata\t"+Serializer.getEncodedString(mapData)+"\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -115,8 +115,8 @@ public class NetworkPlayer extends Thread implements Player {
 		// implement Serializable directly.
 		HashMap<MapPoint,Integer> map = new HashMap<MapPoint,Integer>(units);
 		try {
-			_out.write("updatemap\t"+new String(Serializer.getByteArray(map))+"\t"
-					+new String(Serializer.getByteArray(lastAction))+"\n");
+			_out.write("updatemap\t"+Serializer.getEncodedString(map)+"\t"
+					+Serializer.getEncodedString(lastAction)+"\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -185,7 +185,7 @@ public class NetworkPlayer extends Thread implements Player {
 						_core.getValidActions(this,id));
 			// Write the data...
 			try {
-				_out.write("validactions\t"+id+"\t"+new String(Serializer.getByteArray(map))+"\n");
+				_out.write("validactions\t"+id+"\t"+Serializer.getEncodedString(map)+"\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -235,7 +235,7 @@ public class NetworkPlayer extends Thread implements Player {
 			}
 			// Write the unit back across the wire...
 			try {
-				_out.write("unit\t"+id+"\t"+Serializer.getByteArray(u)+"\n");
+				_out.write("unit\t"+id+"\t"+Serializer.getEncodedString(u)+"\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
