@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.quadratum.core.Action;
-import net.quadratum.core.Action.ActionType;
 import net.quadratum.core.Core;
 import net.quadratum.core.GameStats;
 import net.quadratum.core.MapData;
@@ -50,20 +49,7 @@ public abstract class AIPlayer implements Player {
 	public void updateMapData(MapData mapData) { }
 
 	@Override
-	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
-		// AIs should keep track of their own units.
-		if (lastAction == null) {
-			return;
-		} else if (lastAction._action == ActionType.UNIT_CREATED) {
-			_unitIDs.clear();
-			for (int i : units.values()) {
-				if (_core.getUnit(this,i) != null) {
-					// this AI owns this unit
-					_unitIDs.add(i);
-				}
-			}
-		}
-	}
+	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) { }
 
 	@Override
 	public void chatMessage(int from, String message) { }
