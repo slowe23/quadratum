@@ -43,7 +43,7 @@ public class Action implements Serializable {
 	public Action(ActionType action, MapPoint source, MapPoint dest)
 	{
 		_action = action;
-		source = new MapPoint(source);
-		dest = new MapPoint(dest);
+		_source = new MapPoint(source);
+		_dest = new MapPoint(dest);
 	}
 }
