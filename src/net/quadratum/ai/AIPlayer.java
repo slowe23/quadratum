@@ -15,13 +15,13 @@ import net.quadratum.core.Player;
 public abstract class AIPlayer implements Player {
 	
 	/** Core that this AIPlayer belongs to. */
-	Core _core;
+	protected Core _core;
 	/** Map terrain. */
-	int[][] _terrain;
+	protected int[][] _terrain;
 	/** Player ID. */
-	int _id;
+	protected int _id;
 	/** Total number of players. */
-	int _totalPlayers;
+	protected int _totalPlayers;
 	
 	/** Unit IDs */
 	List<Integer> _unitIDs;
