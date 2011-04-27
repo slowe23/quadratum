@@ -1,16 +1,17 @@
 package net.quadratum.core;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.HashSet;
 
-public class MapData {
+public class MapData implements Serializable {
 	
 	/**
 	 * Constructor for MapData.
 	 * @param terrain the terrain
 	 * @param placementLocations possible unit placement locations
 	 */
-	MapData(int[][] terrain, Set<MapPoint> placementLocations)
+	public MapData(int[][] terrain, Set<MapPoint> placementLocations)
 	{
 		// Copy placement locations
 		_placementArea = new HashSet<MapPoint>();

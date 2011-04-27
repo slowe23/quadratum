@@ -8,11 +8,14 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.quadratum.core.Action.ActionType;
 import net.quadratum.core.Core;
+import net.quadratum.core.MapData;
 import net.quadratum.core.Player;
 import net.quadratum.core.MapPoint;
 import net.quadratum.core.PlayerInformation;
@@ -272,9 +275,10 @@ public class VirtualCore extends Thread implements Core {
 		} else if (parts[0].equals("turnstart")) {
 			// It is now this player's turn.
 			_localPlayer.turnStart();
-		} else if (parts[0].equals("updatemapdata")) {
+		} else if (parts[0].equals("mapdata")) {
 			// The host is sending new map data.
-			// TODO protocol
+			// protocol: mapdata \t mdobject
+			_localPlayer.updateMapData((MapData)Serializer.getObject(parts[1].getBytes()));
 		} else if (parts[0].equals("updatemap")) {
 			// The host is sending new information about units and actions.
 			// TODO protocol

@@ -2,6 +2,7 @@ package net.quadratum.network;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -91,7 +92,8 @@ public class NetworkPlayer extends Thread implements Player {
 	@Override
 	public void turnStart() {
 		try {
-			_out.write("turnstart\n");
+			_out.write("turnstart");
+			_out.newLine();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -99,8 +101,11 @@ public class NetworkPlayer extends Thread implements Player {
 
 	@Override
 	public void updateMapData(MapData mapData) {
-		// TODO protocol
-		
+		try {
+			_out.write("mapdata\t"+new String(Serializer.getByteArray(mapData))+"\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -255,6 +260,11 @@ public class NetworkPlayer extends Thread implements Player {
 		String line;
 		try {
 			while (threadRunning && (line = _in.readLine()) != null) {
+				if (_sockToPlayer.isClosed()) {
+					// Player has disconnected, quit.
+					_core.quit(this);
+					break;
+				}
 				process(line);
 			}
 		} catch (IOException e) {
