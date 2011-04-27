@@ -16,6 +16,13 @@ public class CheckWinner implements WinCondition
 	
     public boolean hasPlayerLost(Map<MapPoint, Unit> units, PlayerInformation playerInformation)
 	{
-		return false;
+		if(units.size() == 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

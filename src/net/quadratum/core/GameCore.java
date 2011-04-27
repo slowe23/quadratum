@@ -192,9 +192,11 @@ public class GameCore implements Core
 	 */
 	public boolean unitAction(Player p, int unitId, MapPoint coords)
 	{
+		log("herp", 2);
 		// TODO logging in this function and then all functions above
 		synchronized(_turnLockObject)
 		{
+			log("derp", 2);
 			int player = getPlayerId(p);
 			if(_turn != player)
 			{
@@ -234,6 +236,7 @@ public class GameCore implements Core
 				_unitInformation.get(unitId)._hasMoved = true;
 				_unitInformation.get(unitId)._position = coords;
 				updateMaps(new Action(Action.ActionType.MOVE, oldCoords, coords));
+				log("Unit moved from " + oldCoords + " to " + coords, 2);
 			}
 			else // Attacking
 			{
@@ -258,6 +261,7 @@ public class GameCore implements Core
 				_unitInformation.get(unitId)._hasAttacked = true;
 				_unitInformation.get(unit)._position = new MapPoint(-1, -1);
 				updateMaps(new Action(Action.ActionType.UNIT_DIED, coords, coords));
+				log("Unit died!", 2);
 			}
 			return true;
 		}
