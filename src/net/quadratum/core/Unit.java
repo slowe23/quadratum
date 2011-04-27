@@ -32,8 +32,9 @@ public class Unit implements Serializable {
 	/**
 	 * Constructor for Unit.
 	 */
-	public Unit(String name, int owner)
+	public Unit(String name, int owner, int id)
 	{
+		_id = id;
 		_name = new String(name);
 		_blocks = new HashMap<MapPoint, Block>();
 		_stats = new HashMap<Block.BonusType, Integer>();
@@ -52,6 +53,7 @@ public class Unit implements Serializable {
 		_size = unit._size;
 		_name = new String(unit._name);
 		_owner = unit._owner;
+		_id = unit._id;
 		for(Block.BonusType key : unit._stats.keySet())
 		{
 			_stats.put(key, new Integer(unit._stats.get(key)));
