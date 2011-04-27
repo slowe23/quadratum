@@ -6,19 +6,19 @@ import java.util.Map;
 public class Piece {
 
 	/** The Blocks that make up this Piece. */
-	Map<MapPoint,Block> _blocks;
+	public Map<MapPoint,Block> _blocks;
 	
 	/** The cost of this Piece. */
-	int _cost;
+	public int _cost;
 	
 	/** The maximum times a player can use this Piece. */
-	int _max;
+	public int _max;
 	
 	/** The name of the Piece. */
-	String _name;
+	public String _name;
 	
 	/** The description of the piece. */
-	String _description;
+	public String _description;
 	
 	/**
 	 * Copy constructor for Piece.
@@ -35,6 +35,28 @@ public class Piece {
 		_max = piece._max;
 		_name = new String(piece._name);
 		_description = new String(piece._description);
+	}
+	
+	/**
+	 * Compute the minimum and maximum coordinates (relative to the piece's origin) of blocks in this piece
+	 * Coordinates are stored in the following order: {min_x, min_y, max_x, max_y}
+	 */
+	public int[] getBounds() {
+		int[] bounds = new int[4];
+		boolean any = false;
+		for(MapPoint m : _blocks.keySet()) {
+			if(!any || m._x<bounds[0])
+				bounds[0] = m._x;
+			if(!any || m._y<bounds[1])
+				bounds[1] = m._y;
+			if(!any || m._x>bounds[2])
+				bounds[2] = m._x;
+			if(!any || m._y>bounds[3])
+				bounds[3] = m._y;
+
+			any = true;
+		}
+		return bounds;
 	}
 	
 	/**
