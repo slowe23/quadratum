@@ -24,6 +24,7 @@ import net.quadratum.core.Player;
 import net.quadratum.core.MapPoint;
 import net.quadratum.core.PlayerInformation;
 import net.quadratum.core.Unit;
+import net.quadratum.util.Serializer;
 
 public class VirtualCore extends Thread implements Core {
 	

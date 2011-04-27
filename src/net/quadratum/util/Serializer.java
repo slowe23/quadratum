@@ -1,4 +1,4 @@
-package net.quadratum.network;
+package net.quadratum.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
