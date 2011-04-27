@@ -690,7 +690,15 @@ public class GameCore implements Core
 	 */
 	public String getPlayerName(int player)
 	{
-		String name = new String(_playerInformation.get(player)._name);
+		String name;
+		if(player == -1)
+		{
+			name = "System Message";
+		}
+		else
+		{
+			name = new String(_playerInformation.get(player)._name);
+		}
 		log("Player " + player + " called getPlayerName(player: " + player + ")", 1);
 		log("\tAnswer: " + name, 1);
 		return name;
