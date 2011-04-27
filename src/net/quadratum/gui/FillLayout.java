@@ -1,7 +1,10 @@
 package net.quadratum.gui;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 
 public class FillLayout implements LayoutManager {
 	private boolean _includeInvisible;  //Whether currently invisible components are counted when calculating min or preferred size

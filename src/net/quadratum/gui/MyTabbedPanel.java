@@ -1,10 +1,19 @@
 package net.quadratum.gui;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 
 public class MyTabbedPanel extends JPanel {
 	private MyTabBar _tabs;

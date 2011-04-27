@@ -1,8 +1,8 @@
 package net.quadratum.core;
 
 import java.io.Serializable;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 public class MapData implements Serializable {
 	

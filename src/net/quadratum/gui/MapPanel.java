@@ -1,12 +1,25 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JPanel;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.util.*;
+
+import net.quadratum.core.Action;
+import net.quadratum.core.MapData;
+import net.quadratum.core.MapPoint;
+import net.quadratum.core.Unit;
 
 public class MapPanel extends JPanel implements MapView, MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
 	private static final int DEFAULT_SCALE = 3;  //Default scale level

@@ -1,9 +1,9 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.Unit;
-import net.quadratum.core.MapPoint;
-
 import java.util.Map;
+
+import net.quadratum.core.MapPoint;
+import net.quadratum.core.Unit;
 
 public class UnitHandler {
 	private Map<MapPoint, Unit> _units;

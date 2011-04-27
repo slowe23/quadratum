@@ -1,11 +1,15 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Random;
+import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 public class GameWindow extends JFrame implements WindowListener {
 	public GameWindow(GUIPlayer player) {

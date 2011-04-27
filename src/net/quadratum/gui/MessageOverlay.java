@@ -1,9 +1,16 @@
 package net.quadratum.gui;
 
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
+
+import javax.swing.JPanel;
 
 public class MessageOverlay extends JPanel implements MessageDisplay {
 	private GraphicsCoordinator _graphicsCoordinator;
