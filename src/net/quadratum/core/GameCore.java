@@ -617,6 +617,7 @@ public class GameCore implements Core
 		}
 		log("GAME OVER\n"
 			+ "Player " + winner + " won!", 1);
+		closeLog();
 		// Return control to the main class.
 		_main.returnControl();
 	}
@@ -958,5 +959,18 @@ public class GameCore implements Core
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Flushes and closes the log.
+	 */
+	private void closeLog() {
+		try {
+			_log.flush();
+			_log.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 }
