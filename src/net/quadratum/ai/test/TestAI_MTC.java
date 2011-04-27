@@ -18,6 +18,7 @@ public class TestAI_MTC extends AIPlayer {
 	/** The center of the map. */
 	MapPoint _center;
 	
+	@Override
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {
 		super.start(core, mapData, id, totalPlayers);
 		Set<MapPoint> locs = mapData._placementArea;
