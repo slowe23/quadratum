@@ -189,6 +189,7 @@ public class GameCore implements Core
 			}
 		}
 		log("Player " + player + " called ready() and every other player was ready, starting game", 1);
+		updateMaps(new Action(Action.ActionType.GAME_START, new MapPoint(-1, -1), new MapPoint(-1, -1)));
 		nextTurn();
 	}
 	
@@ -429,9 +430,10 @@ public class GameCore implements Core
 		{
 			if(!_playerInformation.get(i)._quit)
 			{
-				if(getVisible(i).contains(action._dest))
+				if(getVisible(i).contains(action._dest) || action._action == Action.ActionType.GAME_START)
 				{
 					// TODO create new _source for attacks that the player can't see
+					// Though this may actually be a good thing that they can see where the attack comes from
 					_players.get(i).updateMap(generateMapForPlayer(i), new Action(action));
 				}
 				else
@@ -650,7 +652,7 @@ public class GameCore implements Core
 			}
 			if(getUnitAtPoint(coords) == -1 && _startingLocations.get(player).contains(coords))
 			{
-				_units.add(new Unit(new String(name), player));
+				_units.add(new Unit(new String(name), player, _units.size() - 1));
 				_unitInformation.add(new UnitInformation(coords));
 				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ")\n"
 					+ "\tAnswer: " + (_units.size() - 1), 1);
@@ -831,7 +833,7 @@ public class GameCore implements Core
 		int radius;
 		if(type == 0) // Movement area
 		{
-			radius = 100; // TODO change when not testing
+			radius = 3;
 		}
 		else if(type == 1) // Attack area
 		{
@@ -839,7 +841,7 @@ public class GameCore implements Core
 		}
 		else // Visible area
 		{
-			radius = 5;
+			radius = 100; // TODO change when not testing
 		}
 		UnitInformation info = _unitInformation.get(u);
 		HashSet<MapPoint> visible = new HashSet<MapPoint>();
