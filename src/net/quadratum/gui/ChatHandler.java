@@ -20,10 +20,8 @@ public class ChatHandler {
 	}
 	
 	public void start(Core core) {
-		if(_core==null)
-			_core = core;
-		else
-			throw new RuntimeException("ChatHandler.start(Core) should only be called once.");
+		_core = core;
+		_chat.start();
 	}
 	
 	public void sendMessage(String message) {
