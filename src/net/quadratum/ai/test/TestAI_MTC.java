@@ -53,6 +53,9 @@ public class TestAI_MTC extends AIPlayer {
 		for (int id : _unitIDs) {
 			// Get the valid actions.
 			Map<MapPoint,ActionType> map = _core.getValidActions(this,id);
+			if (map == null) {
+				continue;
+			}
 			// Get all the possible move locations.
 			Set<MapPoint> possibleActions = new HashSet<MapPoint>();
 			for (MapPoint point : map.keySet()) {
