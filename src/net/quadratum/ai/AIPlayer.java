@@ -24,7 +24,7 @@ public abstract class AIPlayer implements Player {
 	protected int _totalPlayers;
 	
 	/** Unit IDs */
-	List<Integer> _unitIDs;
+	protected List<Integer> _unitIDs;
 
 	@Override
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {

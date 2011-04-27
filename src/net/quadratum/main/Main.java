@@ -1,9 +1,10 @@
 package net.quadratum.main;
 
-import net.quadratum.gui.*;
-import net.quadratum.core.*;
-import java.util.HashMap;
 import java.util.ArrayList;
+
+import net.quadratum.core.GameCore;
+import net.quadratum.core.Piece;
+import net.quadratum.gui.GUIPlayer;
 
 public class Main {
 	public static void main(String[] args)
