@@ -12,8 +12,6 @@ import javax.swing.border.TitledBorder;
 
 import net.quadratum.core.Block.BonusType;
 import net.quadratum.core.Unit;
-import net.quadratum.core.Block;
-import net.quadratum.core.Block.*;
 
 //Static convenience methods
 public class CM {
