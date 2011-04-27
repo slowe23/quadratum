@@ -473,7 +473,7 @@ public class GameCore implements Core
 		{
 			if(!_playerInformation.get(i)._quit)
 			{
-				_players.get(i).end(new GameStats());
+				_players.get(i).end(new GameStats(winner));
 			}
 		}
 		log("GAME OVER", 1);
