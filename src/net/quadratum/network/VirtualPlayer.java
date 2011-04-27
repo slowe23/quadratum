@@ -36,4 +36,7 @@ public class VirtualPlayer implements Player {
 
 	@Override
 	public void chatMessage(int from, String message) {}
+
+	@Override
+	public void updateTurn(int turn) {}
 }
