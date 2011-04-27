@@ -14,43 +14,29 @@ import net.quadratum.core.Player;
 public class VirtualPlayer implements Player {
 
 	@Override
-	public void start(Core core, MapData mapData, int id, int totalPlayers) {
-
-	}
+	public void start(Core core, MapData mapData, int id, int totalPlayers) {}
 
 	@Override
-	public void updatePieces(List<Piece> pieces) {
-
-	}
+	public void updatePieces(List<Piece> pieces) {}
 
 	@Override
-	public void end(GameStats stats) {
-
-	}
+	public void end(GameStats stats) {}
 
 	@Override
-	public void lost() {
-
-	}
+	public void lost() {}
 
 	@Override
-	public void turnStart() {
-
-	}
+	public void turnStart() {}
 
 	@Override
-	public void updateMapData(MapData mapData) {
-
-	}
+	public void updateMapData(MapData mapData) {}
 
 	@Override
-	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
-
-	}
+	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {}
 
 	@Override
-	public void chatMessage(int from, String message) {
+	public void chatMessage(int from, String message) {}
 
-	}
-
+	@Override
+	public void updateTurn(int turn) {}
 }

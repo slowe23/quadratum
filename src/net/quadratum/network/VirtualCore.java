@@ -6,17 +6,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import net.quadratum.core.Action;
 import net.quadratum.core.Action.ActionType;
 import net.quadratum.core.Core;
+import net.quadratum.core.GameStats;
+import net.quadratum.core.MapData;
+import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
 import net.quadratum.core.MapPoint;
 import net.quadratum.core.PlayerInformation;
 import net.quadratum.core.Unit;
+import net.quadratum.util.Serializer;
 
 public class VirtualCore extends Thread implements Core {
 	
@@ -110,8 +118,14 @@ public class VirtualCore extends Thread implements Core {
 
 	@Override
 	public Map<MapPoint, ActionType> getValidActions(Player p, int unitID) {
-		// TODO protocol/caching, this might not even use the network at all
-		return null;
+		try {
+			_out.write("getvalidactions\t"+unitID+"\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// protocol: <validactions \t> id \t mapobject
+		String[] s = getResponse("validactions");
+		return (HashMap<MapPoint,ActionType>) Serializer.getObject(s[2].getBytes());
 	}
 
 	@Override
@@ -133,9 +147,9 @@ public class VirtualCore extends Thread implements Core {
 	}
 
 	@Override
-	public boolean placeUnit(Player p, MapPoint coords) {
+	public boolean placeUnit(Player p, MapPoint coords, String name) {
 		try {
-			_out.write("placeunit\t"+coords._x+"\t"+coords._y+"\n");
+			_out.write("placeunit\t"+coords._x+"\t"+coords._y+"\t"+name+"\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -177,8 +191,9 @@ public class VirtualCore extends Thread implements Core {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// TODO get return val
-		return null;
+		// protocol: <unit \t> id \t unitobject
+		String[] s = getResponse("unit");
+		return (Unit) Serializer.getObject(s[1].getBytes());
 	}
 
 	@Override
@@ -257,33 +272,57 @@ public class VirtualCore extends Thread implements Core {
 		// Look at the first part of the incoming message
 		if (parts[0].equals("start")) {
 			// The game has started.
-			// TODO protocol
+			int id = -1, numplayers = 1;
+			// protocol: start \t mdobject \t id \t numplayers
+			MapData md = Serializer.getObject(parts[1].getBytes());
+			try {
+				id = Integer.parseInt(parts[2]);
+				numplayers = Integer.parseInt(parts[3]);
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}
+			_localPlayer.start(this,md,id,numplayers);
 		} else if (parts[0].equals("updatepieces")) {
 			// The game is telling the player what pieces they are
 			// allowed to have.
-			// TODO protocol
+			// protocol: updatepieces \t listobject
+			ArrayList<Piece> p = Serializer.getObject(parts[1].getBytes());
+			_localPlayer.updatePieces(p);
 		} else if (parts[0].equals("end")) {
 			// The game has ended.
-			// TODO get stats
-			_localPlayer.end(null);
+			// protocol: end \t statsobject
+			_localPlayer.end((GameStats) Serializer.getObject(parts[1].getBytes()));
 		} else if (parts[0].equals("lost")) {
 			// This player has just lost.
 			_localPlayer.lost();
 		} else if (parts[0].equals("turnstart")) {
 			// It is now this player's turn.
 			_localPlayer.turnStart();
-		} else if (parts[0].equals("updatemapdata")) {
+		} else if (parts[0].equals("mapdata")) {
 			// The host is sending new map data.
-			// TODO protocol
+			// protocol: mapdata \t mdobject
+			_localPlayer.updateMapData((MapData)Serializer.getObject(parts[1].getBytes()));
 		} else if (parts[0].equals("updatemap")) {
 			// The host is sending new information about units and actions.
-			// TODO protocol
+			// protocol: updatemap \t mapobject \t actobject
+			HashMap<MapPoint,Integer> map = Serializer.getObject(parts[1].getBytes());
+			Action act = Serializer.getObject(parts[2].getBytes());
+			_localPlayer.updateMap(map,act);
 		} else if (parts[0].equals("chat")) {
 			// A chat message was sent.
 			// protocol: chat \t id \t message
 			try {
 				int id = Integer.parseInt(parts[1]);
 				_localPlayer.chatMessage(id, parts[2]);
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}
+		} else if (parts[0].equals("updateturn")) {
+			// The turn has changed.
+			// protocol: updateturn \t turn
+			try {
+				int id = Integer.parseInt(parts[1]);
+				_localPlayer.updateTurn(id);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
