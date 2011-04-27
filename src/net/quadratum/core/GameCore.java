@@ -174,7 +174,7 @@ public class GameCore implements Core
 	public synchronized void ready(Player p)
 	{
 		int player = getPlayerId(p);
-		if(_turn > -1)
+		if(_turn != -1)
 		{
 			log("Player " + player + " called ready() but the game had already started", 2);
 			return;
@@ -465,6 +465,13 @@ public class GameCore implements Core
 			else
 			{
 				log("Player " + player + " has quit", 1);
+				int winner = checkWinLoss();
+				if(winner != -1)
+				{
+					log("Player " + winner + " has won the game, ending...", 1);
+					endGame(winner);
+					return;
+				}
 			}
 		}
 	}
@@ -817,8 +824,9 @@ public class GameCore implements Core
 				}
 			}
 		}
-		log("getVisible(player: " + player + ")\n"
-			+ "\tAnswer was: " + visible, 1);
+		/*log("getVisible(player: " + player + ")\n"
+			+ "\tAnswer was: " + visible, 1);*/
+			// TODO add back in when we are generating less data
 		return visible;
 	}
 	
