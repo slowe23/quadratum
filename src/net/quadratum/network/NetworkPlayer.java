@@ -198,18 +198,18 @@ public class NetworkPlayer extends Thread implements Player {
 			_core.sendChatMessage(this,parts[1]);
 		} else if (parts[0].equals("placeunit")) {
 			// The player is placing a unit.
-			boolean success = false;
+			int id = -1;
 			// protocol: placeunit \t x \t y \t name
 			try {
 				int x = Integer.parseInt(parts[1]);
 				int y = Integer.parseInt(parts[2]);
-				success = _core.placeUnit(this, new MapPoint(x,y), parts[3]);
+				id = _core.placeUnit(this, new MapPoint(x,y), parts[3]);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
 			// send back whether or not it succeeded
 			try {
-				_out.write("unitplaced\t"+success+"\n");
+				_out.write("unitplaced\t"+id+"\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
