@@ -957,6 +957,7 @@ public class GameCore implements Core
 				}
 				_log.write(message + "\n");
 			}
+			_log.flush();
 		}
 		catch(Exception e)
 		{
