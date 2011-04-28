@@ -1,4 +1,4 @@
-package net.quadratum.main;
+package net.quadratum.main.test;
 
 import java.util.Map;
 
