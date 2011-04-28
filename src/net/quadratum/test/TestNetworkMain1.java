@@ -36,6 +36,7 @@ public class TestNetworkMain1 implements Main {
 			core.addPlayer(p, "Test Player 2", 5);
 		}
 		core.start();
+		while(!core.done()) {}
 	}
 	
 	private static void createNetworkPlayer(Player p, String name, int maxUnits) {

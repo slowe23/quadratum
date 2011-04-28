@@ -192,4 +192,9 @@ public class TestingCore implements Core {
 	public int getResources(Player p) {
 		return 0;
 	}
+	
+	public boolean done()
+	{
+		return false;
+	}
 }

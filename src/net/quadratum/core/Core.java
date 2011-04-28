@@ -109,4 +109,9 @@ public interface Core {
 	 * @param p the Player itself
 	 */
 	public int getResources(Player p);
+	
+	/**
+	 * Returns wether or not the game is done.
+	 */
+	public boolean done();
 }

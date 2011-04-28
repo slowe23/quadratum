@@ -365,5 +365,10 @@ public class VirtualCore extends Thread implements Core {
 			e.printStackTrace();
 		}
 	}
+	
+	public boolean done()
+	{
+		return false;
+	}
 
 }

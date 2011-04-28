@@ -965,13 +965,32 @@ public class GameCore implements Core
 	/**
 	 * Flushes and closes the log.
 	 */
-	private void closeLog() {
-		try {
+	private void closeLog()
+	{
+		try
+		{
 			_log.flush();
 			_log.close();
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
-		
+	}
+	
+	/**
+	 * Returns if the game is done.
+	 * @return true if the game is over, false otherwise
+	 */
+	public boolean done()
+	{
+		if(_turn == -2)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

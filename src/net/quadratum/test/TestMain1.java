@@ -19,6 +19,7 @@ public class TestMain1 implements Main {
 		core.addPlayer(player1, "Test Player 1", 5);
 		core.addPlayer(player2, "Test Player 2", 5);
 		core.start();
+		while(!core.done()) {}
 	}
 
 	@Override
