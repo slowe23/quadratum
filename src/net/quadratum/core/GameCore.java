@@ -169,7 +169,7 @@ public class GameCore implements Core
 	{
 		if(_players.size() == 0)
 		{
-			// TODO add eception to throw
+			// TODO add exception to throw
 			log("Tried to start game with 0 players", 3);
 			return;
 		}
@@ -954,6 +954,7 @@ public class GameCore implements Core
 				}
 				_log.write(message + "\n");
 			}
+			_log.flush();
 		}
 		catch(Exception e)
 		{
