@@ -2,6 +2,8 @@ package net.quadratum.ai.test;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,10 +52,13 @@ public class TestAI_MTC extends AIPlayer {
 
 	@Override
 	public void turnStart() {
-		for (int id : _unitIDs) {
+		// Copy the list to avoid possible concurrent modification
+		// when updateMap is called
+		List<Integer> idsCopy = new LinkedList<Integer>(_unitIDs);
+		for (int id : idsCopy) {
 			// Give it a little time to think.
 			try {
-				Thread.sleep(500);
+				Thread.sleep(TestAIConstants.THINK_TIME);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
