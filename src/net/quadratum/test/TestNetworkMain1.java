@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.List;
 
 import net.quadratum.ai.test.TestAI_MTC;
-import net.quadratum.core.Core;
 import net.quadratum.core.GameCore;
 import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
@@ -28,7 +26,7 @@ public class TestNetworkMain1 implements Main {
 		Player player1 = new TestAI_MTC();
 		Player player2 = new TestAI_MTC();
 		// Create a core.
-		GameCore core = new GameCore(new TestMain1(), "null", new CheckWinner(), new ArrayList<Piece>());
+		GameCore core = new GameCore(new TestNetworkMain1(), "null", new CheckWinner(), new ArrayList<Piece>());
 		core.addPlayer(player1, "Test Player 1", 5);
 		createNetworkPlayer(player2, "Test Player 2", 5);
 		for (Player p : server.stopListening()) {
