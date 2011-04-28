@@ -254,6 +254,11 @@ public class VirtualCore extends Thread implements Core {
 		return i;
 	}
 	
+	@Override
+	public boolean done() {
+		return false;
+	}
+	
 	/**
 	 * Gets a response out of the map. Makes sure that no synchronization
 	 * issues occur. Deletes the data of the response afterwards.
@@ -364,11 +369,6 @@ public class VirtualCore extends Thread implements Core {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public boolean done()
-	{
-		return false;
 	}
 
 }
