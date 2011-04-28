@@ -1,6 +1,13 @@
 package net.quadratum.core;
 
-public class MapPoint {
+import java.io.Serializable;
+
+public class MapPoint implements Serializable {
+	
+	/**
+	 * Serialization UID
+	 */
+	private static final long serialVersionUID = -3278468716332610867L;
 	
 	/** The X coordinate of this Point. */
 	public int _x;
