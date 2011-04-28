@@ -594,9 +594,21 @@ public class GameCore implements Core
 			{
 				_players.get(j).updateTurn(_turn);
 			}
+			int resourcesGained = 0;
+			MapPoint point;
+			for(int j = 0; j < _unitInformation.size(); j++)
+			{
+				point = _unitInformation.get(j)._position;
+				if(_units.get(j)._owner == _turn && TerrainConstants.isOfType(_terrain[point._x][point._y], TerrainConstants.RESOURCES))
+				{
+					resourcesGained += Constants.RESOURCES_PER_TURN;
+				}
+			}
+			sendChatMessage(_turn, "You have gained " + resourcesGained + " resources.");
 			TurnStartThread turnStartThread = new TurnStartThread(_players.get(_turn));
 			turnStartThread.start();
-			log("Start of turn for player " + _turn, 1);
+			log("Start of turn for player " + _turn + "\n"
+				+ "\tResources gained: " + resourcesGained, 1);
 			return;
 		}
 		// If we have reached here, the game should be over...
@@ -626,7 +638,23 @@ public class GameCore implements Core
 	}
 	
 	/**
-	 * Sends a chat message to all players from the system
+	 * Sends a chat message to a player. from the system.
+	 * @param to the player to send the message to
+	 * @param message the message to send
+	 */
+	private void sendChatMessage(int to, String message)
+	{
+		synchronized(_chatLockObject)
+		{
+			_players.get(to).chatMessage(-1, new String(message));
+			log("System chat message\n"
+				+ "\tTo player: " + to + "\n"
+				+ "\tMessage: " + message, 1);
+		}
+	}
+	
+	/**
+	 * Sends a chat message to all players from the system.
 	 * @param message the message to send
 	 */
 	private void sendChatMessage(String message)
@@ -643,7 +671,7 @@ public class GameCore implements Core
 	}
 	
 	/**
-	 * Sends a chat message to all players
+	 * Sends a chat message to all players.
 	 * @param p the Player
 	 * @param message the message to send
 	 */
