@@ -1,8 +1,15 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
-import java.util.*;
+import net.quadratum.core.Action;
+import net.quadratum.core.Core;
+import net.quadratum.core.MapPoint;
+import net.quadratum.core.Unit;
 
 public class UnitsInfo {
 	private Core _core;

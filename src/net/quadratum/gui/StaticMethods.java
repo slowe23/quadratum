@@ -1,8 +1,13 @@
 package net.quadratum.gui;
 
-import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.Color;
+
+import javax.swing.BorderFactory;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 //Static convenience methods
 public class StaticMethods {
