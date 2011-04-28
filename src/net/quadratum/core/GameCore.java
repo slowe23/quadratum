@@ -1,9 +1,12 @@
 package net.quadratum.core;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.io.*;
 
 import net.quadratum.main.Main;
 
@@ -169,7 +172,7 @@ public class GameCore implements Core
 	{
 		if(_players.size() == 0)
 		{
-			// TODO add exception to throw
+			// TODO add eception to throw
 			log("Tried to start game with 0 players", 3);
 			return;
 		}
@@ -954,7 +957,6 @@ public class GameCore implements Core
 				}
 				_log.write(message + "\n");
 			}
-			_log.flush();
 		}
 		catch(Exception e)
 		{

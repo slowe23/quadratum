@@ -1,13 +1,15 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+
+import net.quadratum.core.MapData;
 
 public class GameWindow extends JFrame implements WindowListener {
 	private final Center _center;

@@ -1,9 +1,10 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
+import java.util.List;
 
 import javax.swing.JPanel;
-import java.util.List;
+
+import net.quadratum.core.Piece;
 
 public class BuildPanel extends JPanel {
 	public void setPieces(List<Piece> pieces) {
