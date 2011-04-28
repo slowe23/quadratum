@@ -39,7 +39,8 @@ public class Serializer {
 	 * @return a string representing this object.
 	 */
 	public static <T extends Serializable> String getEncodedString(T t) {
-		return _enc.encode(getByteArray(t));
+		// XXX hacky bullshit with replaceall
+		return _enc.encode(getByteArray(t)).replaceAll("(\r)?\n",""); 
 	}
 	
 	/**

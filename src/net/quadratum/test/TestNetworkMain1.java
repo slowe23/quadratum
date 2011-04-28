@@ -31,7 +31,7 @@ public class TestNetworkMain1 implements Main {
 			core.addPlayer(player1, "Test Player 1", 5);
 			createNetworkPlayer(player2, "Test Player 2", 5);
 			for (Player p : server.stopListening()) {
-				// TODO Massively hacky
+				// XXX Massively hacky
 				core.addPlayer(p, "Test Player 2", 5);
 			}
 			core.startGame();
