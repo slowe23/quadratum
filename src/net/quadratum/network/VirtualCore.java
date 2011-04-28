@@ -38,6 +38,9 @@ public class VirtualCore extends Thread implements Core {
 	/** Local player's information. */
 	PlayerInformation _localInfo;
 	
+	/** True if the game is over. */
+	boolean _done;
+	
 	/** Nonlocal players. */
 	List<VirtualPlayer> _virtualPlayers;
 	/** Nonlocal player information. */
@@ -59,6 +62,8 @@ public class VirtualCore extends Thread implements Core {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		_done = false;
 		
 		_responses = Collections.synchronizedMap(new HashMap<String,String>());
 		
@@ -87,29 +92,17 @@ public class VirtualCore extends Thread implements Core {
 
 	@Override
 	public void ready(Player p) {
-		try {
-			_out.write("ready\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("ready\n");
 	}
 
 	@Override
 	public void endTurn(Player p) {
-		try {
-			_out.write("endturn\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("endturn\n");
 	}
 
 	@Override
 	public boolean unitAction(Player p, int unitID, MapPoint coords) {
-		try {
-			_out.write("unitaction\t"+unitID+"\t"+coords._x+"\t"+coords._y+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("unitaction\t"+unitID+"\t"+coords._x+"\t"+coords._y+"\n");
 		// protocol: <unitaction \t> success
 		String[] s = getResponse("unitaction");
 		boolean b = false;
@@ -123,11 +116,7 @@ public class VirtualCore extends Thread implements Core {
 
 	@Override
 	public Map<MapPoint, ActionType> getValidActions(Player p, int unitID) {
-		try {
-			_out.write("getvalidactions\t"+unitID+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("getvalidactions\t"+unitID+"\n");
 		// protocol: <validactions \t> id \t mapobject
 		String[] s = getResponse("validactions");
 		return Serializer.<HashMap<MapPoint,ActionType>>getObject(s[2]);
@@ -135,29 +124,17 @@ public class VirtualCore extends Thread implements Core {
 
 	@Override
 	public void quit(Player p) {
-		try {
-			_out.write("quit\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("quit\n");
 	}
 
 	@Override
 	public void sendChatMessage(Player p, String message) {
-		try {
-			_out.write("chat\t"+message+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("chat\t"+message+"\n");
 	}
 
 	@Override
 	public int placeUnit(Player p, MapPoint coords, String name) {
-		try {
-			_out.write("placeunit\t"+coords._x+"\t"+coords._y+"\t"+name+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("placeunit\t"+coords._x+"\t"+coords._y+"\t"+name+"\n");
 		// protocol: <unitplaced \t> id
 		String[] s = getResponse("unitplaced");
 		int id = -1;
@@ -171,11 +148,7 @@ public class VirtualCore extends Thread implements Core {
 
 	@Override
 	public int getRemainingUnits(Player p) {
-		try {
-			_out.write("getremainingunits\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("getremainingunits\n");
 		// protocol: <remainingunits \t> remunits
 		String[] s = getResponse("remainingunits");
 		int i = 0;
@@ -190,11 +163,7 @@ public class VirtualCore extends Thread implements Core {
 	@Override
 	public Unit getUnit(Player p, int unitID) {
 		// this should be cached also
-		try {
-			_out.write("getunit\t"+unitID+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("getunit\t"+unitID+"\n");
 		// protocol: <unit \t> id \t unitobject
 		String[] s = getResponse("unit");
 		return Serializer.<Unit>getObject(s[1]);
@@ -202,11 +171,7 @@ public class VirtualCore extends Thread implements Core {
 
 	@Override
 	public boolean updateUnit(Player p, int unitID, int pieceID, MapPoint coords) {
-		try {
-			_out.write("updateunit\t"+unitID+"\t"+pieceID+"\t"+coords._x+"\t"+coords._y+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("updateunit\t"+unitID+"\t"+pieceID+"\t"+coords._x+"\t"+coords._y+"\n");
 		// protocol: <unitupdated \t> success
 		String[] s = getResponse("unitupdated");
 		boolean b = false;
@@ -224,11 +189,7 @@ public class VirtualCore extends Thread implements Core {
 			return _playerNames.get(player);
 		} else {
 			// trivial to cache
-			try {
-				_out.write("getplayername\t"+player+"\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			write("getplayername\t"+player+"\n");
 			// protocol: <playername \t> id \t name
 			String[] s = getResponse("playername");
 			_playerNames.put(player,s[1]);
@@ -238,11 +199,7 @@ public class VirtualCore extends Thread implements Core {
 
 	@Override
 	public int getResources(Player p) {
-		try {
-			_out.write("getresources\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("getresources\n");
 		// protocol: <resources \t> res
 		String[] s = getResponse("resources");
 		int i = 0;
@@ -256,7 +213,7 @@ public class VirtualCore extends Thread implements Core {
 	
 	@Override
 	public boolean done() {
-		return false;
+		return _done;
 	}
 	
 	/**
@@ -308,6 +265,7 @@ public class VirtualCore extends Thread implements Core {
 			// The game has ended.
 			// protocol: end \t statsobject
 			_localPlayer.end(Serializer.<GameStats>getObject(parts[1]));
+			_done = true;
 		} else if (parts[0].equals("lost")) {
 			// This player has just lost.
 			_localPlayer.lost();
@@ -356,14 +314,28 @@ public class VirtualCore extends Thread implements Core {
 	}
 	
 	/**
+	 * Writes to the socket.
+	 * @param s the string to write.
+	 */
+	private void write(String s) {
+		try {
+			System.out.println("Attempted to write: "+s);
+			_out.write(s);
+			_out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Runs this VirtualCore.
 	 */
 	public void run() {
-		boolean threadRunning = true;
 		
 		String line;
 		try {
-			while (threadRunning && (line = _in.readLine()) != null) {
+			while (!done() && (line = _in.readLine()) != null) {
+				System.out.println("Reading: "+line);
 				process(line);
 			}
 		} catch (IOException e) {

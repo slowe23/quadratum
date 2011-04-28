@@ -20,28 +20,32 @@ public class TestNetworkMain1 implements Main {
 
 	public static void main(String[] args)
 	{
-		ServerThread server = new ServerThread(_port);
-		server.start();
-		// Make some players.
-		Player player1 = new TestAI_MTC();
-		Player player2 = new TestAI_MTC();
-		// Create a core.
-		GameCore core = new GameCore(new TestNetworkMain1(), "null", new CheckWinner(), new ArrayList<Piece>());
-		core.addPlayer(player1, "Test Player 1", 5);
-		createNetworkPlayer(player2, "Test Player 2", 5);
-		for (Player p : server.stopListening()) {
-			// TODO Massively hacky
-			core.addPlayer(p, "Test Player 2", 5);
+		try {
+			ServerThread server = new ServerThread(_port);
+			server.start();
+			// Make some players.
+			Player player1 = new TestAI_MTC();
+			Player player2 = new TestAI_MTC();
+			// Create a core.
+			GameCore core = new GameCore(new TestNetworkMain1(), "null", new CheckWinner(), new ArrayList<Piece>());
+			core.addPlayer(player1, "Test Player 1", 5);
+			createNetworkPlayer(player2, "Test Player 2", 5);
+			for (Player p : server.stopListening()) {
+				// TODO Massively hacky
+				core.addPlayer(p, "Test Player 2", 5);
+			}
+			core.start();
+			while(!core.done()) {}
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			System.exit(0);
 		}
-		core.start();
-		while(!core.done()) {}
 	}
 	
 	private static void createNetworkPlayer(Player p, String name, int maxUnits) {
 		try {
 			Socket sock = new Socket("localhost",_port);
 			VirtualCore vc = new VirtualCore(sock);
-			// At some point, dummy players using VirtualPlayer?
 			vc.addPlayer(p, name, maxUnits);
 			vc.start();
 		} catch (UnknownHostException e) {
