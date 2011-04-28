@@ -1,10 +1,5 @@
 package net.quadratum.network;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,14 +19,7 @@ import net.quadratum.core.PlayerInformation;
 import net.quadratum.core.Unit;
 import net.quadratum.util.Serializer;
 
-public class VirtualCore extends Thread implements Core {
-	
-	/** Socket that connects to the actual player. */
-	Socket _sockToServer;
-	/** Buffered writer to the player. */
-	BufferedWriter _out;
-	/** Buffered reader from the player. */
-	BufferedReader _in;
+public class VirtualCore extends NetworkClient implements Core {
 	
 	/** Local player. */
 	Player _localPlayer;
@@ -55,13 +43,7 @@ public class VirtualCore extends Thread implements Core {
 	Map<Integer,String> _playerNames;
 	
 	public VirtualCore(Socket sock) {
-		_sockToServer = sock;
-		try {
-			_out = new BufferedWriter(new OutputStreamWriter(_sockToServer.getOutputStream()));
-			_in = new BufferedReader(new InputStreamReader(_sockToServer.getInputStream()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		super(sock);
 		
 		_done = false;
 		
@@ -87,7 +69,8 @@ public class VirtualCore extends Thread implements Core {
 
 	@Override
 	public void startGame() {
-		start();
+		// Start this thread, so it can listen for messages.
+		new ReadThread().start();
 	}
 
 	@Override
@@ -119,7 +102,7 @@ public class VirtualCore extends Thread implements Core {
 		write("getvalidactions\t"+unitID+"\n");
 		// protocol: <validactions \t> id \t mapobject
 		String[] s = getResponse("validactions");
-		return Serializer.<HashMap<MapPoint,ActionType>>getObject(s[2]);
+		return Serializer.<HashMap<MapPoint,ActionType>>getObject(s[1]);
 	}
 
 	@Override
@@ -240,7 +223,8 @@ public class VirtualCore extends Thread implements Core {
 	 * Processes the message that is given.
 	 * @param message a message from the host.
 	 */
-	private void process(String message) {
+	@Override
+	protected void process(String message) {
 		String[] parts = message.split("\t");
 		// Look at the first part of the incoming message
 		if (parts[0].equals("start")) {
@@ -312,35 +296,9 @@ public class VirtualCore extends Thread implements Core {
 			_responses.put(parts[0],resp);
 		}
 	}
-	
-	/**
-	 * Writes to the socket.
-	 * @param s the string to write.
-	 */
-	private void write(String s) {
-		try {
-			System.out.println("Attempted to write: "+s);
-			_out.write(s);
-			_out.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Runs this VirtualCore.
-	 */
-	public void run() {
-		
-		String line;
-		try {
-			while (!done() && (line = _in.readLine()) != null) {
-				System.out.println("Reading: "+line);
-				process(line);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
+	@Override
+	protected boolean doneReading() {
+		return _done;
+	}
 }
