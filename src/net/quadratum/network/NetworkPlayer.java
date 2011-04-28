@@ -1,6 +1,5 @@
 package net.quadratum.network;
 
-import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,11 +53,6 @@ public class NetworkPlayer extends NetworkClient implements Player {
 	@Override
 	public void end(GameStats stats) {
 		write("end\t"+Serializer.getEncodedString(stats)+"\n");
-		try {
-			_sock.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		_done = true;
 	}
 
@@ -217,8 +211,9 @@ public class NetworkPlayer extends NetworkClient implements Player {
 	}
 	
 	@Override
-	protected void cleanUp() {
+	public void close() {
 		_core.quit(this);
+		super.close();
 	}
 
 }
