@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.List;
 
 import net.quadratum.ai.test.TestAI_MTC;
-import net.quadratum.core.Core;
 import net.quadratum.core.GameCore;
 import net.quadratum.core.Piece;
 import net.quadratum.core.Player;

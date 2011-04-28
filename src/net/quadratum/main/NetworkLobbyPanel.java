@@ -1,9 +1,12 @@
 package net.quadratum.main;
 
-import javax.swing.*;
+import java.awt.Component;
+import java.awt.event.ActionListener;
 
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 public class NetworkLobbyPanel extends JPanel {
 

@@ -2,7 +2,6 @@ package net.quadratum.test;
 
 import java.util.ArrayList;
 
-import net.quadratum.ai.AIPlayer;
 import net.quadratum.ai.test.TestAI_MTC;
 import net.quadratum.core.GameCore;
 import net.quadratum.core.Piece;
