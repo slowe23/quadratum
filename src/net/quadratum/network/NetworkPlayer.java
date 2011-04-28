@@ -51,29 +51,21 @@ public class NetworkPlayer extends Thread implements Player {
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {
 		_core = core;
 		_playerID = id;
-		try {
-			_out.write("start\t"+Serializer.getEncodedString(mapData)+
-					"\t"+id+"\t"+totalPlayers+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("start\t"+Serializer.getEncodedString(mapData)+
+				"\t"+id+"\t"+totalPlayers+"\n");
 	}
 	
 	@Override
 	public void updatePieces(List<Piece> pieces) {
 		// Copy to ArrayList because List does not implement Serializable.
 		ArrayList<Piece> p = new ArrayList<Piece>(pieces);
-		try {
-			_out.write("updatepieces\t"+Serializer.getEncodedString(p)+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("updatepieces\t"+Serializer.getEncodedString(p)+"\n");
 	}
 	
 	@Override
 	public void end(GameStats stats) {
+		write("end\t"+Serializer.getEncodedString(stats)+"\n");
 		try {
-			_out.write("end\t"+Serializer.getEncodedString(stats)+"\n");
 			_sockToPlayer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -83,30 +75,17 @@ public class NetworkPlayer extends Thread implements Player {
 
 	@Override
 	public void lost() {
-		try {
-			_out.write("lost\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("lost\n");
 	}
 
 	@Override
 	public void turnStart() {
-		try {
-			_out.write("turnstart");
-			_out.newLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("turnstart\n");
 	}
 
 	@Override
 	public void updateMapData(MapData mapData) {
-		try {
-			_out.write("mapdata\t"+Serializer.getEncodedString(mapData)+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("mapdata\t"+Serializer.getEncodedString(mapData)+"\n");
 	}
 
 	@Override
@@ -114,30 +93,18 @@ public class NetworkPlayer extends Thread implements Player {
 		// Copy this to a HashMap because the Map interface does not
 		// implement Serializable directly.
 		HashMap<MapPoint,Integer> map = new HashMap<MapPoint,Integer>(units);
-		try {
-			_out.write("updatemap\t"+Serializer.getEncodedString(map)+"\t"
-					+Serializer.getEncodedString(lastAction)+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("updatemap\t"+Serializer.getEncodedString(map)+"\t"
+				+Serializer.getEncodedString(lastAction)+"\n");
 	}
 	
 	@Override
 	public void chatMessage(int from, String message) {
-		try {
-			_out.write("chat\t"+from+"\t"+message+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("chat\t"+from+"\t"+message+"\n");
 	}
 	
 	@Override
 	public void updateTurn(int turn) {
-		try {
-			_out.write("updateturn\t"+turn+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		write("updateturn\t"+turn+"\n");
 	}
 	
 	/**
@@ -166,11 +133,7 @@ public class NetworkPlayer extends Thread implements Player {
 				e.printStackTrace();
 			}
 			// send back whether or not it succeeded
-			try {
-				_out.write("unitaction\t"+success+"\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			write("unitaction\t"+success+"\n");
 		} else if (parts[0].equals("getvalidactions")) {
 			// The player is requesting valid actions.
 			int id = -1;
@@ -184,11 +147,7 @@ public class NetworkPlayer extends Thread implements Player {
 				new HashMap<MapPoint, Action.ActionType>(
 						_core.getValidActions(this,id));
 			// Write the data...
-			try {
-				_out.write("validactions\t"+id+"\t"+Serializer.getEncodedString(map)+"\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			write("validactions\t"+id+"\t"+Serializer.getEncodedString(map)+"\n");
 		} else if (parts[0].equals("quit")) {
 			// The player has quit.
 			_core.quit(this);
@@ -208,20 +167,12 @@ public class NetworkPlayer extends Thread implements Player {
 				e.printStackTrace();
 			}
 			// send back whether or not it succeeded
-			try {
-				_out.write("unitplaced\t"+id+"\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			write("unitplaced\t"+id+"\n");
 		} else if (parts[0].equals("getremainingunits")) {
 			// The player wants to know how many units they have left to place.
 			int remunits = _core.getRemainingUnits(this);
 			// send back the remaining units count
-			try {
-				_out.write("remainingunits\t"+remunits+"\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			write("remainingunits\t"+remunits+"\n");
 		} else if (parts[0].equals("getunit")) {
 			// The player wants to get a particular unit.
 			Unit u = null;
@@ -234,11 +185,7 @@ public class NetworkPlayer extends Thread implements Player {
 				e.printStackTrace();
 			}
 			// Write the unit back across the wire...
-			try {
-				_out.write("unit\t"+id+"\t"+Serializer.getEncodedString(u)+"\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			write("unit\t"+id+"\t"+Serializer.getEncodedString(u)+"\n");
 		} else if (parts[0].equals("updateunit")) {
 			// The player wants to update a unit with a piece.
 			boolean success = false;
@@ -253,11 +200,7 @@ public class NetworkPlayer extends Thread implements Player {
 				e.printStackTrace();
 			}
 			// send back whether it succeeded
-			try {
-				_out.write("unitupdated\t"+success+"\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			write("unitupdated\t"+success+"\n");
 		} else if (parts[0].equals("getplayername")) {
 			// The player wants to know the name of a given player.
 			int id = -1;
@@ -270,20 +213,26 @@ public class NetworkPlayer extends Thread implements Player {
 				e.printStackTrace();
 			}
 			// send back the id and player name
-			try {
-				_out.write("playername\t"+id+"\t"+name+"\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			write("playername\t"+id+"\t"+name+"\n");
 		} else if (parts[0].equals("getresources")) {
 			// The player wants to know how many resources he has.
 			int res = _core.getResources(this);
 			// send back the amount of resources
-			try {
-				_out.write("resources\t"+res+"\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			write("resources\t"+res+"\n");
+		}
+	}
+	
+	/**
+	 * Writes to the socket.
+	 * @param s the string to write.
+	 */
+	private void write(String s) {
+		try {
+			System.out.println("Attempted to write: "+s);
+			_out.write(s);
+			_out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	

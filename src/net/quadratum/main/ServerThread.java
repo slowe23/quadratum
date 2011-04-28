@@ -39,7 +39,7 @@ public class ServerThread extends Thread {
 		// Create the ServerSocket that everything will connect to.
 		try {
 			server = new ServerSocket(_port);
-			server.setSoTimeout(5000);
+			server.setSoTimeout(1000);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
