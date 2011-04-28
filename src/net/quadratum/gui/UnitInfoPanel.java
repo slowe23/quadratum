@@ -1,11 +1,14 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
-import net.quadratum.core.Block.*;
-
 import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import net.quadratum.core.Block.BonusType;
+import net.quadratum.core.Core;
+import net.quadratum.core.Unit;
 
 public class UnitInfoPanel extends JPanel {
 	private Core _core;

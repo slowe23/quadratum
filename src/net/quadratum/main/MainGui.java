@@ -1,15 +1,23 @@
 package net.quadratum.main;
 
-import javax.swing.*;
-
-import net.quadratum.ai.AIPlayer;
-import net.quadratum.ai.InstantiableAI;
-import net.quadratum.core.*;
-import net.quadratum.gui.GUIPlayer;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.ArrayList;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import net.quadratum.ai.InstantiableAI;
+import net.quadratum.core.GameCore;
+import net.quadratum.core.Piece;
+import net.quadratum.core.Player;
+import net.quadratum.core.WinCondition;
+import net.quadratum.gui.GUIPlayer;
 
 public class MainGui extends JFrame 
 					 implements Main, ActionListener, ComponentListener {

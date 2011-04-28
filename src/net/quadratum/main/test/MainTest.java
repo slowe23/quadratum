@@ -1,11 +1,12 @@
 package net.quadratum.main.test;
 
-import net.quadratum.gui.*;
-import net.quadratum.core.*;
-import net.quadratum.main.*;
-import net.quadratum.ai.test.*;
-import java.util.HashMap;
 import java.util.ArrayList;
+
+import net.quadratum.ai.test.TestAI_MTC;
+import net.quadratum.core.GameCore;
+import net.quadratum.core.Piece;
+import net.quadratum.gui.GUIPlayer;
+import net.quadratum.main.Main;
 
 public class MainTest implements Main {
 	

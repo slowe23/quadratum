@@ -1,6 +1,6 @@
 package net.quadratum.main;
 
-import net.quadratum.core.*;
+import net.quadratum.core.WinCondition;
 
 public interface Settings {
 
