@@ -41,10 +41,15 @@ public class VirtualCore extends Thread implements Core {
 	/** Nonlocal players. */
 	List<VirtualPlayer> _virtualPlayers;
 	/** Nonlocal player information. */
+	// Should actual ID be stored in here?
 	List<PlayerInformation> _virtualInfo;
 	
-	/** Used for storage. */
+	/** Used for response storage. */
 	Map<String,String> _responses;
+	
+	// CACHEING ----------------------------
+	/** Maps number to player name. */
+	Map<Integer,String> _playerNames;
 	
 	public VirtualCore(Socket sock) {
 		_sockToServer = sock;
@@ -55,7 +60,9 @@ public class VirtualCore extends Thread implements Core {
 			e.printStackTrace();
 		}
 		
-		_responses = Collections.synchronizedMap(new HashMap<String,String>());		
+		_responses = Collections.synchronizedMap(new HashMap<String,String>());
+		
+		_playerNames = new HashMap<Integer,String>();
 	}
 
 	@Override
@@ -164,7 +171,6 @@ public class VirtualCore extends Thread implements Core {
 
 	@Override
 	public int getRemainingUnits(Player p) {
-		// this should be cached
 		try {
 			_out.write("getremainingunits\n");
 		} catch (IOException e) {
@@ -191,7 +197,7 @@ public class VirtualCore extends Thread implements Core {
 		}
 		// protocol: <unit \t> id \t unitobject
 		String[] s = getResponse("unit");
-		return (Unit) Serializer.getObject(s[1]);
+		return Serializer.<Unit>getObject(s[1]);
 	}
 
 	@Override
@@ -214,23 +220,20 @@ public class VirtualCore extends Thread implements Core {
 	
 	@Override
 	public String getPlayerName(int player) {
-		// trivial to cache
-		try {
-			_out.write("getplayername\t"+player+"\n");
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (_playerNames.containsKey(player)) {
+			return _playerNames.get(player);
+		} else {
+			// trivial to cache
+			try {
+				_out.write("getplayername\t"+player+"\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			// protocol: <playername \t> id \t name
+			String[] s = getResponse("playername");
+			_playerNames.put(player,s[1]);
+			return s[1];
 		}
-		// protocol: <playername \t> id \t name
-		String[] s = getResponse("playername");
-		/*
-		int id = 0;
-		try {
-			id = Integer.parseInt(s[0]);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
-		*/
-		return s[1];
 	}
 
 	@Override
