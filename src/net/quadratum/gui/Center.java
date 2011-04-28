@@ -1,8 +1,15 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
-import java.util.*;
+import net.quadratum.core.Action;
+import net.quadratum.core.Core;
+import net.quadratum.core.MapData;
+import net.quadratum.core.MapPoint;
+import net.quadratum.core.Piece;
+import net.quadratum.core.Unit;
 
 public class Center {
 	private Core _core;

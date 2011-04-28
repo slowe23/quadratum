@@ -1,10 +1,16 @@
 package net.quadratum.gui;
 
-import net.quadratum.core.*;
-import net.quadratum.core.Action.*;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Polygon;
 import java.awt.image.BufferedImage;
+
+import net.quadratum.core.Action.ActionType;
+import net.quadratum.core.Block;
+import net.quadratum.core.MapPoint;
+import net.quadratum.core.Piece;
+import net.quadratum.core.TerrainConstants;
+import net.quadratum.core.Unit;
 
 public class DrawingMethods {
 	private static final Color[] PLAYER_COLORS = {Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.PINK};
