@@ -102,6 +102,7 @@ public class TestAI_MTC extends AIPlayer {
 		_core.endTurn(this);
 	}
 	
+	/** Calculates the Manhattan distance between two points. */
 	private int distance(MapPoint mp1, MapPoint mp2) {
 		return Math.abs(mp1._x-mp2._x) + Math.abs(mp1._y-mp2._y);
 	}

@@ -9,11 +9,13 @@ import net.quadratum.core.WinCondition;
 
 public class CheckWinner implements WinCondition
 {
+	@Override
 	public boolean hasPlayerWon(Map<MapPoint, Unit> units, PlayerInformation playerInformation)
 	{
 		return false;
 	}
 	
+	@Override
     public boolean hasPlayerLost(Map<MapPoint, Unit> units, PlayerInformation playerInformation)
 	{
 		if(units.size() == 0)
