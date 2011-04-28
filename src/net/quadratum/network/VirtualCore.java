@@ -299,7 +299,7 @@ public class VirtualCore extends Thread implements Core {
 		} else if (parts[0].equals("end")) {
 			// The game has ended.
 			// protocol: end \t statsobject
-			_localPlayer.end((GameStats) Serializer.getObject(parts[1]));
+			_localPlayer.end(Serializer.<GameStats>getObject(parts[1]));
 		} else if (parts[0].equals("lost")) {
 			// This player has just lost.
 			_localPlayer.lost();
@@ -309,7 +309,7 @@ public class VirtualCore extends Thread implements Core {
 		} else if (parts[0].equals("mapdata")) {
 			// The host is sending new map data.
 			// protocol: mapdata \t mdobject
-			_localPlayer.updateMapData((MapData)Serializer.getObject(parts[1]));
+			_localPlayer.updateMapData(Serializer.<MapData>getObject(parts[1]));
 		} else if (parts[0].equals("updatemap")) {
 			// The host is sending new information about units and actions.
 			// protocol: updatemap \t mapobject \t actobject
