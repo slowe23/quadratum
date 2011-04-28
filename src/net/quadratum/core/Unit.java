@@ -64,12 +64,15 @@ public class Unit implements Serializable {
 		}
 	}
 	
-	/** Tests whether the two objects represent the same unit */
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof Unit) && (_id == ((Unit)o)._id);
 	}
 	
+	@Override
 	public int hashCode() {
+		// TODO is this necessary? if id is not a sequential number, or
+		// even if it is, we can just return id...
 		return new Integer(_id).hashCode();
 	}
 }

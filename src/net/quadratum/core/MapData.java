@@ -35,7 +35,9 @@ public class MapData implements Serializable {
 		}
 	}
 	
-	//Construct a map data with null contents
+	/**
+	 * Constructor for MapData will null contents.
+	 */
 	public MapData() {
 		_terrain = null;
 		_placementArea = null;

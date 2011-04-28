@@ -1,10 +1,5 @@
 package net.quadratum.network;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +16,7 @@ import net.quadratum.core.Player;
 import net.quadratum.core.Unit;
 import net.quadratum.util.Serializer;
 
-public class NetworkPlayer extends Thread implements Player {
+public class NetworkPlayer extends NetworkClient implements Player {
 	
 	/** Core that this Player belongs to. */
 	Core _core;
@@ -29,22 +24,13 @@ public class NetworkPlayer extends Thread implements Player {
 	/** Player ID of this Player. */
 	int _playerID;
 	
-	/** Socket that connects to the actual player. */
-	Socket _sockToPlayer;
-	/** Buffered writer to the player. */
-	BufferedWriter _out;
-	/** Buffered reader from the player. */
-	BufferedReader _in;
+	/** */
+	boolean _done;
 	
 	public NetworkPlayer(Socket sock) {
-		_sockToPlayer = sock;
-		try {
-			_out = new BufferedWriter(new OutputStreamWriter(_sockToPlayer.getOutputStream()));
-			_in = new BufferedReader(new InputStreamReader(_sockToPlayer.getInputStream()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		super(sock);
 		
+		_done = false;
 	}
 	
 	@Override
@@ -53,6 +39,8 @@ public class NetworkPlayer extends Thread implements Player {
 		_playerID = id;
 		write("start\t"+Serializer.getEncodedString(mapData)+
 				"\t"+id+"\t"+totalPlayers+"\n");
+		// Start this thread, so it can listen for messages.
+		new ReadThread().start();
 	}
 	
 	@Override
@@ -65,12 +53,7 @@ public class NetworkPlayer extends Thread implements Player {
 	@Override
 	public void end(GameStats stats) {
 		write("end\t"+Serializer.getEncodedString(stats)+"\n");
-		try {
-			_sockToPlayer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+		_done = true;
 	}
 
 	@Override
@@ -107,11 +90,8 @@ public class NetworkPlayer extends Thread implements Player {
 		write("updateturn\t"+turn+"\n");
 	}
 	
-	/**
-	 * Process the message that is given.
-	 * @param message the message sent from the client.
-	 */
-	private void process(String message) {
+	@Override
+	protected void process(String message) {
 		String[] parts = message.split("\t");
 		// Look at the first part of the incoming message
 		if (parts[0].equals("ready")) {
@@ -143,9 +123,12 @@ public class NetworkPlayer extends Thread implements Player {
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
-			HashMap<MapPoint, Action.ActionType> map = 
-				new HashMap<MapPoint, Action.ActionType>(
-						_core.getValidActions(this,id));
+			// Get the valid actions for this unit.
+			HashMap<MapPoint, Action.ActionType> map = null;
+			Map<MapPoint,Action.ActionType> valid = _core.getValidActions(this,id);
+			if (valid != null) {
+				map = new HashMap<MapPoint, Action.ActionType>(valid);
+			}
 			// Write the data...
 			write("validactions\t"+id+"\t"+Serializer.getEncodedString(map)+"\n");
 		} else if (parts[0].equals("quit")) {
@@ -221,40 +204,16 @@ public class NetworkPlayer extends Thread implements Player {
 			write("resources\t"+res+"\n");
 		}
 	}
-	
-	/**
-	 * Writes to the socket.
-	 * @param s the string to write.
-	 */
-	private void write(String s) {
-		try {
-			System.out.println("Writing: "+s);
-			_out.write(s);
-			_out.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+	@Override
+	protected boolean doneReading() {
+		return _done;
 	}
 	
-	/**
-	 * Runs this NetworkPlayer.
-	 */
-	public void run() {
-		boolean threadRunning = true;
-		
-		String line;
-		try {
-			while (threadRunning && (line = _in.readLine()) != null) {
-				if (_sockToPlayer.isClosed()) {
-					// Player has disconnected, quit.
-					_core.quit(this);
-					break;
-				}
-				process(line);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	@Override
+	public void close() {
+		_core.quit(this);
+		super.close();
 	}
 
 }
