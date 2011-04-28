@@ -168,7 +168,7 @@ public class GameCore implements Core
 	/**
 	 * Starts the game.
 	 */
-	public void start()
+	public void startGame()
 	{
 		if(_players.size() == 0)
 		{

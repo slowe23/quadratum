@@ -17,7 +17,7 @@ public class MainTest implements Main {
 		GameCore core = new GameCore(new MainTest(), "null", new CheckWinnerTest(), new ArrayList<Piece>());
 		core.addPlayer(ai, "AI Player", 10);
 		core.addPlayer(player, "Test Player", 10);
-		core.start();
+		core.startGame();
 	}
 
 	@Override

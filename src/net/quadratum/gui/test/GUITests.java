@@ -9,6 +9,6 @@ public class GUITests {
 		GUIPlayer pl = new GUIPlayer();
 		Core c = new TestingCore();
 		c.addPlayer(pl, "Test Player", 100);
-		c.start();
+		c.startGame();
 	}
 }

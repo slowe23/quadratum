@@ -86,8 +86,8 @@ public class VirtualCore extends Thread implements Core {
 	}
 
 	@Override
-	public void start() {
-		// The VirtualCore has no control over this.
+	public void startGame() {
+		start();
 	}
 
 	@Override
