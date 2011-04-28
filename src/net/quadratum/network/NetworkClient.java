@@ -2,12 +2,13 @@ package net.quadratum.network;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
-public abstract class NetworkClient {
+public abstract class NetworkClient implements Closeable {
 	
 	/** Socket that this NetworkClient is using. */
 	Socket _sock;
@@ -46,15 +47,21 @@ public abstract class NetworkClient {
 	protected abstract void process(String s);
 	
 	/**
-	 * Cleans up after the read loop is over.
-	 */
-	protected void cleanUp() {}
-	
-	/**
 	 * Finds whether or not this NetworkClient is done reading.
 	 * @return true if the client is done, false otherwise.
 	 */
 	protected abstract boolean doneReading();
+	
+	@Override
+	public void close() {
+		try {
+			_out.close();
+			_in.close();
+			_sock.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	class ReadThread extends Thread {
 		
@@ -70,12 +77,13 @@ public abstract class NetworkClient {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			cleanUp();
+			close();
 		}
 	}
 	
 	class ProcessThread extends Thread {
 		
+		/** The string that this thread must process. */
 		String _toProcess;
 		
 		ProcessThread(String toProcess) {
