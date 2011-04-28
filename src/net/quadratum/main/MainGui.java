@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import net.quadratum.ai.InstantiableAI;
+import net.quadratum.ai.test.TestAI_MTC;
 import net.quadratum.core.GameCore;
 import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
@@ -133,7 +133,8 @@ public class MainGui extends JFrame
 		GameCore gc = new GameCore(this, map, wc, pieces);
 		//then create GuiPlayer and AIPlayer
 		Player human = new GUIPlayer();
-		Player ai = new InstantiableAI();
+		// TODO make this not a test AI later
+		Player ai = new TestAI_MTC();
 		
 		int maxU = set.getMaxUnits();
 		gc.addPlayer(human, "human", maxU);

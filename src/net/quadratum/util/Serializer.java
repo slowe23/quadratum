@@ -12,7 +12,10 @@ import sun.misc.BASE64Encoder;
 
 public class Serializer {
 	
+	// TODO use better base64 stuff
+	/** Base64 encoder. */
 	static BASE64Encoder _enc = new BASE64Encoder();
+	/** Base64 decoder. */
 	static BASE64Decoder _dec = new BASE64Decoder();
 	
 	/**
