@@ -228,6 +228,7 @@ public class NetworkPlayer extends Thread implements Player {
 	 */
 	private void write(String s) {
 		try {
+			System.out.println("Writing: "+s);
 			_out.write(s);
 			_out.flush();
 		} catch (IOException e) {
