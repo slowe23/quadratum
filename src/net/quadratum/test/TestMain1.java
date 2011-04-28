@@ -17,7 +17,7 @@ public class TestMain1 implements Main {
 		GameCore core = new GameCore(new TestMain1(), "null", new CheckWinner(), new ArrayList<Piece>());
 		core.addPlayer(player1, "Test Player 1", 5);
 		core.addPlayer(player2, "Test Player 2", 5);
-		core.start();
+		core.startGame();
 		while(!core.done()) {}
 	}
 

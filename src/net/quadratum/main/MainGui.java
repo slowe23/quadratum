@@ -139,7 +139,7 @@ public class MainGui extends JFrame
 		gc.addPlayer(human, "human", maxU);
 		gc.addPlayer(ai, "ai", maxU);
 		
-		gc.start();
+		gc.startGame();
 		hideMe();
 	}
 	

@@ -38,7 +38,7 @@ public class TestingCore implements Core {
 	/**
 	 * Starts the game.
 	 */
-	public void start() {
+	public void startGame() {
 		_index = new Random().nextInt(8);
 		_player.start(this, createRandomMapData(30, 40), _index, 8);
 	}

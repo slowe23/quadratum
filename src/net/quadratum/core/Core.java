@@ -15,7 +15,7 @@ public interface Core {
 	/**
 	 * Starts the game.
 	 */
-	public void start();
+	public void startGame();
 	
 	/**
 	 * Callback that alerts the core when a player is ready to start the game,

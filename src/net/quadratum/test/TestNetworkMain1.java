@@ -34,7 +34,7 @@ public class TestNetworkMain1 implements Main {
 				// TODO Massively hacky
 				core.addPlayer(p, "Test Player 2", 5);
 			}
-			core.start();
+			core.startGame();
 			while(!core.done()) {}
 		} catch (NullPointerException e) {
 			e.printStackTrace();
@@ -47,7 +47,7 @@ public class TestNetworkMain1 implements Main {
 			Socket sock = new Socket("localhost",_port);
 			VirtualCore vc = new VirtualCore(sock);
 			vc.addPlayer(p, name, maxUnits);
-			vc.start();
+			vc.startGame();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
