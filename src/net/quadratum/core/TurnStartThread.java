@@ -3,6 +3,7 @@ package net.quadratum.core;
 
 public class TurnStartThread extends Thread
 {
+	/** Player whose turn this thread needs to start. */
 	Player _player;
 		
 	/**
