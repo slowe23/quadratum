@@ -8,6 +8,9 @@ public class Piece {
 	/** The Blocks that make up this Piece. */
 	public Map<MapPoint, Block> _blocks;
 	
+	//Cached bounding box values
+	private int[] _bounds;
+	
 	/** The cost of this Piece. */
 	public int _cost;
 	
@@ -42,17 +45,21 @@ public class Piece {
 	 * Copy constructor for Piece.
 	 * @param piece the Piece to copy
 	 */
-	public Piece(Piece piece)
-	{
+	public Piece(Piece piece) {
+		this(piece._blocks, piece._cost, piece._max, piece._name, piece._description);
+	}
+	
+	/** Explicit constructor */
+	public Piece(Map<MapPoint, Block> blocks, int cost, int max, String name, String description) {
 		_blocks = new HashMap<MapPoint, Block>();
-		for(MapPoint key : piece._blocks.keySet())
-		{
-			_blocks.put(new MapPoint(key), new Block(piece._blocks.get(key)));
+		for(Map.Entry<MapPoint, Block> entry : blocks.entrySet()) {
+			_blocks.put(new MapPoint(entry.getKey()), new Block(entry.getValue()));
 		}
-		_cost = piece._cost;
-		_max = piece._max;
-		_name = new String(piece._name);
-		_description = new String(piece._description);
+		
+		_cost = cost;
+		_max = max;
+		_name = name;  //Strings are immutable
+		_description = description;
 	}
 	
 	/**
@@ -60,21 +67,24 @@ public class Piece {
 	 * Coordinates are stored in the following order: {min_x, min_y, max_x, max_y}
 	 */
 	public int[] getBounds() {
-		int[] bounds = new int[4];
-		boolean any = false;
-		for(MapPoint m : _blocks.keySet()) {
-			if(!any || m._x<bounds[0])
-				bounds[0] = m._x;
-			if(!any || m._y<bounds[1])
-				bounds[1] = m._y;
-			if(!any || m._x>bounds[2])
-				bounds[2] = m._x;
-			if(!any || m._y>bounds[3])
-				bounds[3] = m._y;
+		if(_bounds==null) {
+			_bounds = new int[4];
+			boolean any = false;
+			for(MapPoint m : _blocks.keySet()) {
+				if(!any || m._x<_bounds[0])
+					_bounds[0] = m._x;
+				if(!any || m._y<_bounds[1])
+					_bounds[1] = m._y;
+				if(!any || m._x>_bounds[2])
+					_bounds[2] = m._x;
+				if(!any || m._y>_bounds[3])
+					_bounds[3] = m._y;
 
-			any = true;
+				any = true;
+			}	
 		}
-		return bounds;
+		
+		return _bounds;
 	}
 	
 	/**

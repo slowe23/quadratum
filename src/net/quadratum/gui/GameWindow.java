@@ -74,9 +74,9 @@ public class GameWindow extends JFrame implements WindowListener {
 		UnitPanel units = new UnitPanel();
 		infoArea.addTab("Units", units);
 		
-		//Add build tab
-		BuildPanel build = new BuildPanel();
-		infoArea.addTab("Build", build);
+		//Add pieces tab
+		PiecesPanel pieces = new PiecesPanel(drawingMethods);
+		infoArea.addTab("Pieces", pieces);
 		
 		//Add objectives tab
 		JPanel objectives = new JPanel();
@@ -94,7 +94,7 @@ public class GameWindow extends JFrame implements WindowListener {
 		
 		content.add(controls, BorderLayout.SOUTH);
 		
-		center.setComponents(map, uInfo, uImg, units, build);
+		center.setComponents(map, uInfo, uImg, units, pieces);
 	}
 	
 	public void windowDeactivated(WindowEvent e) { }

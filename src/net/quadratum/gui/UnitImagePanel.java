@@ -26,7 +26,7 @@ public class UnitImagePanel extends JPanel {
 		Unit u = _unitsInfo.getSelected();
 		if(u!=null) {
 			int uSize = u._size;
-			int scale = Math.min(getWidth()/uSize, getHeight()/uSize);
+			int scale = Math.min(getWidth()/(uSize+2), getHeight()/(uSize+2));
 			int uSSize = scale*uSize;
 			int ox = (getWidth()-uSSize)/2, oy = (getHeight()-uSSize)/2;
 
@@ -36,8 +36,8 @@ public class UnitImagePanel extends JPanel {
 			g.setColor(_drawingMethods.NEUTRAL_COLOR);
 			for(int i = 1; i<uSize; i++) {
 				int sI = scale*i;
-				g.drawLine(ox+sI, oy, ox+sI-1, oy+uSSize-1);
-				g.drawLine(ox, oy+sI, ox+uSSize-1, oy+sI-1);
+				g.drawLine(ox+sI-1, oy, ox+sI-1, oy+uSSize-1);
+				g.drawLine(ox, oy+sI-1, ox+uSSize-1, oy+sI-1);
 			}
 			
 			BufferedImage mask = new BufferedImage(scale, scale, BufferedImage.TYPE_INT_ARGB);
