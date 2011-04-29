@@ -744,10 +744,10 @@ public class GameCore implements Core
 				// TODO make heart blocks size and position based on unit size
 				Block heartBlock = new Block(Constants.HEART_HEALTH);
 				heartBlock._bonuses.put(Block.BonusType.HEART, 1);
+				toAdd._blocks.put(new MapPoint(3, 3), new Block(heartBlock));
+				toAdd._blocks.put(new MapPoint(3, 4), new Block(heartBlock));
+				toAdd._blocks.put(new MapPoint(4, 3), new Block(heartBlock));
 				toAdd._blocks.put(new MapPoint(4, 4), new Block(heartBlock));
-				toAdd._blocks.put(new MapPoint(4, 5), new Block(heartBlock));
-				toAdd._blocks.put(new MapPoint(5, 4), new Block(heartBlock));
-				toAdd._blocks.put(new MapPoint(5, 5), new Block(heartBlock));
 				toAdd._stats.put(Block.BonusType.HEART, 4);
 				_units.add(toAdd);
 				_unitInformation.add(new UnitInformation(coords));
