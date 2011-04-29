@@ -23,22 +23,25 @@ public class TestAI_MTC extends AIPlayer {
 	@Override
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {
 		super.start(core, mapData, id, totalPlayers);
-		Set<MapPoint> locs = mapData._placementArea;
 		
 		_center = new MapPoint(_terrain.length/2,_terrain[0].length/2);
 		
 		// Unit placement
 		int rand, unitID;
+		MapPoint placement;
 		while (_core.getRemainingUnits(this) > 0) {
-			rand = (int)(Math.random()*locs.size());
-			MapPoint placement = null;
-			for (Iterator<MapPoint> iter = locs.iterator(); iter.hasNext(); 
-					placement = iter.next()) {
+			rand = (int)(Math.random()*mapData._placementArea.size());
+			placement = null;
+			for (MapPoint point : mapData._placementArea) {
 				if (rand == 0) {
-					iter.remove();
+					placement = point;
 					break;
 				}
 				rand--;
+			}
+			// We didn't find anything... this should never happen.
+			if (placement == null) {
+				throw new IllegalStateException("Unable to find a placement point");
 			}
 			// place the unit... counts backwards?
 			unitID = _core.placeUnit(this, placement, "Dude #"+_core.getRemainingUnits(this));
