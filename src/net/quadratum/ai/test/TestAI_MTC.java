@@ -51,6 +51,9 @@ public class TestAI_MTC extends AIPlayer {
 			}
 		}
 		_core.ready(this);
+		
+		// So the AI will make fun of you
+		new ChatThread().start();
 	}
 
 	@Override
@@ -108,6 +111,29 @@ public class TestAI_MTC extends AIPlayer {
 	/** Calculates the Manhattan distance between two points. */
 	private int distance(MapPoint mp1, MapPoint mp2) {
 		return Math.abs(mp1._x-mp2._x) + Math.abs(mp1._y-mp2._y);
+	}
+	
+	class ChatThread extends Thread {
+		
+		final String[] INSULTS = {
+			"LOL, you suck!",
+			"What the hell was that?",
+			"You call that a move?",
+			"Is this the best you puny humans can do?!",
+			"Stupid meatsack!"
+		};
+		
+		public void run() {
+			while (!_ended) {
+				try {
+					Thread.sleep((int)(Math.random()*20+5)*1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				_core.sendChatMessage(TestAI_MTC.this,
+					INSULTS[(int)(Math.random()*INSULTS.length)]);
+			}
+		}
 	}
 
 }

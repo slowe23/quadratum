@@ -27,6 +27,9 @@ public abstract class AIPlayer implements Player {
 	
 	/** Unit IDs */
 	protected List<Integer> _unitIDs;
+	
+	/** True once the game has ended. */
+	protected boolean _ended;
 
 	@Override
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {
@@ -36,13 +39,16 @@ public abstract class AIPlayer implements Player {
 		_totalPlayers = totalPlayers;
 		
 		_unitIDs = new LinkedList<Integer>();
+		_ended = false;
 	}
 
 	@Override
 	public void updatePieces(List<Piece> pieces) { }
 
 	@Override
-	public void end(GameStats stats) { }
+	public void end(GameStats stats) {
+		_ended = true;
+	}
 
 	@Override
 	public void lost() { }
