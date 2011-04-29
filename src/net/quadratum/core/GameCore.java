@@ -10,6 +10,7 @@ import java.util.HashSet;
 
 import net.quadratum.main.Main;
 
+// TODO add debug constants
 public class GameCore implements Core
 {
 	private Main _main;
@@ -826,6 +827,7 @@ public class GameCore implements Core
 	 * @param coords the coordinates in the unit to place the piece
 	 * @return true if the piece is added sucessfuly, false otherwise
 	 */
+	// TODO add stats to cache
 	public boolean updateUnit(Player p, int unitId, int pieceId, MapPoint coords)
 	{
 		synchronized(_turnLockObject)

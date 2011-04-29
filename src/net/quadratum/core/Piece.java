@@ -6,7 +6,7 @@ import java.util.Map;
 public class Piece {
 
 	/** The Blocks that make up this Piece. */
-	public Map<MapPoint,Block> _blocks;
+	public Map<MapPoint, Block> _blocks;
 	
 	/** The cost of this Piece. */
 	public int _cost;
@@ -19,6 +19,24 @@ public class Piece {
 	
 	/** The description of the piece. */
 	public String _description;
+	
+	
+	/**
+	 * Constructor for Piece.
+	 * @param cost the cost of the Piece
+	 * @param max the max times a player can use this Piece
+	 * @param name the name of the Piece
+	 * @param description the description of the Piece
+	 */
+	public Piece(int cost, int max, String name, String description)
+	{
+		_cost = cost;
+		_max = max;
+		_name = new String(name);
+		_description = new String(description);
+		_blocks = new HashMap<MapPoint, Block>();
+	}
+	
 	
 	/**
 	 * Copy constructor for Piece.
