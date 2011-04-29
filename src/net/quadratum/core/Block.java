@@ -18,6 +18,7 @@ public class Block {
 		SIGHT("Sight", false),
 		WATER_MOVEMENT("Water Movement", true),
 		CLOAK("Cloaking", true),
+		HEART("Heart", true),
 		JUMP("Jump", true);
 		// TODO add more
 		
@@ -40,6 +41,17 @@ public class Block {
 		public boolean isStat() {
 			return !_isAbility;
 		}
+	}
+	
+	/**
+	 * Constructor for Block.
+	 * @param health the max health of this block
+	 */
+	public Block(int health)
+	{
+		_health = health;
+		_totalHealth = health;
+		_bonuses = new HashMap<BonusType, Integer>();
 	}
 	
 	/**

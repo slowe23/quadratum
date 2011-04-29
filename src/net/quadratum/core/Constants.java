@@ -6,7 +6,14 @@ public class Constants
 	public static final int MAX_PLAYERS = 8;
 	/** Internal size of a unit. */
 	public static final int UNIT_SIZE = 8;
+	/** Resources gained per turn per unit on a resource square. */
 	public static final int RESOURCES_PER_TURN = 10;
+	/** Initial move radius of units. */
+	public static final int INITIAL_MOVE = 2;
+	/** Initial sight radius of units. */
+	public static final int INITIAL_SIGHT = 3;
+	/** Health of heart blocks. */
+	public static final int HEART_HEALTH = 100;
 	
 	/** Debug flag. When set to true, core logs to log.txt, otherwise it logs to System.out. */
 	public static final boolean DEBUG_TO_FILE = true;
