@@ -25,6 +25,7 @@ public class GameCore implements Core
 	private boolean _started;
 	private Object _chatLockObject, _turnLockObject;
 	private Writer _log;
+	private HashSet<Integer> _observers;
 	
 	/**
 	 * Constructor for GameCore.
@@ -45,6 +46,43 @@ public class GameCore implements Core
 		_started = false;
 		_chatLockObject = new Object();
 		_turnLockObject = new Object();
+		_observers = new HashSet<Integer>();
+		try
+		{
+			if (Constants.DEBUG_TO_FILE) {
+				_log = new FileWriter("log.txt");
+			} else {
+				_log = new OutputStreamWriter(System.out);
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		readMap(map);
+	}
+	
+	/**
+	 * Constructor for GameCore with observers.
+	 * @param map the map file name
+	 * @param winCondition the win condition
+	 */
+	// TODO make observers more legit
+	public GameCore(Main m, String map, WinCondition winCondition, ArrayList<Piece> pieces, HashSet<Integer> observers)
+	{
+		_main = m;
+		_startingLocations = new ArrayList<HashSet<MapPoint>>();
+		_units = new ArrayList<Unit>();
+		_unitInformation = new ArrayList<UnitInformation>();
+		_players = new ArrayList<Player>();
+		_playerInformation = new ArrayList<PlayerInformation>();
+		_pieces = pieces;
+		_winCondition = winCondition;
+		_turn = -1;
+		_started = false;
+		_chatLockObject = new Object();
+		_turnLockObject = new Object();
+		_observers = observers;
 		try
 		{
 			if (Constants.DEBUG_TO_FILE) {
@@ -115,6 +153,15 @@ public class GameCore implements Core
 			}
 		}
 		_startingLocations.add(startingLocations);
+		startingLocations = new HashSet<MapPoint>();
+		for(int i = 20; i < 30; i++)
+		{
+			for(int j = 0; j < 10; j++)
+			{
+				startingLocations.add(new MapPoint(i, j));
+			}
+		}
+		_startingLocations.add(startingLocations);
 	}
 	
 	/**
@@ -128,6 +175,10 @@ public class GameCore implements Core
 		{
 			_players.add(p);
 			_playerInformation.add(new PlayerInformation(new String(playerName), maxUnits));
+			if(_observers.contains(new Integer(_players.size() - 1)))
+			{
+				_playerInformation.get(_players.size() - 1)._lost = true;
+			}
 			log("Added player\n"
 				+ "\tNumber: " + (_players.size() - 1) + "\n"
 				+ "\tName: " + playerName + "\n"
@@ -521,6 +572,7 @@ public class GameCore implements Core
 				if(winner != -1)
 				{
 					log("Player " + winner + " has won the game, ending...", 1);
+					sendChatMessage("Game over! Player " + getPlayerName(winner) + " has won!");
 					endGame(winner);
 					return;
 				}
