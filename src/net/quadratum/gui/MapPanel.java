@@ -71,17 +71,20 @@ public class MapPanel extends JPanel implements MapView, MouseListener, MouseMot
 			double vX = getViewX(), vY = getViewY(), vW = getViewWidth(), vH = getViewHeight();
 			int offx = StaticMethods.round(-1*vX*scale), offy = StaticMethods.round(-1*vY*scale);  //The pixel location of the top left map corner
 			
+			
+			
 			//Draw map border
 			g.setColor(_drawingMethods.NEUTRAL_COLOR);
 			g.drawRect(offx-1, offy-1, scale*_mapData._terrain.length+2-1, scale*_mapData._terrain[0].length+2-1);
 			
+			Graphics tileGraph;
 			//Draw visible map tiles
 			for(int i = Math.max(0, (int)vX); i<_mapData._terrain.length && i<vX+vW; i++) {
 				int tilex = offx+scale*i;
 				for(int j = Math.max(0, (int)vY); j<_mapData._terrain[i].length && j<vY+vH; j++) {
 					int tiley = offy+scale*j;
 					
-					Graphics tileGraph = g.create(tilex, tiley, scale, scale);
+					tileGraph = g.create(tilex, tiley, scale, scale);
 					
 					_drawingMethods.drawTerrainTile(tileGraph, _mapData._terrain[i][j], scale);
 					

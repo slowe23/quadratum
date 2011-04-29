@@ -116,7 +116,7 @@ public class LineLayout implements LayoutManager2 {
 		if(_pref==null) {
 			double totalWeight = getTotalWeight();
 			
-			_pref = new Dimension(0, 0);
+			Dimension pref = new Dimension(0, 0);
 			
 			for(WeightedComponent w : _comps) {
 				if(w.component.isVisible()) {
@@ -125,11 +125,13 @@ public class LineLayout implements LayoutManager2 {
 						prefD = new Dimension((int)(Math.ceil(w.component.getPreferredSize().width*totalWeight/w.weight)), w.component.getPreferredSize().height);
 					else
 						prefD = new Dimension(w.component.getPreferredSize().width, (int)(Math.ceil(w.component.getPreferredSize().height*totalWeight/w.weight)));
-					_pref = getMaxDimension(_pref, prefD);
+					pref = getMaxDimension(pref, prefD);
 				}
 			}
 			
-			addInsets(_pref, parent.getInsets());
+			addInsets(pref, parent.getInsets());
+			
+			_pref = pref;
 		}
 		
 		return _pref;

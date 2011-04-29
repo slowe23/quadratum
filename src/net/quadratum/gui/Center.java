@@ -24,7 +24,7 @@ public class Center {
 	private UnitInfoPanel _unitInfoPanel;
 	private UnitImagePanel _unitImagePanel;
 	private UnitPanel _unitPanel;
-	private BuildPanel _buildPanel;
+	private PiecesPanel _piecesPanel;
 	
 	public Center(GUIPlayer player, ChatHandler chatHandler, UnitsInfo unitsInfo, MapData mapData) {
 		_player = player;
@@ -33,12 +33,12 @@ public class Center {
 		_mapData = mapData;
 	}
 	
-	public void setComponents(MapPanel mapPanel, UnitInfoPanel unitInfoPanel, UnitImagePanel unitImagePanel, UnitPanel unitPanel, BuildPanel buildPanel) {
+	public void setComponents(MapPanel mapPanel, UnitInfoPanel unitInfoPanel, UnitImagePanel unitImagePanel, UnitPanel unitPanel, PiecesPanel piecesPanel) {
 		_mapPanel = mapPanel;
 		_unitInfoPanel = unitInfoPanel;
 		_unitImagePanel = unitImagePanel;
 		_unitPanel = unitPanel;
-		_buildPanel = buildPanel;
+		_piecesPanel = piecesPanel;
 	}
 	
 	public void start(Core core, MapData mapData) {
@@ -60,7 +60,7 @@ public class Center {
 	
 	public void setPieces(List<Piece> pieces) {
 		try {
-			_buildPanel.setPieces(pieces);
+			_piecesPanel.setPieces(pieces);
 		} catch(NullPointerException n) {
 			System.out.println("This is a bug that needs fixing:");
 			n.printStackTrace();
