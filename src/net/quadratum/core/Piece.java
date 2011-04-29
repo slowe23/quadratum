@@ -1,14 +1,20 @@
 package net.quadratum.core;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Piece {
+public class Piece implements Serializable {
+
+	/**
+	 * Serialization UID
+	 */
+	private static final long serialVersionUID = -6946404104013633398L;
 
 	/** The Blocks that make up this Piece. */
 	public Map<MapPoint, Block> _blocks;
 	
-	//Cached bounding box values
+	/** Cached bounding box values */
 	private int[] _bounds;
 	
 	/** The cost of this Piece. */
