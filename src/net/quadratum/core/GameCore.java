@@ -442,11 +442,10 @@ public class GameCore implements Core
 	 * @param player the player
 	 * @return a map of MapPoints to unit ids
 	 */
-	private HashMap<MapPoint, Integer> generateMapForPlayer(int player)
+	private HashMap<MapPoint, Integer> generateMapForPlayer(int player, HashSet<MapPoint> visible)
 	{
 		HashMap<MapPoint, Integer> units = new HashMap<MapPoint, Integer>();
-		HashSet<MapPoint> visible = getVisible(player);
-		for(int i = 0; i < _unitInformation.size(); i++)
+ 		for(int i = 0; i < _unitInformation.size(); i++)
 		{
 			if(visible.contains(_unitInformation.get(i)._position))
 			{
@@ -464,20 +463,35 @@ public class GameCore implements Core
 	private void updateMaps(Action action)
 	{
 		log("Updating maps for all players", 1);
+		HashMap<MapPoint, Integer> playerMap;
+		HashSet<MapPoint> visible;
+		MapPoint newDestination;
 		for(int i = 0; i < _players.size(); i++)
 		{
 			if(!_playerInformation.get(i)._quit)
 			{
-				if(getVisible(i).contains(action._dest) || action._action == Action.ActionType.GAME_START)
+				visible = getVisible(i);
+				if(visible.contains(action._dest) || action._action == Action.ActionType.GAME_START)
 				{
-					// TODO create new _source for attacks that the player can't see
-					// Though this may actually be a good thing that they can see where the attack comes from
-					_players.get(i).updateMap(generateMapForPlayer(i), new Action(action));
+					_players.get(i).updateMap(generateMapForPlayer(i, visible), new Action(action));
+				}
+				else if(visible.contains(action._source))
+				{
+					playerMap = generateMapForPlayer(i, visible);
+					newDestination = new MapPoint(action._source);
+					for(MapPoint point : visible)
+					{
+						// Find a new, closer, and visible destination
+						if((Math.abs(point._x - action._dest._x) + Math.abs(point._y - action._dest._y)) < (Math.abs(newDestination._x - action._dest._x) + Math.abs(newDestination._y - action._dest._y)))
+						{
+							newDestination = new MapPoint(point);
+						}
+					}
+					_players.get(i).updateMap(playerMap, new Action(action._action, action._source, newDestination));
 				}
 				else
 				{
-					// TODO generate new _dest if player can see _source but not _dest (find the closest point in the visible area) 
-					_players.get(i).updateMap(generateMapForPlayer(i), null);
+					_players.get(i).updateMap(generateMapForPlayer(i, visible), null);
 				}
 			}
 		}
@@ -599,7 +613,7 @@ public class GameCore implements Core
 			for(int j = 0; j < _unitInformation.size(); j++)
 			{
 				point = _unitInformation.get(j)._position;
-				if(_units.get(j)._owner == _turn && TerrainConstants.isOfType(_terrain[point._x][point._y], TerrainConstants.RESOURCES))
+				if(_units.get(j)._owner == _turn && !point.equals(new MapPoint(-1, -1)) && TerrainConstants.isOfType(_terrain[point._x][point._y], TerrainConstants.RESOURCES))
 				{
 					resourcesGained += Constants.RESOURCES_PER_TURN;
 				}
@@ -638,7 +652,7 @@ public class GameCore implements Core
 	}
 	
 	/**
-	 * Sends a chat message to a player. from the system.
+	 * Sends a chat message to a player from the system.
 	 * @param to the player to send the message to
 	 * @param message the message to send
 	 */
@@ -726,7 +740,16 @@ public class GameCore implements Core
 			}
 			if(getUnitAtPoint(coords) == -1 && _startingLocations.get(player).contains(coords))
 			{
-				_units.add(new Unit(new String(name), player, _units.size()));
+				Unit toAdd = new Unit(new String(name), player, _units.size());
+				// TODO make heart blocks size and position based on unit size
+				Block heartBlock = new Block(Constants.HEART_HEALTH);
+				heartBlock._bonuses.put(Block.BonusType.HEART, 1);
+				toAdd._blocks.put(new MapPoint(4, 4), new Block(heartBlock));
+				toAdd._blocks.put(new MapPoint(4, 5), new Block(heartBlock));
+				toAdd._blocks.put(new MapPoint(5, 4), new Block(heartBlock));
+				toAdd._blocks.put(new MapPoint(5, 5), new Block(heartBlock));
+				toAdd._stats.put(Block.BonusType.HEART, 4);
+				_units.add(toAdd);
 				_unitInformation.add(new UnitInformation(coords));
 				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ")\n"
 					+ "\tAnswer: " + (_units.size() - 1), 1);
@@ -828,7 +851,7 @@ public class GameCore implements Core
 		{
 			name = new String(_playerInformation.get(player)._name);
 		}
-		log("Player " + player + " called getPlayerName(player: " + player + ")\n"
+		log("getPlayerName(player: " + player + ")\n"
 			+ "\tAnswer: " + name, 1);
 		return name;
 	}
