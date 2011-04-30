@@ -1,10 +1,16 @@
 package net.quadratum.core;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Block {
+public class Block implements Serializable {
 
+	/**
+	 * Serialization ID
+	 */
+	private static final long serialVersionUID = -6999486864534816402L;
+	
 	/** Bonuses given by this Block. */
 	public Map<BonusType,Integer> _bonuses;
 	/** Health points this Block has. */
