@@ -573,7 +573,6 @@ public class GameCore implements Core
 				if(winner != -1)
 				{
 					log("Player " + winner + " has won the game, ending...", 1);
-					sendChatMessage("Game over! Player " + getPlayerName(winner) + " has won!");
 					endGame(winner);
 					return;
 				}
@@ -697,6 +696,7 @@ public class GameCore implements Core
 				_players.get(i).end(new GameStats(winner));
 			}
 		}
+		sendChatMessage("Game over! Player " + getPlayerName(winner) + " has won!");
 		log("GAME OVER\n"
 			+ "Player " + winner + " won!", 1);
 		closeLog();
@@ -1042,11 +1042,11 @@ public class GameCore implements Core
 	 * @param message the message to log
 	 * @param level the severity level: 1 = debug, 2 = warning, 3 = error
 	 */
-	private void log(String message, int level)
+	private synchronized void log(String message, int level)
 	{
 		try
 		{
-			if(Constants.DEBUG_LEVEL == -1)
+			if(Constants.DEBUG_LEVEL == -1 || _turn == -2)
 			{
 				return;
 			}
