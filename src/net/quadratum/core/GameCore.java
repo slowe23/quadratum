@@ -796,26 +796,29 @@ public class GameCore implements Core
 				Unit toAdd = new Unit(new String(name), player, _units.size());
 				Block heartBlock = new Block(Constants.HEART_HEALTH);
 				heartBlock._bonuses.put(Block.BonusType.HEART, 1);
+				// Vary heart size based on unit size
 				if(Constants.UNIT_SIZE % 2 == 0)
 				{
 					// Add a 2x2 block
-					toAdd._blocks.put(new MapPoint(Constants.UNIT_SIZE / 2 - 1, Constants.UNIT_SIZE / 2 - 1), new Block(heartBlock));
-					toAdd._blocks.put(new MapPoint(Constants.UNIT_SIZE / 2 - 1, Constants.UNIT_SIZE / 2), new Block(heartBlock));
-					toAdd._blocks.put(new MapPoint(Constants.UNIT_SIZE / 2, Constants.UNIT_SIZE / 2 - 1), new Block(heartBlock));
-					toAdd._blocks.put(new MapPoint(Constants.UNIT_SIZE / 2, Constants.UNIT_SIZE / 2), new Block(heartBlock));
+					for(int i = Constants.UNIT_SIZE / 2 - 1; i <= Constants.UNIT_SIZE / 2; i++)
+					{
+						for(int j = Constants.UNIT_SIZE / 2 - 1; j <= Constants.UNIT_SIZE / 2; j++)
+						{
+							toAdd._blocks.put(new MapPoint(i, j), new Block(heartBlock));
+						}
+					}
 					toAdd._stats.put(Block.BonusType.HEART, 4);
 				}
 				else
 				{
-					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) - 1, (int) Math.floor(Constants.UNIT_SIZE / 2) - 1), new Block(heartBlock));
-					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) - 1, (int) Math.floor(Constants.UNIT_SIZE / 2)), new Block(heartBlock));
-					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) - 1, (int) Math.floor(Constants.UNIT_SIZE / 2) + 1), new Block(heartBlock));
-					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2), (int) Math.floor(Constants.UNIT_SIZE / 2) - 1), new Block(heartBlock));
-					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2), (int) Math.floor(Constants.UNIT_SIZE / 2)), new Block(heartBlock));
-					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2), (int) Math.floor(Constants.UNIT_SIZE / 2) + 1), new Block(heartBlock));
-					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) + 1, (int) Math.floor(Constants.UNIT_SIZE / 2) - 1), new Block(heartBlock));
-					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) + 1, (int) Math.floor(Constants.UNIT_SIZE / 2)), new Block(heartBlock));
-					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) + 1, (int) Math.floor(Constants.UNIT_SIZE / 2) + 1), new Block(heartBlock));
+					// Add a 3x3 block
+					for(int i = (int) Math.floor(Constants.UNIT_SIZE / 2) - 1; i <= (int) Math.floor(Constants.UNIT_SIZE / 2) + 1; i++)
+					{
+						for(int j = (int) Math.floor(Constants.UNIT_SIZE / 2) - 1; j <= (int) Math.floor(Constants.UNIT_SIZE / 2) + 1; j++)
+						{
+							toAdd._blocks.put(new MapPoint(i, j), new Block(heartBlock));
+						}
+					}
 					toAdd._stats.put(Block.BonusType.HEART, 9);
 				}
 				_units.add(toAdd);
