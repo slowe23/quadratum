@@ -91,6 +91,7 @@ public class MyTabbedPanel extends JPanel {
 		private final Font FONT;
 		private final FontMetrics FMETRICS;
 		
+		// XXX never used?
 		private int min_height;
 		
 		private static final int XPAD = 5, YPAD = 3;

@@ -11,9 +11,13 @@ import net.quadratum.core.Core;
 import net.quadratum.core.Unit;
 
 public class UnitInfoPanel extends JPanel {
+	
+	/** Core that provides information to this UnitInfoPanel. */
 	private Core _core;
 	
+	/** Unit info that is cached and stored. */
 	private UnitsInfo _unitsInfo;
+	/** Text area that info is displayed in. */
 	private JTextArea _text;
 	
 	public UnitInfoPanel(UnitsInfo unitsInfo) {
