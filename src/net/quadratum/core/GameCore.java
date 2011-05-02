@@ -794,20 +794,35 @@ public class GameCore implements Core
 			if(getUnitAtPoint(coords) == -1 && _startingLocations.get(player).contains(coords))
 			{
 				Unit toAdd = new Unit(new String(name), player, _units.size());
-				// TODO make heart blocks size and position based on unit size
 				Block heartBlock = new Block(Constants.HEART_HEALTH);
 				heartBlock._bonuses.put(Block.BonusType.HEART, 1);
-				toAdd._blocks.put(new MapPoint(3, 3), new Block(heartBlock));
-				toAdd._blocks.put(new MapPoint(3, 4), new Block(heartBlock));
-				toAdd._blocks.put(new MapPoint(4, 3), new Block(heartBlock));
-				toAdd._blocks.put(new MapPoint(4, 4), new Block(heartBlock));
-				toAdd._stats.put(Block.BonusType.HEART, 4);
+				if(Constants.UNIT_SIZE % 2 == 0)
+				{
+					// Add a 2x2 block
+					toAdd._blocks.put(new MapPoint(Constants.UNIT_SIZE / 2 - 1, Constants.UNIT_SIZE / 2 - 1), new Block(heartBlock));
+					toAdd._blocks.put(new MapPoint(Constants.UNIT_SIZE / 2 - 1, Constants.UNIT_SIZE / 2), new Block(heartBlock));
+					toAdd._blocks.put(new MapPoint(Constants.UNIT_SIZE / 2, Constants.UNIT_SIZE / 2 - 1), new Block(heartBlock));
+					toAdd._blocks.put(new MapPoint(Constants.UNIT_SIZE / 2, Constants.UNIT_SIZE / 2), new Block(heartBlock));
+					toAdd._stats.put(Block.BonusType.HEART, 4);
+				}
+				else
+				{
+					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) - 1, (int) Math.floor(Constants.UNIT_SIZE / 2) - 1), new Block(heartBlock));
+					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) - 1, (int) Math.floor(Constants.UNIT_SIZE / 2)), new Block(heartBlock));
+					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) - 1, (int) Math.floor(Constants.UNIT_SIZE / 2) + 1), new Block(heartBlock));
+					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2), (int) Math.floor(Constants.UNIT_SIZE / 2) - 1), new Block(heartBlock));
+					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2), (int) Math.floor(Constants.UNIT_SIZE / 2)), new Block(heartBlock));
+					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2), (int) Math.floor(Constants.UNIT_SIZE / 2) + 1), new Block(heartBlock));
+					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) + 1, (int) Math.floor(Constants.UNIT_SIZE / 2) - 1), new Block(heartBlock));
+					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) + 1, (int) Math.floor(Constants.UNIT_SIZE / 2)), new Block(heartBlock));
+					toAdd._blocks.put(new MapPoint((int) Math.floor(Constants.UNIT_SIZE / 2) + 1, (int) Math.floor(Constants.UNIT_SIZE / 2) + 1), new Block(heartBlock));
+					toAdd._stats.put(Block.BonusType.HEART, 9);
+				}
 				_units.add(toAdd);
 				_unitInformation.add(new UnitInformation(coords));
 				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ")\n"
 					+ "\tAnswer: " + (_units.size() - 1), 1);
 				return _units.size() - 1;
-				// TODO add "brain block"
 			}
 			else
 			{
