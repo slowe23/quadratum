@@ -827,7 +827,6 @@ public class GameCore implements Core
 	 * @param coords the coordinates in the unit to place the piece
 	 * @return true if the piece is added sucessfuly, false otherwise
 	 */
-	// TODO add stats to cache
 	public boolean updateUnit(Player p, int unitId, int pieceId, MapPoint coords)
 	{
 		synchronized(_turnLockObject)
@@ -879,9 +878,22 @@ public class GameCore implements Core
 						+ "\tAnswer: false", 2);
 				}
 			}
+			Block toAdd;
 			for(MapPoint key : piece._blocks.keySet())
 			{
-				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), new Block(piece._blocks.get(key)));
+				toAdd = new Block(piece._blocks.get(key));
+				for(Block.BonusType bonus : toAdd._bonuses.keySet())
+				{
+					if(unit._stats.containsKey(bonus))
+					{
+						unit._stats.put(bonus, new Integer(toAdd._bonuses.get(bonus).intValue() + unit._stats.get(bonus).intValue()));
+					}
+					else
+					{
+						unit._stats.put(bonus, new Integer(toAdd._bonuses.get(bonus)));
+					}
+				}
+				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), toAdd);
 			}
 			log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ")\n"
 				+ "\tAnswer: true", 1);
