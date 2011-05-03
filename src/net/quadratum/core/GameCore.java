@@ -7,6 +7,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import net.quadratum.main.Main;
 
@@ -170,6 +172,7 @@ public class GameCore implements Core
 	 * @param p the actual player
 	 * @param playerName the name of the player
 	 */
+	@Override
 	public synchronized void addPlayer(Player p, String playerName, int maxUnits)
 	{
 		if(!_started && _players.size() < Constants.MAX_PLAYERS)
@@ -220,6 +223,7 @@ public class GameCore implements Core
 	/**
 	 * Starts the game.
 	 */
+	@Override
 	public void startGame()
 	{
 		if(_players.size() == 0)
@@ -261,6 +265,7 @@ public class GameCore implements Core
 	 * Callback for notifying the GameCode that a player is ready.
 	 * @param p the Player
 	 */
+	@Override
 	public synchronized void ready(Player p)
 	{
 		int player = getPlayerId(p);
@@ -287,6 +292,7 @@ public class GameCore implements Core
 	 * Callback for ending a turn.
 	 * @param p the Player
 	 */
+	@Override
 	public void endTurn(Player p)
 	{
 		synchronized(_turnLockObject)
@@ -312,6 +318,7 @@ public class GameCore implements Core
 	 * @return true if the action has been taken, false if otherwise
 	 */
 	// TODO finish
+	@Override
 	public boolean unitAction(Player p, int unitId, MapPoint coords)
 	{
 		// TODO logging in this function and then all functions above
@@ -343,7 +350,7 @@ public class GameCore implements Core
 			}
 			coords = new MapPoint(coords);
 			// TODO add real attacking
-			HashSet<MapPoint> valid;
+			Set<MapPoint> valid;
 			MapPoint oldCoords = new MapPoint(_unitInformation.get(unitId)._position);
 			int unit = CoreActions.getUnitAtPoint(coords, _unitInformation);
 			if(unit == -1) // Movement
@@ -404,7 +411,8 @@ public class GameCore implements Core
 	 * @param unitId the unit's id
 	 * @return a map of MapPoints to Action.ActionTypes that represents what actions can be taken where
 	 */
-	public HashMap<MapPoint, Action.ActionType> getValidActions(Player p, int unitId)
+	@Override
+	public Map<MapPoint, Action.ActionType> getValidActions(Player p, int unitId)
 	{
 		int player = getPlayerId(p);
 		if(unitId < 0 || unitId >= _units.size() || _units.get(unitId)._owner != player || _turn != player)
@@ -430,7 +438,7 @@ public class GameCore implements Core
 				+ "\tAnswer: null", 2);
 			return null;
 		}
-		HashMap<MapPoint, Action.ActionType> actions = CoreActions.getValidActions(unitId, player, _units, _unitInformation, _terrain);
+		Map<MapPoint, Action.ActionType> actions = CoreActions.getValidActions(unitId, player, _units, _unitInformation, _terrain);
 		if(actions.size() == 0)
 		{
 			log("Player " + player + " called getValidActions(unitId: " + unitId + ") but the unit had already attacked/moved\n"
@@ -509,6 +517,7 @@ public class GameCore implements Core
 	 * Callback for quitting a game.
 	 * @param p the Player
 	 */
+	@Override
 	public void quit(Player p)
 	{
 		synchronized(_turnLockObject)
@@ -698,6 +707,7 @@ public class GameCore implements Core
 	 * @param p the Player
 	 * @param message the message to send
 	 */
+	@Override
 	public void sendChatMessage(Player p, String message)
 	{
 		if(message.length() > 0)
@@ -728,6 +738,7 @@ public class GameCore implements Core
 	 * @return true if the unit is placed sucessfully, false otherwise
 	 */
 	// TODO finish
+	@Override
 	public int placeUnit(Player p, MapPoint coords, String name)
 	{
 		synchronized(_turnLockObject)
@@ -801,6 +812,7 @@ public class GameCore implements Core
 	 * @param coords the coordinates in the unit to place the piece
 	 * @return true if the piece is added sucessfuly, false otherwise
 	 */
+	@Override
 	public boolean updateUnit(Player p, int unitId, int pieceId, MapPoint coords)
 	{
 		synchronized(_turnLockObject)
@@ -880,6 +892,7 @@ public class GameCore implements Core
 	 * @param player the player's id
 	 * @return the player's name
 	 */
+	@Override
 	public String getPlayerName(int player)
 	{
 		String name;
@@ -901,6 +914,7 @@ public class GameCore implements Core
 	 * @param p the Player
 	 * @return the Player's recourses
 	 */
+	@Override
 	public int getResources(Player p)
 	{
 		int resources = _playerInformation.get(getPlayerId(p))._resources;
@@ -915,6 +929,7 @@ public class GameCore implements Core
 	 * @param unitId the id of the unit
 	 * @return a copy of the Unit
 	 */
+	@Override
 	public Unit getUnit(Player p, int unitId)
 	{
 		if(unitId >= _units.size() && unitId < 0)
@@ -942,7 +957,7 @@ public class GameCore implements Core
 	private HashSet<MapPoint> getVisible(int player)
 	{
 		HashSet<MapPoint> visible = new HashSet<MapPoint>();
-		HashSet<MapPoint> unitVisible;
+		Set<MapPoint> unitVisible;
 		for(int i = 0; i < _units.size(); i++)
 		{
 			if(_units.get(i)._owner == player)
@@ -965,6 +980,7 @@ public class GameCore implements Core
 	 * @param p the Player we are checking
 	 * @return the number of units the Player can build
 	 */
+	@Override
 	public int getRemainingUnits(Player p)
 	{
 		int built = 0;
@@ -1035,15 +1051,9 @@ public class GameCore implements Core
 	 * Returns if the game is done.
 	 * @return true if the game is over, false otherwise
 	 */
+	@Override
 	public boolean done()
 	{
-		if(_turn == -2)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return _turn == -2;
 	}
 }
