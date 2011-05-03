@@ -27,7 +27,7 @@ public class MinimapPanel extends JPanel {
 		_unitsInfo = unitsInfo;
 		_drawingMethods = drawingMethods;
 		
-		setBackground(_drawingMethods.BACKGROUND_COLOR);
+		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
 	public void predrawMapData(MapData mapData) {
@@ -84,7 +84,7 @@ public class MinimapPanel extends JPanel {
 			int offx = off[0], offy = off[1];
 			
 			g.drawImage(_terrainImg, offx, offy, SCALE*_terrainImg.getWidth(), SCALE*_terrainImg.getHeight(), this);
-			g.setColor(_drawingMethods.NEUTRAL_COLOR);
+			g.setColor(DrawingMethods.NEUTRAL_COLOR);
 			g.drawRect(offx-1, offy-1, SCALE*_terrainImg.getWidth()+2-1, SCALE*_terrainImg.getHeight()+2-1);
 			
 			///Draw in the units
@@ -99,13 +99,13 @@ public class MinimapPanel extends JPanel {
 				g.fillRect(x, y, SCALE, SCALE);
 				
 				if(_unitsInfo.isSelected(unit)) {
-					g.setColor(_drawingMethods.FOREGROUND_COLOR);
+					g.setColor(DrawingMethods.FOREGROUND_COLOR);
 					g.drawRect(x-1, y-1, SCALE+2-1, SCALE+2-1);
 				}
 			}
 			
 			//Draw the border
-			g.setColor(StaticMethods.applyAlpha(_drawingMethods.BACKGROUND_COLOR, 127));
+			g.setColor(StaticMethods.applyAlpha(DrawingMethods.BACKGROUND_COLOR, 127));
 			g.fillRect(0,0,getWidth(), BORDER);
 			g.fillRect(0,getHeight()-BORDER,getWidth(), BORDER);
 			
@@ -113,7 +113,7 @@ public class MinimapPanel extends JPanel {
 			g.fillRect(getWidth()-BORDER, BORDER, BORDER, getHeight()-2*BORDER);
 			
 			//Draw a box around the currently visible area
-			g.setColor(_drawingMethods.FOREGROUND_COLOR);
+			g.setColor(DrawingMethods.FOREGROUND_COLOR);
 			g.drawRect(offx+StaticMethods.round(SCALE*_mapView.getViewX())-1, offy+StaticMethods.round(SCALE*_mapView.getViewY())-1, StaticMethods.round(SCALE*_mapView.getViewWidth())+2-1, StaticMethods.round(SCALE*_mapView.getViewHeight())+2-1);
 		}
 	}

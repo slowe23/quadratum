@@ -10,7 +10,10 @@ import net.quadratum.core.MapPoint;
 import net.quadratum.core.Unit;
 
 public class UnitImagePanel extends JPanel {
+	
+	/** Unit info that is cached and stored. */
 	private UnitsInfo _unitsInfo;
+	/** Drawing methods. */
 	private DrawingMethods _drawingMethods;
 	
 	public UnitImagePanel(UnitsInfo unitsInfo, DrawingMethods drawingMethods) {
@@ -20,6 +23,7 @@ public class UnitImagePanel extends JPanel {
 		setBackground(_drawingMethods.BACKGROUND_COLOR);
 	}
 	
+	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
@@ -54,6 +58,9 @@ public class UnitImagePanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * Callback that alerts this UnitImagePanel that the units have been updated.
+	 */
 	public void unitsUpdated() {
 		repaint();	
 	}
