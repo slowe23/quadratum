@@ -345,7 +345,7 @@ public class GameCore implements Core
 			// TODO add real attacking
 			HashSet<MapPoint> valid;
 			MapPoint oldCoords = new MapPoint(_unitInformation.get(unitId)._position);
-			int unit = getUnitAtPoint(coords);
+			int unit = CoreActions.getUnitAtPoint(coords, _unitInformation);
 			if(unit == -1) // Movement
 			{
 				if(_unitInformation.get(unitId)._hasMoved)
@@ -353,7 +353,7 @@ public class GameCore implements Core
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but the unit had already moved", 2);
 					return false;
 				}
-				valid = getAreaForUnit(unitId, 0);
+				valid = CoreActions.getAreaForUnit(unitId, 0, _unitInformation, _terrain);
 				if(!valid.contains(coords))
 				{
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but did provide a valid movement coordinate\n"
@@ -374,7 +374,7 @@ public class GameCore implements Core
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but the unit had already attacked", 2);
 					return false;
 				}
-				valid = getAreaForUnit(unitId, 1);
+				valid = CoreActions.getAreaForUnit(unitId, 1, _unitInformation, _terrain);
 				if(!valid.contains(coords))
 				{
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but did provide a valid attack coordinate\n"
@@ -404,8 +404,6 @@ public class GameCore implements Core
 	 * @param unitId the unit's id
 	 * @return a map of MapPoints to Action.ActionTypes that represents what actions can be taken where
 	 */
-	// TODO finish
-	// TODO add support for different types of terrain
 	public HashMap<MapPoint, Action.ActionType> getValidActions(Player p, int unitId)
 	{
 		int player = getPlayerId(p);
@@ -432,8 +430,8 @@ public class GameCore implements Core
 				+ "\tAnswer: null", 2);
 			return null;
 		}
-		HashMap<MapPoint, Action.ActionType> actions = new HashMap<MapPoint, Action.ActionType>();
-		if(_unitInformation.get(unitId)._hasMoved && _unitInformation.get(unitId)._hasAttacked)
+		HashMap<MapPoint, Action.ActionType> actions = CoreActions.getValidActions(unitId, player, _units, _unitInformation, _terrain);
+		if(actions.size() == 0)
 		{
 			log("Player " + player + " called getValidActions(unitId: " + unitId + ") but the unit had already attacked/moved\n"
 				+ "\tAnswer: (empty map)", 1);
@@ -441,54 +439,12 @@ public class GameCore implements Core
 		}
 		else
 		{
-			if(!_unitInformation.get(unitId)._hasMoved)
-			{
-				for(MapPoint point : getAreaForUnit(unitId, 0))
-				{
-					if(getUnitAtPoint(point) == -1)
-					{
-						actions.put(new MapPoint(point), Action.ActionType.MOVE);
-					}
-				}
-			}
-			if(!_unitInformation.get(unitId)._hasAttacked)
-			{
-				int unit;
-				for(MapPoint point : getAreaForUnit(unitId, 1))
-				{
-					unit = getUnitAtPoint(point);
-					if(unit != -1 && _units.get(unit)._owner != player)
-					{
-						actions.put(new MapPoint(point), Action.ActionType.ATTACK);
-					}
-				}
-			}
 			log("Player " + player + " called getValidActions(unitId: " + unitId + ")\n"
 				+ "\tAnswer: " + actions, 1);
 			return actions;
 		}
 	}
-	
-	/**
-	 * Gets a unit at a specific point.
-	 * @param point the MapPoint to check
-	 * @return the id of the unit, -1 if no unit exists
-	 */
-	private int getUnitAtPoint(MapPoint point)
-	{
-		log("Looking for unit at point " + point, 1);
-		for(int i = 0; i < _unitInformation.size(); i++)
-		{
-			if(_unitInformation.get(i)._position.equals(point))
-			{
-				log("\tUnit " + i + " found", 1);
-				return i;
-			}
-		}
-		log("\tNo unit found", 1);
-		return -1;
-	}
-	
+		
 	/**
 	 * Generates what the units player can see.
 	 * @param player the player
@@ -791,7 +747,7 @@ public class GameCore implements Core
 					+ "\tAnswer: false", 2);
 				return -1;
 			}
-			if(getUnitAtPoint(coords) == -1 && _startingLocations.get(player).contains(coords))
+			if(CoreActions.getUnitAtPoint(coords, _unitInformation) == -1 && _startingLocations.get(player).contains(coords))
 			{
 				Unit toAdd = new Unit(new String(name), player, _units.size());
 				Block heartBlock = new Block(Constants.HEART_HEALTH);
@@ -830,7 +786,7 @@ public class GameCore implements Core
 			else
 			{
 				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but tried to place a unit in an invalid location\n"
-					+ "\tUnit at point: " + getUnitAtPoint(coords) + "\n"
+					+ "\tUnit at point: " + CoreActions.getUnitAtPoint(coords, _unitInformation) + "\n"
 					+ "\tAnswer: -1", 2);
 				return -1;
 			}
@@ -991,7 +947,7 @@ public class GameCore implements Core
 		{
 			if(_units.get(i)._owner == player)
 			{
-				unitVisible = getAreaForUnit(i, 2);
+				unitVisible = CoreActions.getAreaForUnit(i, 2, _unitInformation, _terrain);
 				for(MapPoint point : unitVisible)
 				{
 					visible.add(point);
@@ -1003,48 +959,7 @@ public class GameCore implements Core
 			// TODO add back in when we are generating less data
 		return visible;
 	}
-	
-	/**
-	 * Gets the action/visible area for a single unit.
-	 * @param u the Unit
-	 * @return the MapPoints that the unit can act upon/see
-	 */
-	// TODO add support for sight blocks and special movement blocks/terrain
-	private HashSet<MapPoint> getAreaForUnit(int u, int type)
-	{
-		int radius;
-		if(type == 0) // Movement area
-		{
-			radius = 3;
-		}
-		else if(type == 1) // Attack area
-		{
-			radius = 2;
-		}
-		else // Visible area
-		{
-			radius = 60; // TODO change when not testing
-		}
-		UnitInformation info = _unitInformation.get(u);
-		HashSet<MapPoint> visible = new HashSet<MapPoint>();
-		for(int x = info._position._x - radius; x < (info._position._x + radius + 1); x++)
-		{
-			for(int y = info._position._y - radius; y < (info._position._y + radius + 1); y++)
-			{
-				if(x >= 0 && y >= 0 && x < _terrain.length && y < _terrain[0].length) // Check to make sure the point is on the board
-				{
-					if((Math.abs(info._position._x - x) + Math.abs(info._position._y - y)) < radius)
-					{
-						visible.add(new MapPoint(x, y));
-					}
-				}
-			}
-		}
-		/*log("getAreaForUnit(u: " + u + ", type: " + type + ")\n"
-			+ "\tAnswer was: " + visible, 1);*/
-		return visible;
-	}
-	
+		
 	/**
 	 * Returns the number of units left to build for a given player.
 	 * @param p the Player we are checking
