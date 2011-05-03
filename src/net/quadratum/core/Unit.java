@@ -40,6 +40,10 @@ public class Unit implements Serializable {
 		_stats = new HashMap<Block.BonusType, Integer>();
 		_owner = owner;
 		_size = Constants.UNIT_SIZE;
+		for(Block.BonusType bonus : Block.BonusType.values())
+		{
+			_stats.put(bonus, new Integer(0));
+		}
 	}
 	
 	/**

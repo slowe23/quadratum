@@ -353,7 +353,7 @@ public class GameCore implements Core
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but the unit had already moved", 2);
 					return false;
 				}
-				valid = CoreActions.getAreaForUnit(unitId, 0, _unitInformation, _terrain);
+				valid = CoreActions.getAreaForUnit(unitId, 0, _units, _unitInformation, _terrain);
 				if(!valid.contains(coords))
 				{
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but did provide a valid movement coordinate\n"
@@ -374,7 +374,7 @@ public class GameCore implements Core
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but the unit had already attacked", 2);
 					return false;
 				}
-				valid = CoreActions.getAreaForUnit(unitId, 1, _unitInformation, _terrain);
+				valid = CoreActions.getAreaForUnit(unitId, 1, _units, _unitInformation, _terrain);
 				if(!valid.contains(coords))
 				{
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but did provide a valid attack coordinate\n"
@@ -858,14 +858,7 @@ public class GameCore implements Core
 				toAdd = new Block(piece._blocks.get(key));
 				for(Block.BonusType bonus : toAdd._bonuses.keySet())
 				{
-					if(unit._stats.containsKey(bonus))
-					{
-						unit._stats.put(bonus, new Integer(toAdd._bonuses.get(bonus).intValue() + unit._stats.get(bonus).intValue()));
-					}
-					else
-					{
-						unit._stats.put(bonus, new Integer(toAdd._bonuses.get(bonus)));
-					}
+					unit._stats.put(bonus, new Integer(toAdd._bonuses.get(bonus).intValue() + unit._stats.get(bonus).intValue()));
 				}
 				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), toAdd);
 			}
@@ -947,7 +940,7 @@ public class GameCore implements Core
 		{
 			if(_units.get(i)._owner == player)
 			{
-				unitVisible = CoreActions.getAreaForUnit(i, 2, _unitInformation, _terrain);
+				unitVisible = CoreActions.getAreaForUnit(i, 2, _units, _unitInformation, _terrain);
 				for(MapPoint point : unitVisible)
 				{
 					visible.add(point);
