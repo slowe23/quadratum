@@ -2,7 +2,9 @@ package net.quadratum.core;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class CoreActions
 {
@@ -15,7 +17,7 @@ public class CoreActions
 	 */
 	// TODO finish
 	// TODO add support for different types of terrain
-	public static HashMap<MapPoint, Action.ActionType> getValidActions(int unit, int player, ArrayList<Unit> units, ArrayList<UnitInformation> unitInformation, int[][] terrain)
+	public static Map<MapPoint, Action.ActionType> getValidActions(int unit, int player, List<Unit> units, List<UnitInformation> unitInformation, int[][] terrain)
 	{
 		HashMap<MapPoint, Action.ActionType> actions = new HashMap<MapPoint, Action.ActionType>();
 		if(unitInformation.get(unit)._hasMoved && unitInformation.get(unit)._hasAttacked)
@@ -56,7 +58,7 @@ public class CoreActions
 	 * @param unitInformation a list of UnitInformation
 	 * @return the id of the unit, -1 if no unit exists
 	 */
-	public static int getUnitAtPoint(MapPoint point, ArrayList<UnitInformation> unitInformation)
+	public static int getUnitAtPoint(MapPoint point, List<UnitInformation> unitInformation)
 	{
 		for(int i = 0; i < unitInformation.size(); i++)
 		{
@@ -77,7 +79,7 @@ public class CoreActions
 	 * @return the MapPoints that the unit can act upon/see
 	 */
 	// TODO add support for sight blocks and special movement blocks/terrain
-	public static HashSet<MapPoint> getAreaForUnit(int unit, int type, ArrayList<UnitInformation> unitInformation, int[][] terrain)
+	public static Set<MapPoint> getAreaForUnit(int unit, int type, List<UnitInformation> unitInformation, int[][] terrain)
 	{
 		int radius;
 		if(type == 0) // Movement area
