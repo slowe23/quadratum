@@ -12,13 +12,20 @@ import net.quadratum.core.MapPoint;
 import net.quadratum.core.Unit;
 
 public class UnitsInfo {
+	/** Core that this UnitsInfo gets information from. */
 	private Core _core;
+	/** GUIPlayer which the UnitsInfo is associated with. */
 	private GUIPlayer _player;
 	
+	// TODO BiMap for this sort of thing?
+	/** Maps loctions to unit IDs. */
 	private Map<MapPoint, Integer> _pointMap;
+	/** Maps unit IDs to locations. */
 	private Map<Integer, MapPoint> _idMap;
+	/** Maps unit IDs to cached versions of the units. */
 	private Map<Integer, Unit> _unitCache;
 	
+	/** ID of the selected unit. */
 	private Integer _selectedID;
 	
 	public UnitsInfo(GUIPlayer player) {
