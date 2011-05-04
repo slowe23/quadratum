@@ -35,7 +35,7 @@ public interface Player {
 	
 	/**
 	 * Notifies the player that the turn has changed.
-	 * @param turn ???
+	 * @param id the ID of the player whose turn it now is
 	 */
-	public void updateTurn(int turn);
+	public void updateTurn(int id);
 }

@@ -72,7 +72,7 @@ public class Piece implements Serializable {
 	 * Compute the minimum and maximum coordinates (relative to the piece's origin) of blocks in this piece
 	 * Coordinates are stored in the following order: {min_x, min_y, max_x, max_y}
 	 */
-	public int[] getBounds() {
+	public synchronized int[] getBounds() {
 		if(_bounds==null) {
 			_bounds = new int[4];
 			boolean any = false;

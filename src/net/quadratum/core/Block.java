@@ -24,7 +24,7 @@ public class Block implements Serializable {
 		SIGHT("Sight", false),
 		WATER_MOVEMENT("Water Movement", true),
 		CLOAK("Cloaking", true),
-		HEART("Heart", true),
+		HEART("Life", true),
 		JUMP("Jump", true);
 		// TODO add more
 		

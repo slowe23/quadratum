@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import javax.swing.JPanel;
 
 public class MessageOverlay extends JPanel implements MessageDisplay {
-	private DrawingMethods _drawingMethods;
+	private GUIPlayer _guiPlayer;
 	
 	private final Font FONT;
 	private final FontMetrics FMETR;
@@ -26,16 +26,16 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 	
 	private Deque<Message> _msgs; //Messages to display
 	
-	public MessageOverlay(DrawingMethods drawingMethods) {
-		setOpaque(false);
-		
-		_drawingMethods = drawingMethods;
+	public MessageOverlay(GUIPlayer player) {
+		_guiPlayer = player;
 		
 		FONT = getFont();
 		FMETR = getFontMetrics(FONT);
 		
 		_showMessages = true;
 		_msgs = new LinkedList<Message>();
+
+		setOpaque(false);
 	}
 	
 	public void setShowMessages(boolean b) {
@@ -56,11 +56,11 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 	}
 	
 	public void newMessage(int id, String message) {
-		newMessage(new Message(message.split("\n"), _drawingMethods.getPlayerColor(id)));
+		newMessage(new Message(message.split("\n"), _guiPlayer._drawingMethods.getPlayerColor(id)));
 	}
 	
 	public void newMessage(String message) {
-		newMessage(new Message(message.split("\n"), _drawingMethods.FOREGROUND_COLOR));
+		newMessage(new Message(message.split("\n"), _guiPlayer._drawingMethods.FOREGROUND_COLOR));
 	}
 	
 	private void newMessage(Message mess) {
@@ -110,7 +110,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 					n++;
 					
 					for(int s = ss.length-1; s>=0 && y>=FMETR.getAscent()+MSG_PAD; s--) {
-						String[] sss = getWrap(ss[s], w);
+						String[] sss = StaticMethods.getWrap(FMETR, ss[s], w);
 						
 						int lines = 0;
 						int max = 0;
@@ -123,18 +123,16 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 							ny -= FMETR.getHeight();
 						}
 						
-						g.setColor(_drawingMethods.BACKGROUND_COLOR);
+						g.setColor(_guiPlayer._drawingMethods.BACKGROUND_COLOR);
 						g.fillRect(0, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight());
 						
 						
-						g.setColor(_drawingMethods.FOREGROUND_COLOR);
+						g.setColor(_guiPlayer._drawingMethods.FOREGROUND_COLOR);
 						for(int ssss = sss.length-1; ssss>=0 && ny>=FMETR.getAscent()+MSG_PAD; ssss--) {
 							g.drawString(sss[ssss], MSG_PAD, y);
 							y -= FMETR.getHeight();
 						}
 						
-						g.setColor(_drawingMethods.FOREGROUND_COLOR);
-						g.drawRect(-1, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight()-1);
 						g.setColor(m._color);
 						g.drawRect(-1, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight()-1);
 						
@@ -145,81 +143,13 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		}
 	}
 	
-	private String[] getWrap(String s, int maxw) {
-		ArrayList<String> list = new ArrayList<String>();
-		String[] words = s.split(" ");
-		String current = "";
-		for(int i = 0; i<words.length; i++) {
-			String word = words[i];
-			
-			String pot;
-			if(current.length()>0)
-				pot = current+" "+word;
-			else
-				pot = word;
-			
-			if(FMETR.stringWidth(pot)<=maxw)
-				current = pot;
-			else {
-				list.add(current);
-				current = "";
-			}
-			
-			if(current=="") {
-				while(FMETR.stringWidth(word)>maxw) {
-					int brk = findOnscreenLength(word, maxw);
-					list.add(word.substring(0, brk));
-					word = word.substring(brk);
-				}
-				current = word;
-			}
-		}
-		
-		if(FMETR.stringWidth(current)<=maxw)
-			list.add(current);
-		
-		return list.toArray(new String[list.size()]);
-	}
-	
-	private int findOnscreenLength(String s, int maxw) {
-		int sw = FMETR.stringWidth(s);
-		
-		if(sw<=maxw)
-			return s.length();
-		
-		int minlength = 0;  //minlength is the longest substring of s known to fit
-		int maxlength = s.length()-1;  //maxlength+1 is the shortest substring of s known not to fit
-		
-		int trylength = (maxw*s.length())/sw;
-		if(trylength<=minlength)
-			trylength = minlength+1;
-		if(trylength>maxlength)
-			trylength = maxlength;
-		
-		while(minlength < maxlength) {
-			sw = FMETR.stringWidth(s.substring(0, trylength));
-			if(sw<=maxw) {
-				minlength = trylength;
-				trylength = minlength+1;
-			} else {
-				maxlength = trylength-1;
-				trylength = (maxw*trylength)/sw;
-				if(trylength<=minlength)
-					trylength = minlength+1;
-				if(trylength>maxlength)
-					trylength = maxlength;
-			}
-		}
-		return maxlength;
-	}
-	
 	private static class Message {
 		public final String[] _lines;
 		public final Color _color;
 		
 		public Message(String[] lines, Color color) {
 			_lines = lines;
-			_color = StaticMethods.applyAlpha(color, 127);  //Translucent version of the given color
+			_color = StaticMethods.applyAlpha(color, 255);  //Opaque version of the given color
 		}
 	}
 }

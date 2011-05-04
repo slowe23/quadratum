@@ -1,42 +1,46 @@
 package net.quadratum.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
 
-import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 
-import net.quadratum.core.MapData;
+import net.quadratum.core.*;
 
 public class GameWindow extends JFrame implements WindowListener {
-	private final Center _center;
+	private GUIPlayer _guiPlayer;
 	
-	public GameWindow(GUIPlayer player, Center center, ChatHandler chatHandler, DrawingMethods drawingMethods, MapData mapData, UnitsInfo unitsInfo) {
+	public GameWindow(GUIPlayer player, ChatHandler chatHandler) {
 		setTitle("Quadratum");
 		setSize(800, 600);
 		setResizable(false);
 		
-		_center = center;
-		
 		addWindowListener(this);
+		
+		_guiPlayer = player;
 		
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
 		
-		//Add a layered pane containing the map
+		//Add a layered pane containing the map and other stuff
 		JLayeredPane mapPane = new JLayeredPane();
 		mapPane.setLayout(new FillLayout());
 		
 		//Add map display panel
-		MapPanel map = new MapPanel(center, unitsInfo, mapData, drawingMethods);
+		MapPanel map = new MapPanel(_guiPlayer);
 		mapPane.add(map, new Integer(0));
 		
 		//Add message display
-		MessageOverlay msg = new MessageOverlay(drawingMethods);
+		MessageOverlay msg = new MessageOverlay(_guiPlayer);
 		mapPane.add(msg, new Integer(1));
+		
+		//Add a strip at the top with buttons and stuff
+		ButtonsPanel buttons = new ButtonsPanel(_guiPlayer);
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.setOpaque(false);
+		panel.add(buttons, BorderLayout.NORTH);
+		mapPane.add(panel, new Integer(2));
 		
 		content.add(mapPane, BorderLayout.CENTER);
 		
@@ -47,9 +51,8 @@ public class GameWindow extends JFrame implements WindowListener {
 		LineConstraints constraints;
 		
 		//Add minimap panel
-		MinimapPanel minimap = map.getMinimapPanel();
 		constraints = new LineConstraints(0.2);
-		controls.add(minimap, constraints);
+		controls.add(map._minimap, constraints);
 		
 		//Add selected unit panel
 		JPanel sUPanel = new JPanel();
@@ -57,11 +60,11 @@ public class GameWindow extends JFrame implements WindowListener {
 		sUPanel.setLayout(new LineLayout(LineLayout.LEFT_TO_RIGHT));
 		
 		//Add unit info panel
-		UnitInfoPanel uInfo = new UnitInfoPanel(unitsInfo);
+		UnitInfoPanel uInfo = new UnitInfoPanel(_guiPlayer);
 		sUPanel.add(uInfo);
 		
 		//Add unit image panel
-		UnitImagePanel uImg = new UnitImagePanel(unitsInfo, drawingMethods);
+		UnitImagePanel uImg = new UnitImagePanel(_guiPlayer);
 		sUPanel.add(uImg);
 		
 		constraints = new LineConstraints(0.4);
@@ -71,18 +74,20 @@ public class GameWindow extends JFrame implements WindowListener {
 		MyTabbedPanel infoArea = new MyTabbedPanel();
 		
 		//Add unit tab
-		UnitPanel units = new UnitPanel();
+		UnitsPanel units = new UnitsPanel(_guiPlayer);
 		infoArea.addTab("Units", units);
 		
 		//Add pieces tab
-		PiecesPanel pieces = new PiecesPanel(drawingMethods);
+		PiecesPanel pieces = new PiecesPanel(_guiPlayer, uImg);
 		infoArea.addTab("Pieces", pieces);
 		
 		//Add objectives tab
 		JPanel objectives = new JPanel();
 		objectives.setBorder(StaticMethods.getTitleBorder("Game Objectives"));
 		objectives.setLayout(new FillLayout());
-		objectives.add(StaticMethods.createScrollingTextDisplay());
+		StaticMethods.STD objSTD = StaticMethods.createScrollingTextDisplay(5);
+		objSTD._jta.setText("-Win the game.\n-Don't lose.");
+		objectives.add(objSTD._jsp);
 		infoArea.addTab("Objectives", objectives, true);
 		
 		//Add chat tab
@@ -94,7 +99,7 @@ public class GameWindow extends JFrame implements WindowListener {
 		
 		content.add(controls, BorderLayout.SOUTH);
 		
-		center.setComponents(map, uInfo, uImg, units, pieces);
+		_guiPlayer.setStuff(map, uInfo, uImg, units, pieces, buttons);
 	}
 	
 	public void windowDeactivated(WindowEvent e) { }
@@ -105,7 +110,8 @@ public class GameWindow extends JFrame implements WindowListener {
 	public void windowOpened(WindowEvent e) { }
 	
 	public void windowClosing(WindowEvent e) {
-		_center.closing();
+		//TODO: some kind of confirmation?
+		_guiPlayer.closing();
 		setVisible(false);
 	}
 }

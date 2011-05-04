@@ -1,45 +1,85 @@
 package net.quadratum.gui;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import net.quadratum.core.Action;
-import net.quadratum.core.Core;
-import net.quadratum.core.GameStats;
-import net.quadratum.core.MapData;
-import net.quadratum.core.MapPoint;
-import net.quadratum.core.Piece;
-import net.quadratum.core.Player;
+import net.quadratum.core.*;
 
 public class GUIPlayer implements Player {
-	private UnitsInfo _unitsInfo;
-	private MapData _mapData;
-	
-	private ChatHandler _chatHandler;
-	private Center _center;
-	
-	private DrawingMethods _drawingMethods;
-	
 	private int _id;
 	
+	public final DrawingMethods _drawingMethods;
+	
+	public final MapData _mapData;
+	public final UnitsData _unitsData;
+	private int _unitNumber;
+	
+	private final ChatHandler _chat;  //Manages chat stuff
+	
+	private MapPanel _map;  //Map and minimap display
+	private UnitInfoPanel _selectedInfo;  //Displays info for the selected unit
+	private UnitImagePanel _selectedImage;  //Displays an image of the selected unit
+	private UnitsPanel _units;  //Displays the player's units
+	private PiecesPanel _pieces;  //Displays the available pieces
+	private ButtonsPanel _buttonsPanel;  //Displays some stuff
+	
+	private final GameWindow _gameWindow;
+	
+	private Core _core;
+	
+	private boolean _ready;
+	private final Object _readyLock;
+	
 	public GUIPlayer() {
-		_unitsInfo = new UnitsInfo(this);
-		_mapData = new MapData();
-		
-		_chatHandler = new ChatHandler(this);
-		_center = new Center(this, _chatHandler, _unitsInfo, _mapData);
-		
 		_drawingMethods = new DrawingMethods();
+		
+		_mapData = new MapData();
+		_unitsData = new UnitsData(this);
+		
+		_unitNumber = 1;
+		
+		_chat = new ChatHandler(this);
+		
+		_gameWindow = new GameWindow(this, _chat);
+		
+		_ready = false;
+		_readyLock = new Object();
+	}
+	
+	public void setStuff(MapPanel map, UnitInfoPanel selectedInfo, UnitImagePanel selectedImage, UnitsPanel units, PiecesPanel pieces, ButtonsPanel buttons) {
+		_map = map;
+		_selectedInfo = selectedInfo;
+		_selectedImage = selectedImage;
+		_units = units;
+		_pieces = pieces;
+		_buttonsPanel = buttons;
 	}
 	
 	/** Notifies the player that there is a new game. */
 	public void start(Core core, MapData mapData, int id, int totalPlayers) {
-		GameWindow window = new GameWindow(this, _center, _chatHandler, _drawingMethods, _mapData, _unitsInfo);
-		window.setVisible(true);
-		
 		_id = id;
+		_core = core;
 		
-		_center.start(core, mapData);
+		_mapData._terrain = mapData._terrain;
+		_mapData._placementArea = mapData._placementArea;
+		
+		_unitsData.start(_core);
+		
+		_chat.start(_core);
+		
+		_selectedInfo.start(_core);
+		
+		_buttonsPanel.start(_core.getRemainingUnits(this));
+		
+		synchronized(_readyLock) {
+			_ready = true;
+			_readyLock.notifyAll();
+		}
+		
+		_gameWindow.setVisible(true);
+		
+		mapUpdated();
+		unitsUpdated();
+		_map.centerAtPlacementArea();
 	}
 	
 	public int getID() {
@@ -48,43 +88,208 @@ public class GUIPlayer implements Player {
 	
 	/** Notifies the player of the pieces that are now available */
 	public void updatePieces(List<Piece> pieces) {
-		_center.setPieces(pieces);
+		blockUntilReady();
+		
+		//For testing purposes
+		HashMap<MapPoint, Block> map = new HashMap<MapPoint, Block>();
+		Block block = new Block(100);
+		block._bonuses.put(Block.BonusType.ATTACK, 10);
+		map.put(new MapPoint(0, 0), new Block(block));
+		map.put(new MapPoint(1, 0), new Block(block));
+		map.put(new MapPoint(0, 1), new Block(block));
+		
+		pieces.add(new Piece(map, 0, -1, "Attack", "This piece increases the unit's attack power."));
+		
+		_pieces.setPieces(pieces);
 	}
 	
 	/** Updates the map data. Currently unused but should be supported for future flexibility */
 	public void updateMapData(MapData mapData) {
-		_center.updateMapData(mapData);
+		blockUntilReady();
+		
+		synchronized(_mapData) {
+			_mapData._terrain = mapData._terrain;
+			_mapData._placementArea = mapData._placementArea;
+		}
+		
+		mapUpdated();
 	}
 	
 	/** Updates the position of units on the map. */
 	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
-		_center.update(units, lastAction);
+		blockUntilReady();
+		
+		synchronized(_unitsData) {
+			_unitsData.setUnits(units);
+		}
+		
+		unitsUpdated();
+		_map.scrollTo(lastAction, false);
+		_map.repaintBoth();
+		_buttonsPanel.updateResources(_core.getResources(this));
 	}
 	
 	/** Notifies the player that their turn has started. */
 	public void turnStart() {
-		//TODO
+		//Do nothing because this is completely redundant (see updateTurn, below)
 	}
 	
 	/** Notifies the player that the turn has changed. */
 	public void updateTurn(int turn) {
-		//TODO
+		blockUntilReady();
+		
+		if(turn==_id) {
+			_chat.incomingMessage(-1, "Your turn.");
+			selectionUpdated();
+			_map.scrollTo(_unitsData.getSelectedLocation(), false);
+			_map.repaintBoth();
+		} else {
+			_chat.incomingMessage(-1, _core.getPlayerName(turn)+"'s turn.");
+			selectionUpdated();  //The available actions may change with the turn
+		}
+		_buttonsPanel.turn(turn==_id);
 	}
 	
 	/** Notifies the player that he has lost. */
 	public void lost() {
-		//TODO
+		blockUntilReady();
+		
+		_chat.incomingMessage(-1, "You have lost.");
+		
+		//TODO: stuff?
 	}
 	
 	/** Notifies the player that the game has ended. */
 	public void end(GameStats stats) {
-		//TODO
+		blockUntilReady();
+		
+		_chat.incomingMessage(-1, "The game has ended.");
+
+		//TODO: stuff?
 	}
 	
 	/** Notifies the player of a chat message (can be from self). */
 	public void chatMessage(int from, String message) {
-		_chatHandler.incomingMessage(from, message);
+		blockUntilReady();
+		
+		_chat.incomingMessage(from, message);
 	}
-
 	
+	public void click(MapPoint point) {
+		blockUntilReady();
+		
+		synchronized(_mapData) {
+			synchronized(_unitsData) {
+				Unit clicked = _unitsData.getUnit(point);
+				if(clicked!=null) {
+					selectUnit(clicked);
+				} else {
+					if(_mapData._placementArea!=null && _mapData._placementArea.contains(point)) {
+						String newUnitName = "Unit "+_unitNumber;
+						int newUnitID = _core.placeUnit(this, point, newUnitName);
+						if(newUnitID!=-1) {
+							_unitNumber++;
+							
+							_unitsData.addUnit(point, newUnitID, true);
+							_mapData._placementArea.remove(point);
+							
+							unitsUpdated();
+							placementUpdated();
+							
+							_buttonsPanel.updateToPlace(_core.getRemainingUnits(this));
+						}
+					} else {
+						Map<MapPoint, Action.ActionType> selActions = _unitsData.getSelectedActions();
+						if(selActions!=null && selActions.containsKey(point))
+							_core.unitAction(this, _unitsData.getSelectedID(), point);
+						else {
+							_unitsData.deselect();
+							selectionUpdated();
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public void clickOut() {
+		blockUntilReady();
+		
+		synchronized(_unitsData) {
+			_unitsData.deselect();
+			selectionUpdated();
+		}
+	}
+	
+	public void placementDone() {
+		blockUntilReady();
+		
+		synchronized(_mapData) {
+			_mapData._placementArea = null;
+			placementUpdated();
+			
+			_core.ready(this);
+			_buttonsPanel.gameStart(_core.getResources(this));
+		}
+	}
+	
+	public void turnDone() {
+		_core.endTurn(this);
+	}
+	
+	public void closing() {
+		blockUntilReady();
+		
+		_core.quit(this);
+	}
+	
+	public void selectUnit(Unit u) {
+		blockUntilReady();
+		
+		synchronized(_unitsData) {
+			_unitsData.setSelected(u);
+			selectionUpdated();
+			_map.scrollTo(_unitsData.getSelectedLocation(), false);
+		}
+	}
+	
+	private void placementUpdated() {
+		blockUntilReady();
+		
+		_map.placementUpdated();
+	}
+	
+	private void mapUpdated() {
+		blockUntilReady();
+		
+		_map.mapUpdated();
+	}
+	
+	private void selectionUpdated() {
+		blockUntilReady();
+		
+		_map.selectionUpdated();
+		_selectedInfo.selectionUpdated();
+		_selectedImage.selectionUpdated();
+		_units.selectionUpdated();
+	}
+	
+	private void unitsUpdated() {
+		blockUntilReady();
+		
+		_map.unitsUpdated();
+		_selectedInfo.selectionUpdated();
+		_selectedImage.selectionUpdated();
+		_units.unitsUpdated();
+	}
+	
+	private void blockUntilReady() {
+		synchronized(_readyLock) {
+			while(!_ready) {
+				try {
+					_readyLock.wait();
+				} catch (InterruptedException e) {}
+			}
+		}
+	}
 }

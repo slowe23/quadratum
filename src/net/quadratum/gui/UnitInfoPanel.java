@@ -13,29 +13,29 @@ import net.quadratum.core.Unit;
 public class UnitInfoPanel extends JPanel {
 	private Core _core;
 	
-	private UnitsInfo _unitsInfo;
+	private GUIPlayer _guiPlayer;
+	
 	private JTextArea _text;
 	
-	public UnitInfoPanel(UnitsInfo unitsInfo) {
-		_unitsInfo = unitsInfo;
+	public UnitInfoPanel(GUIPlayer player) {
+		_guiPlayer = player;
 		
 		setBorder(StaticMethods.getTitleBorder("Unit Info"));
 		setLayout(new FillLayout());
 		
-		_text = new JTextArea();
-		
-		JScrollPane textScroll = StaticMethods.createScrollingTextDisplay(_text);
-		add(textScroll);
+		StaticMethods.STD std = StaticMethods.createScrollingTextDisplay(7);
+		_text = std._jta;
+		add(std._jsp);
 	}
 	
 	public void start(Core core) {
 		_core = core;
-		
-		_text.setText(getDescription(null));
 	}
 	
-	public void unitsUpdated() {
-		_text.setText(getDescription(_unitsInfo.getSelected()));
+	public void selectionUpdated() {
+		synchronized(_guiPlayer._unitsData) {
+			_text.setText(getDescription(_guiPlayer._unitsData.getSelectedUnit()));
+		}
 		_text.setCaretPosition(0);
 		repaint();
 	}

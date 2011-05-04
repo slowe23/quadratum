@@ -36,10 +36,9 @@ public class ChatPanel extends JPanel {
 		ctr.setLayout(new BorderLayout());
 		
 		//Set up main text area
-		_area = new JTextArea();
-		JScrollPane jsp = StaticMethods.createScrollingTextDisplay(_area);
-		_area.setRows(5);
-		ctr.add(jsp, BorderLayout.CENTER);
+		StaticMethods.STD std = StaticMethods.createScrollingTextDisplay(5);
+		_area = std._jta;
+		ctr.add(std._jsp, BorderLayout.CENTER);
 		
 		///Set up text entry area with text field and button
 		JPanel textEntryPanel = new JPanel();
@@ -81,23 +80,13 @@ public class ChatPanel extends JPanel {
 	public void addMessage(int from, String message) {
 		String msg = _chatHandler.getPlayerName(from) + ": " + message;
 		synchronized(_area) {
-			appendMessageToField(msg);
+			if(_area.getText().length()>0)
+				_area.append("\n");
+			_area.append(msg);
+			_area.setCaretPosition(_area.getDocument().getLength());
+			_area.validate();
 			_messageDisplay.newMessage(from, msg);
 		}
-	}
-	
-	public void addMessage(String message) {
-		synchronized(_area) {
-			appendMessageToField(message);
-			_messageDisplay.newMessage(message);
-		}
-	}
-	
-	private void appendMessageToField(String message) {
-		if(_area.getText().length()>0)
-			_area.append("\n");
-		_area.append(message);
-		_area.validate();
 	}
 	
 	private class ChatPanelActionListener implements ActionListener {

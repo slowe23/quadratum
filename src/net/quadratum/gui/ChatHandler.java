@@ -32,10 +32,6 @@ public class ChatHandler {
 		_core.sendChatMessage(_player, message);
 	}
 	
-	public void lateralMessage(String message) {
-		_chat.addMessage(message);
-	}
-	
 	public String getPlayerName(int id) {
 		return _core.getPlayerName(id);
 	}

@@ -19,12 +19,11 @@ public class TestMain2 implements Main {
 		core.addPlayer(player1, "Test Player 1", 5);
 		core.addPlayer(player2, "Test Player 2", 5);
 		core.startGame();
-		while(!core.done()) {}
 	}
 
 	@Override
 	public void returnControl() {
 		System.out.println("Done.");
-		
+		System.exit(0);
 	}
 }

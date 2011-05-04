@@ -41,7 +41,7 @@ public class MapPoint implements Serializable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		return (obj instanceof MapPoint && ((MapPoint) obj)._x == _x && ((MapPoint) obj)._y == _y);
+		return (obj!=null) && (obj instanceof MapPoint) && (((MapPoint) obj)._x == _x) && (((MapPoint) obj)._y == _y);
 	}
 	
 	@Override

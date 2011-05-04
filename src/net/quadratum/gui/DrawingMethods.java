@@ -1,16 +1,12 @@
 package net.quadratum.gui;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Polygon;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import java.util.*;
+
+import net.quadratum.core.*;
 import net.quadratum.core.Action.ActionType;
-import net.quadratum.core.Block;
-import net.quadratum.core.MapPoint;
-import net.quadratum.core.Piece;
-import net.quadratum.core.TerrainConstants;
-import net.quadratum.core.Unit;
 
 public class DrawingMethods {
 	private static final Color[] PLAYER_COLORS = {Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.PINK};
@@ -22,13 +18,13 @@ public class DrawingMethods {
 		if(id>=0 && id<PLAYER_COLORS.length)
 			return PLAYER_COLORS[id];
 		else
-			return NEUTRAL_COLOR;
+			return Color.WHITE;
 	}
 	
-	public Color getTerrainColor(int terrainValue) {
+	public Color getTerrainTileColor(int terrainValue) {
 		Color col;
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.WATER))
-			col = new Color(0, 0, 255);
+			col = new Color(0, 0, 191);
 		else
 			col = new Color(0, 127, 63);
 		
@@ -36,7 +32,7 @@ public class DrawingMethods {
 	}
 	
 	public void drawTerrainTile(Graphics g, int terrainValue, int size) {
-		g.setColor(getTerrainColor(terrainValue));
+		g.setColor(getTerrainTileColor(terrainValue));
 		g.fillRect(0, 0, size, size);
 		
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.MOUNTAIN)) {
@@ -55,16 +51,57 @@ public class DrawingMethods {
 		}
 	}
 	
-	public Color getTerrainMaskColor(boolean placement) {
+	public BufferedImage getTerrainTileImage(int terrainValue, int size) {
+		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		drawTerrainTile(img.getGraphics(), terrainValue, size);
+		return img;
+	}
+	
+	public Color getPlacementMaskColor(boolean placement) {
 		if(placement)
 			return new Color(255, 255, 255, 127);
 		else
-			return new Color(0, 0, 0, 0);
+			return new Color(0, 0, 0, 63);
 	}
 	
-	public void drawTerrainTileMask(Graphics g, boolean placement, int size) {
-		g.setColor(getTerrainMaskColor(placement));
-		g.fillRect(0, 0, size, size);
+	public void drawPlacementMask(Graphics g, Set<MapPoint> placementArea, MapPoint location, int size) {
+		if(placementArea.contains(location)) {
+			g.setColor(getPlacementMaskColor(true));
+			
+			int th = Math.min(5, size/6);
+			
+			boolean north = !(placementArea.contains(new MapPoint(location._x, location._y-1)));
+			boolean south = !(placementArea.contains(new MapPoint(location._x, location._y+1)));
+			boolean east = !(placementArea.contains(new MapPoint(location._x+1, location._y)));
+			boolean west = !(placementArea.contains(new MapPoint(location._x-1, location._y)));
+			
+			if(north)
+				g.fillRect(th, 0, size-2*th, th);
+			if(south)
+				g.fillRect(th, size-th, size-2*th, th);
+			if(east)
+				g.fillRect(size-th, th, th, size-2*th);
+			if(west)
+				g.fillRect(0, th, th, size-2*th);
+			
+			if(north || east || !(placementArea.contains(new MapPoint(location._x+1, location._y-1))))
+				g.fillRect(size-th, 0, th, th);
+			if(north || west || !(placementArea.contains(new MapPoint(location._x-1, location._y-1))))
+				g.fillRect(0, 0, th, th);
+			if(south || east || !(placementArea.contains(new MapPoint(location._x+1, location._y+1))))
+				g.fillRect(size-th, size-th, th, th);
+			if(south || west || !(placementArea.contains(new MapPoint(location._x-1, location._y+1))))
+				g.fillRect(0, size-th, th, th);
+		} else {
+			g.setColor(getPlacementMaskColor(false));
+			g.fillRect(0,0,size,size);
+		}
+	}
+	
+	public BufferedImage getPlacementMaskImage(Set<MapPoint> placementArea, MapPoint location, int size) {
+		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		drawPlacementMask(img.getGraphics(), placementArea, location, size);
+		return img;
 	}
 	
 	public Color getBlockBaseColor(Block b) {
@@ -84,8 +121,14 @@ public class DrawingMethods {
 		drawBlockMask(g, size);
 	}
 	
+	public BufferedImage getBlockImage(Block b, int size) {
+		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		drawBlock(img.getGraphics(), b, size);
+		return img;
+	}
+	
 	public void drawBlockMask(Graphics g, int size) {
-		int bevelSize = Math.min(5, size/10);
+		int bevelSize = Math.min(5, size/6);
 		
 		if(bevelSize>0) {
 			//Draw sides of bevel
@@ -101,6 +144,12 @@ public class DrawingMethods {
 				g.drawLine(size-1-i, i+1, size-1-i, size-1-bevelSize);
 			}
 		}
+	}
+	
+	public BufferedImage getBlockMaskImage(int size) {
+		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		drawBlockMask(img.getGraphics(), size);
+		return img;
 	}
 	
 	public void drawUnit(Graphics g, Unit unit, int blockSize, int size) {
@@ -124,6 +173,12 @@ public class DrawingMethods {
 		g.fillRect(off + uSize-blockSize, off + blockSize, blockSize, uSize-2*blockSize);
 	}
 	
+	public BufferedImage getUnitImage(Unit unit, int blockSize, int size) {
+		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		drawUnit(img.getGraphics(), unit, blockSize, size);
+		return img;
+	}
+	
 	public void drawPiece(Graphics g, Piece piece, int blockSize) {
 		int[] bounds = piece.getBounds();
 		int xsize = bounds[2]-bounds[0]+1, ysize = bounds[3]-bounds[1]+1;
@@ -143,14 +198,53 @@ public class DrawingMethods {
 		}
 	}
 	
+	public BufferedImage getPieceImage(Piece piece, int blockSize) {
+		int[] bounds = piece.getBounds();
+		int xsize = bounds[2]-bounds[0]+1, ysize = bounds[3]-bounds[1]+1;
+		
+		BufferedImage img = new BufferedImage(xsize, ysize, BufferedImage.TYPE_INT_ARGB);
+		drawPiece(img.getGraphics(), piece, blockSize);
+		return img;
+	}
+	
 	public Color getActionTypeColor(ActionType actionType) {
 		if(actionType==ActionType.MOVE)
-			return Color.blue;
+			return Color.CYAN;
 		else if(actionType==ActionType.ATTACK)
-			return Color.red;
+			return Color.RED;
 		else if(actionType==ActionType.GATHER_RESOURCES)
-			return Color.yellow;
+			return Color.YELLOW;
 		else
-			return Color.white;
+			return Color.WHITE;
+	}
+	
+	public void drawActionType(Graphics g, ActionType actionType, MapPoint unitLocation, MapPoint actionLocation, int size) {
+		g.setColor(getActionTypeColor(actionType));
+		int dx = actionLocation._x-unitLocation._x, dy = actionLocation._y-unitLocation._y;
+		double angle;
+		if(dx==0) {
+			if(dy>0)
+				angle = 0.5*Math.PI;
+			else
+				angle = 1.5*Math.PI;
+		} else {
+			angle = Math.atan(((double)dy)/((double) dx));
+			if(dx<0)
+				angle += Math.PI;
+		}
+		double angle2 = angle+(Math.PI*2.0/3.0);
+		double angle3 = angle-(Math.PI*2.0/3.0);
+		
+		double radius = size/2.0;
+		int[] xs = {StaticMethods.round(Math.cos(angle)*radius+radius), StaticMethods.round(Math.cos(angle2)*radius+radius), StaticMethods.round(radius), StaticMethods.round(Math.cos(angle3)*radius+radius)};
+		int[] ys = {StaticMethods.round(Math.sin(angle)*radius+radius), StaticMethods.round(Math.sin(angle2)*radius+radius), StaticMethods.round(radius), StaticMethods.round(Math.sin(angle3)*radius+radius)};
+		
+		g.fillPolygon(new Polygon(xs, ys, 4));
+	}
+	
+	public BufferedImage getActionTypeImage(ActionType actionType, MapPoint unitLocation, MapPoint actionLocation, int size) {
+		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		drawActionType(img.getGraphics(), actionType, unitLocation, actionLocation, size);
+		return img;
 	}
 }

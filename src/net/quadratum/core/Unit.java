@@ -71,8 +71,6 @@ public class Unit implements Serializable {
 	
 	@Override
 	public int hashCode() {
-		// TODO is this necessary? if id is not a sequential number, or
-		// even if it is, we can just return id...
-		return new Integer(_id).hashCode();
+		return _id;
 	}
 }

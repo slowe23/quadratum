@@ -59,7 +59,7 @@ public interface Core {
 	
 	/**
 	 * Callback that alerts the core that a chat message should be sent
-	 * @param p the Player itself who sent the message - can be this
+	 * @param p the Player sending the message
 	 * @param message the message that is being sent
 	 */
 	public void sendChatMessage(Player p, String message);
@@ -69,7 +69,7 @@ public interface Core {
 	 * @param p the Player itself
 	 * @param coords the coordinates at which a player is placing the unit
 	 * @param name the name of the Unit
-	 * @return -1 if the unit could not be place, the unit id otherwise
+	 * @return -1 if the unit could not be placed, the unit id otherwise
 	 */
 	int placeUnit(Player p, MapPoint coords, String name);
 	
@@ -81,7 +81,7 @@ public interface Core {
 	
 	/**
 	 * Returns the unit with the given ID
-	 * @param p the Player itself
+	 * @param p the Player making the request
 	 * @param unitID The unit in question's id
 	 */
 	public Unit getUnit(Player p, int unitID);
