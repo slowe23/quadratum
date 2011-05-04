@@ -349,7 +349,6 @@ public class GameCore implements Core
 				return false;
 			}
 			coords = new MapPoint(coords);
-			// TODO add real attacking
 			Set<MapPoint> valid;
 			MapPoint oldCoords = new MapPoint(_unitInformation.get(unitId)._position);
 			int unit = CoreActions.getUnitAtPoint(coords, _unitInformation);
@@ -395,7 +394,25 @@ public class GameCore implements Core
 					return false;
 				}
 				_unitInformation.get(unitId)._hasAttacked = true;
+				
 				_unitInformation.get(unit)._position = new MapPoint(-1, -1);
+				
+				/* TODO real attacking goes here */
+				
+				// Calculate angle between center of attacker and
+				// center of defender
+				
+				// Get perpendicular angle
+				
+				// Calculate start and end positions for each attack line by
+				// following the perpendicular line outward
+				
+				// Calculate damage per line
+				
+				// Iterate over each attack line, calculate the pixels on each side,
+				// and split the damage across them. Carry damage to the next level
+				// if there is still damage left over to be distributed on this line
+				
 				updateMaps(new Action(Action.ActionType.UNIT_DIED, coords, coords));
 				log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ")\n"
 					+ "\tAction taken: attack\n"
