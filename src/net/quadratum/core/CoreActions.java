@@ -86,7 +86,17 @@ public class CoreActions
 		HashSet<MapPoint> area = new HashSet<MapPoint>();
 		if(type == 0) // Movement area
 		{
-			radius = 3 + units.get(unit)._stats.get(Block.BonusType.MOVEMENT) / 100;
+			Unit actionUnit = units.get(unit);
+			radius = 3 + actionUnit._stats.get(Block.BonusType.MOVEMENT) / 100;
+			boolean canMoveOnWater;
+			if(actionUnit._stats.get(Block.BonusType.WATER_MOVEMENT).intValue() > 0)
+			{
+				canMoveOnWater = true;
+			}
+			else
+			{
+				canMoveOnWater = false;
+			}
 			HashSet<MapPoint> alreadyChecked = new HashSet<MapPoint>();
 			LinkedList<MapPoint> queue = new LinkedList<MapPoint>();
 			MapPoint temp;
@@ -97,13 +107,32 @@ public class CoreActions
 				if(!alreadyChecked.contains(temp))
 				{
 					alreadyChecked.add(temp);
-					if((Math.abs(info._position._x - temp._x) + Math.abs(info._position._y - temp._y)) < radius && temp._x >= 0 && temp._y >= 0 && temp._x < terrain.length && temp._y < terrain[0].length)
+					// Make sure the point is in the movement radius
+					if((Math.abs(info._position._x - temp._x) + Math.abs(info._position._y - temp._y)) < radius)
 					{
-						area.add(temp);
-						queue.add(new MapPoint(temp._x + 1, temp._y));
-						queue.add(new MapPoint(temp._x - 1, temp._y));
-						queue.add(new MapPoint(temp._x, temp._y + 1));
-						queue.add(new MapPoint(temp._x, temp._y - 1));
+						// Make sure the coordinate is in the map
+						if(temp._x >= 0 && temp._y >= 0 && temp._x < terrain.length && temp._y < terrain[0].length)
+						{
+							if(TerrainConstants.isOfType(terrain[temp._x][temp._y], TerrainConstants.WATER))
+							{
+								if(canMoveOnWater)
+								{
+									area.add(temp);
+									queue.add(new MapPoint(temp._x + 1, temp._y));
+									queue.add(new MapPoint(temp._x - 1, temp._y));
+									queue.add(new MapPoint(temp._x, temp._y + 1));
+									queue.add(new MapPoint(temp._x, temp._y - 1));
+								}
+							}
+							else
+							{
+								area.add(temp);
+								queue.add(new MapPoint(temp._x + 1, temp._y));
+								queue.add(new MapPoint(temp._x - 1, temp._y));
+								queue.add(new MapPoint(temp._x, temp._y + 1));
+								queue.add(new MapPoint(temp._x, temp._y - 1));
+							}
+						}
 					}
 				}
 			}
