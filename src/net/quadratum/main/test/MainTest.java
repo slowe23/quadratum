@@ -26,7 +26,7 @@ public class MainTest implements Main
 			Player player2 = new TestAI_MTC();
 			Player player3 = new GUIPlayer();
 			HashSet<Integer> observers = new HashSet<Integer>();
-			observers.add(new Integer(2));
+			observers.add(2);
 			ArrayList<Piece> pieces = new ArrayList<Piece>();
 			Block attackBlock = new Block(30);
 			attackBlock._bonuses.put(Block.BonusType.ATTACK, 10);
