@@ -2,8 +2,10 @@ package net.quadratum.core;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 public class CoreActions
@@ -89,12 +91,12 @@ public class CoreActions
 		{
 			radius = 3 + units.get(unit)._stats.get(Block.BonusType.MOVEMENT) / 100;
 			HashSet<MapPoint> alreadyChecked = new HashSet<MapPoint>();
-			LinkedList<MapPoint> queue = new LinkedList<MapPoint>();
+			Queue<MapPoint> queue = new LinkedList<MapPoint>();
 			MapPoint temp;
-			queue.addLast(new MapPoint(info._position));
+			queue.add(new MapPoint(info._position));
 			while(queue.size() > 0)
 			{
-				temp = new MapPoint(queue.removeFirst());
+				temp = new MapPoint(queue.remove());
 				if(!alreadyChecked.contains(temp))
 				{
 					alreadyChecked.add(temp);
