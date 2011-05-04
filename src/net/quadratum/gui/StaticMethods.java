@@ -11,12 +11,23 @@ import javax.swing.border.TitledBorder;
 
 //Static convenience methods
 public class StaticMethods {
-	// Rounds a double to the nearest int value
+
+	/**
+	 * Rounds a double to the nearest int value.
+	 * @param d a double to round
+	 * @return an int which is closest to the given double
+	 */
 	public static int round(double d) {
 		return longToInt(Math.round(d));
 	}
 	
-	//Converts a long to an int, capping it if it excedes the minimum or maximum int values
+	/**
+	 * Converts a long to an int, capping it if it excedes the minimum or 
+	 * maximum int values as if it were using saturation arithmetic.
+	 * @param l a long to convert
+	 * @return an int which is either the same value as or the closest value 
+	 * to the given long.
+	 */
 	public static int longToInt(long l) {
 		if(l<Integer.MIN_VALUE)
 			return Integer.MIN_VALUE;
@@ -27,12 +38,19 @@ public class StaticMethods {
 		return (int)l;
 	}
 	
-	//Creates a scrolling text area
+	/**
+	 * Creates a new scrolling text area.
+	 * @return a JScrollPane which wraps a new JTextArea.
+	 */
 	public static JScrollPane createScrollingTextDisplay() {
 		return createScrollingTextDisplay(new JTextArea());
 	}
 	
-	//Creates a scrolling text area around the given JTextArea
+	/**
+	 * Creates a new scrolling pane which wraps the given text area.
+	 * @param textArea a text area to wrap
+	 * @return a JScrollPane which wraps the given JTextAtea.
+	 */
 	public static JScrollPane createScrollingTextDisplay(JTextArea textArea) {
 		textArea.setEditable(false);
 		textArea.setLineWrap(true);
@@ -41,11 +59,22 @@ public class StaticMethods {
 		return scrollPane;
 	}
 	
-	//Creates a Color with the RGB values of the given color and the given alpha value (must be in the range 0-255)
+	/**
+	 * Creates a Color with the RGB values defined by the given Color and the
+	 * alpha value given.
+	 * @param c the Color which represents the RGB values
+	 * @param alpha an alpha value to apply to the Color
+	 * @return a new Color with the given RGBA values.
+	 */
 	public static Color applyAlpha(Color c, int alpha) {
 		return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
 	}
 	
+	/**
+	 * Gets a titled border.
+	 * @param title the Title of the titled border
+	 * @return a new titled border.
+	 */
 	public static Border getTitleBorder(String title) {
 		return BorderFactory.createTitledBorder(null, title, TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION);
 	}
