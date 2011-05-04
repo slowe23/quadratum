@@ -476,10 +476,8 @@ public class GameCore implements Core
 		// Get the differentials along the x and y axes
 		double dx = end._x - start._x;
 		double dy = end._y - start._y;
-		// Figure out some properties of the line
+		// Make the line go at <45 degrees from the horizontal
 		boolean steep = Math.abs(dx) < Math.abs(dy);
-		boolean swap = dx < 0;
-		// Do some swapping if necessary
 		double tmp;
 		if (steep) {
 			// Swap start x,y
@@ -495,6 +493,8 @@ public class GameCore implements Core
 			dx = dy;
 			dy = tmp;
 		}
+		// Make the line go left to right
+		boolean swap = dx < 0;
 		if (swap) {
 			// Swap start x, end x
 			tmp = sx;
@@ -508,15 +508,19 @@ public class GameCore implements Core
 		double grad = dy/dx;
 		
 		// Find the lower bound, accounting for all the swapping we just did
-		RealPoint p = end;
 		int bound;
 		if (swap) {
-			p = start;
-		}
-		if (steep) {
-			bound = getFloorCellPosition(p._y,size);
+			if (steep) {
+				bound = getFloorCellPosition((int)start._y,size);
+			} else {
+				bound = getFloorCellPosition(((int)start._x)+1,size);
+			}
 		} else {
-			bound = getFloorCellPosition(p._x,size);
+			if (steep) {
+				bound = getFloorCellPosition(((int)end._y)+1,size);
+			} else {
+				bound = getFloorCellPosition((int)end._x,size);
+			}
 		}
 		
 		// Set up the data structures
@@ -556,7 +560,7 @@ public class GameCore implements Core
 		
 		// main loop
 		for (int x = xpt1+1; x < xpt2; x++) {
-			boolean good = x >= bound;
+			boolean good = swap ? x <= bound : x >= bound;
 			// If we are inside the defender, plot some points
 			if (good) {
 				map = new HashMap<MapPoint,Double>();
