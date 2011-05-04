@@ -116,9 +116,22 @@ public class CoreActions
 						// Make sure the coordinate is in the map
 						if(temp._x >= 0 && temp._y >= 0 && temp._x < terrain.length && temp._y < terrain[0].length)
 						{
-							if(TerrainConstants.isOfType(terrain[temp._x][temp._y], TerrainConstants.WATER))
+							// Make sure there's no unit at that point
+							if(getUnitAtPoint(temp, unitInformation) == -1)
 							{
-								if(canMoveOnWater)
+								// Make sure the unit can only move over water if it has a water movement block
+								if(TerrainConstants.isOfType(terrain[temp._x][temp._y], TerrainConstants.WATER))
+								{
+									if(canMoveOnWater)
+									{
+										area.add(temp);
+										queue.add(new MapPoint(temp._x + 1, temp._y));
+										queue.add(new MapPoint(temp._x - 1, temp._y));
+										queue.add(new MapPoint(temp._x, temp._y + 1));
+										queue.add(new MapPoint(temp._x, temp._y - 1));
+									}
+								}
+								else
 								{
 									area.add(temp);
 									queue.add(new MapPoint(temp._x + 1, temp._y));
@@ -126,14 +139,6 @@ public class CoreActions
 									queue.add(new MapPoint(temp._x, temp._y + 1));
 									queue.add(new MapPoint(temp._x, temp._y - 1));
 								}
-							}
-							else
-							{
-								area.add(temp);
-								queue.add(new MapPoint(temp._x + 1, temp._y));
-								queue.add(new MapPoint(temp._x - 1, temp._y));
-								queue.add(new MapPoint(temp._x, temp._y + 1));
-								queue.add(new MapPoint(temp._x, temp._y - 1));
 							}
 						}
 					}
