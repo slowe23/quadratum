@@ -7,6 +7,10 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import net.quadratum.main.Main;
 
@@ -170,6 +174,7 @@ public class GameCore implements Core
 	 * @param p the actual player
 	 * @param playerName the name of the player
 	 */
+	@Override
 	public synchronized void addPlayer(Player p, String playerName, int maxUnits)
 	{
 		if(!_started && _players.size() < Constants.MAX_PLAYERS)
@@ -220,6 +225,7 @@ public class GameCore implements Core
 	/**
 	 * Starts the game.
 	 */
+	@Override
 	public void startGame()
 	{
 		if(_players.size() == 0)
@@ -261,6 +267,7 @@ public class GameCore implements Core
 	 * Callback for notifying the GameCode that a player is ready.
 	 * @param p the Player
 	 */
+	@Override
 	public synchronized void ready(Player p)
 	{
 		int player = getPlayerId(p);
@@ -287,6 +294,7 @@ public class GameCore implements Core
 	 * Callback for ending a turn.
 	 * @param p the Player
 	 */
+	@Override
 	public void endTurn(Player p)
 	{
 		synchronized(_turnLockObject)
@@ -312,6 +320,7 @@ public class GameCore implements Core
 	 * @return true if the action has been taken, false if otherwise
 	 */
 	// TODO finish
+	@Override
 	public boolean unitAction(Player p, int unitId, MapPoint coords)
 	{
 		// TODO logging in this function and then all functions above
@@ -342,10 +351,9 @@ public class GameCore implements Core
 				return false;
 			}
 			coords = new MapPoint(coords);
-			// TODO add real attacking
-			HashSet<MapPoint> valid;
+			Set<MapPoint> valid;
 			MapPoint oldCoords = new MapPoint(_unitInformation.get(unitId)._position);
-			int unit = getUnitAtPoint(coords);
+			int unit = CoreActions.getUnitAtPoint(coords, _unitInformation);
 			if(unit == -1) // Movement
 			{
 				if(_unitInformation.get(unitId)._hasMoved)
@@ -353,7 +361,7 @@ public class GameCore implements Core
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but the unit had already moved", 2);
 					return false;
 				}
-				valid = getAreaForUnit(unitId, 0);
+				valid = CoreActions.getAreaForUnit(unitId, 0, _units, _unitInformation, _terrain);
 				if(!valid.contains(coords))
 				{
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but did provide a valid movement coordinate\n"
@@ -374,7 +382,7 @@ public class GameCore implements Core
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but the unit had already attacked", 2);
 					return false;
 				}
-				valid = getAreaForUnit(unitId, 1);
+				valid = CoreActions.getAreaForUnit(unitId, 1, _units, _unitInformation, _terrain);
 				if(!valid.contains(coords))
 				{
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but did provide a valid attack coordinate\n"
@@ -388,8 +396,62 @@ public class GameCore implements Core
 					return false;
 				}
 				_unitInformation.get(unitId)._hasAttacked = true;
-				_unitInformation.get(unit)._position = new MapPoint(-1, -1);
-				updateMaps(new Action(Action.ActionType.UNIT_DIED, coords, coords));
+				
+				// TODO factor out? also potentially increase the number of
+				// attack lines
+				
+				// Grab some references
+				
+				Unit attacker = _units.get(unitId);
+				Unit defender = _units.get(unit);
+				
+				// Calculate centers of attacker and defender in real coordinates
+				// oldCoords = attacker
+				// coords = defender
+				
+				RealPoint attackerPos = new RealPoint(oldCoords._x+0.5,oldCoords._y+0.5);
+				RealPoint defenderPos = new RealPoint(coords._x+0.5,coords._y+0.5);
+				
+				// Get the attack line
+				
+				List<Map<MapPoint,Double>> line = getAttackLine(defender._size,
+						attackerPos,defenderPos);
+				
+				// Distribute the damage
+				
+				int damageLeft = attacker._stats.get(Block.BonusType.ATTACK);
+				int damageDone;
+				for (Map<MapPoint,Double> current : line) {
+					damageDone = 0;
+					for (MapPoint point : current.keySet()) {
+						
+						Block b = defender._blocks.get(point);
+						if (b == null) {
+							continue;
+						}
+						// Get damage at this point and apply it to the block
+						int damage = (int)(damageLeft*current.get(point)+0.5);
+						b._health -= damage;
+						if (b._health < 0) {
+							damage += b._health;
+							defender._blocks.remove(b);
+						}
+						damageDone += damage;
+					}
+					damageLeft -= damageDone;
+					if (damageLeft == 0) {
+						break;
+					}
+				}
+				
+				// We don't need to send out the unit died action unless the heart is totally gone
+				
+				updateCachedStats(defender);
+				
+				if (defender._stats.get(Block.BonusType.HEART) == 0) {
+					updateMaps(new Action(Action.ActionType.UNIT_DIED, coords, coords));
+				}
+				
 				log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ")\n"
 					+ "\tAction taken: attack\n"
 					+ "\tFrom: " + oldCoords, 1);
@@ -399,14 +461,196 @@ public class GameCore implements Core
 	}
 	
 	/**
+	 * Adaptation of Xiaolin Wu's line algorithm to determine an attack line
+	 * and corresponding damage spread.
+	 * @param size the internal size of the defending unit
+	 * @param start the point of origin
+	 * @param end the destination point
+	 * @return a representation of damage splits in sequence
+	 */
+	private List<Map<MapPoint,Double>> getAttackLine(int size, 
+			RealPoint start, RealPoint end) {
+		// Get start and end x,y
+		double sx = start._x, sy = start._y;
+		double ex = end._x, ey = end._y;
+		// Get the differentials along the x and y axes
+		double dx = end._x - start._x;
+		double dy = end._y - start._y;
+		// Figure out some properties of the line
+		boolean steep = Math.abs(dx) < Math.abs(dy);
+		boolean swap = dx < 0;
+		// Do some swapping if necessary
+		double tmp;
+		if (steep) {
+			// Swap start x,y
+			tmp = sx;
+			sx = sy;
+			sy = tmp;
+			// Swap end x,y
+			tmp = ex;
+			ex = ey;
+			ey = tmp;
+			// Swap dx,dy
+			tmp = dx;
+			dx = dy;
+			dy = tmp;
+		}
+		if (swap) {
+			// Swap start x, end x
+			tmp = sx;
+			sx = ex;
+			ex = tmp;
+			// Swap start y, end y
+			tmp = sy;
+			sy = ey;
+			ey = tmp;
+		}
+		double grad = dy/dx;
+		
+		// Find the lower bound, accounting for all the swapping we just did
+		RealPoint p = end;
+		int bound;
+		if (swap) {
+			p = start;
+		}
+		if (steep) {
+			bound = getFloorCellPosition(p._y,size);
+		} else {
+			bound = getFloorCellPosition(p._x,size);
+		}
+		
+		// Set up the data structures
+		Map<MapPoint,Double> map;
+		LinkedList<Map<MapPoint,Double>> list = new LinkedList<Map<MapPoint,Double>>();
+		
+		// first endpoint
+		double xend = getRoundedCellPosition(sx, size);
+		double yend = sy + grad * (xend - sx);
+		double xgap = 1 - getFractionalCellPosition(sx + 0.5, size);
+		int xpt1 = (int)xend;
+		int ypt1 = getFloorCellPosition(yend,size);
+		if (swap) {
+			map = new HashMap<MapPoint,Double>();
+			putPoint(map,xpt1%size,ypt1%size,
+					1-getFractionalCellPosition(yend,size)*xgap,steep);
+			putPoint(map,xpt1%size,(ypt1+1)%size,
+					getFractionalCellPosition(yend,size)*xgap,steep);
+			list.add(map);
+		}
+		double intery = yend + grad;
+		
+		// second endpoint, if inside defender
+		xend = getRoundedCellPosition(ex, size);
+		yend = sy + grad * (xend - ex);
+		xgap = 1 - getFractionalCellPosition(ex + 0.5, size);
+		int xpt2 = (int)xend;
+		int ypt2 = getFloorCellPosition(yend,size);
+		if (!swap) {
+			map = new HashMap<MapPoint,Double>();
+			putPoint(map,xpt2%size,ypt2%size,
+					1-getFractionalCellPosition(yend,size)*xgap,steep);
+			putPoint(map,xpt2%size,(ypt2+1)%size,
+					getFractionalCellPosition(yend,size)*xgap,steep);
+			list.add(map);
+		}
+		
+		// main loop
+		for (int x = xpt1+1; x < xpt2; x++) {
+			boolean good = x >= bound;
+			// If we are inside the defender, plot some points
+			if (good) {
+				map = new HashMap<MapPoint,Double>();
+				putPoint(map,x % size,getFloorCellPosition(intery,size),
+						1-getFractionalCellPosition(yend,size),steep);
+				putPoint(map,x % size,getFloorCellPosition(intery,size)+1,
+						getFractionalCellPosition(yend,size),steep);
+				if (swap) {
+					list.addFirst(map);
+				} else {
+					list.addLast(map);
+				}
+			}
+			// Increment the y
+			intery += grad;
+		}
+		return list;
+	}
+	
+	/**
+	 * Helper function that is used to get the closest cell position inside a 
+	 * unit given the unit's internal size.
+	 * @param d the real-valued location
+	 * @param size the internal size of the unit
+	 * @return which cell in the unit this point would be closest to.
+	 */
+	private int getRoundedCellPosition(double d, int size) {
+		return (int)(d*size+0.5);
+	}
+	
+	/**
+	 * Helper function that is used to get the floor cell position inside a unit
+	 * given the unit's internal size. 
+	 * @param d the real-valued location
+	 * @param size the internal size of the unit
+	 * @return which cell in the unit this point is inside.
+	 */
+	private int getFloorCellPosition(double d, int size) {
+		return (int)Math.floor(d*size);
+	}
+	
+	/**
+	 * Helper function that is used to get the fractional part of the cell
+	 * position inside a unit given the unit's internal size.
+	 * @param d the real-valued location
+	 * @param size the internal size of the unit
+	 * @return the fractional position inside the cell this point is in.
+	 */
+	private double getFractionalCellPosition(double d, int size) {
+		return d*size-getFloorCellPosition(d,size);
+	}
+	
+	/**
+	 * Puts a point in the given map.
+	 * @param map a map
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @param d the value
+	 * @param steep whether or not the coordinates should be transposed.
+	 */
+	private void putPoint(Map<MapPoint,Double> map, int x, int y, 
+			double d, boolean steep) {
+		if (steep) {
+			map.put(new MapPoint(y,x),d);
+		} else {
+			map.put(new MapPoint(x,y),d);
+		}
+	}
+	
+	/**
+	 * Updates a unit's cached stats.
+	 * @param u the unit to update
+	 */
+	private void updateCachedStats(Unit u) {
+		// Clear out old values
+		for (Block.BonusType bonus : Block.BonusType.values()) {
+			u._stats.put(bonus, 0);
+		}
+		// Put in new values
+		for (Block b : u._blocks.values()) {
+			for (Block.BonusType bonus : b._bonuses.keySet()) {
+				u._stats.put(bonus, u._stats.get(bonus) + b._bonuses.get(bonus));
+			}
+		}
+	}
+	
+	/**
 	 * Calculates the valid actions for a given unit
 	 * @param p the Player
 	 * @param unitId the unit's id
 	 * @return a map of MapPoints to Action.ActionTypes that represents what actions can be taken where
 	 */
-	// TODO finish
-	// TODO add support for different types of terrain
-	public HashMap<MapPoint, Action.ActionType> getValidActions(Player p, int unitId)
+	@Override
+	public Map<MapPoint, Action.ActionType> getValidActions(Player p, int unitId)
 	{
 		int player = getPlayerId(p);
 		if(unitId < 0 || unitId >= _units.size() || _units.get(unitId)._owner != player || _turn != player)
@@ -432,8 +676,8 @@ public class GameCore implements Core
 				+ "\tAnswer: null", 2);
 			return null;
 		}
-		HashMap<MapPoint, Action.ActionType> actions = new HashMap<MapPoint, Action.ActionType>();
-		if(_unitInformation.get(unitId)._hasMoved && _unitInformation.get(unitId)._hasAttacked)
+		Map<MapPoint, Action.ActionType> actions = CoreActions.getValidActions(unitId, player, _units, _unitInformation, _terrain);
+		if(actions.size() == 0)
 		{
 			log("Player " + player + " called getValidActions(unitId: " + unitId + ") but the unit had already attacked/moved\n"
 				+ "\tAnswer: (empty map)", 1);
@@ -441,54 +685,12 @@ public class GameCore implements Core
 		}
 		else
 		{
-			if(!_unitInformation.get(unitId)._hasMoved)
-			{
-				for(MapPoint point : getAreaForUnit(unitId, 0))
-				{
-					if(getUnitAtPoint(point) == -1)
-					{
-						actions.put(new MapPoint(point), Action.ActionType.MOVE);
-					}
-				}
-			}
-			if(!_unitInformation.get(unitId)._hasAttacked)
-			{
-				int unit;
-				for(MapPoint point : getAreaForUnit(unitId, 1))
-				{
-					unit = getUnitAtPoint(point);
-					if(unit != -1 && _units.get(unit)._owner != player)
-					{
-						actions.put(new MapPoint(point), Action.ActionType.ATTACK);
-					}
-				}
-			}
 			log("Player " + player + " called getValidActions(unitId: " + unitId + ")\n"
 				+ "\tAnswer: " + actions, 1);
 			return actions;
 		}
 	}
-	
-	/**
-	 * Gets a unit at a specific point.
-	 * @param point the MapPoint to check
-	 * @return the id of the unit, -1 if no unit exists
-	 */
-	private int getUnitAtPoint(MapPoint point)
-	{
-		log("Looking for unit at point " + point, 1);
-		for(int i = 0; i < _unitInformation.size(); i++)
-		{
-			if(_unitInformation.get(i)._position.equals(point))
-			{
-				log("\tUnit " + i + " found", 1);
-				return i;
-			}
-		}
-		log("\tNo unit found", 1);
-		return -1;
-	}
-	
+		
 	/**
 	 * Generates what the units player can see.
 	 * @param player the player
@@ -553,6 +755,7 @@ public class GameCore implements Core
 	 * Callback for quitting a game.
 	 * @param p the Player
 	 */
+	@Override
 	public void quit(Player p)
 	{
 		synchronized(_turnLockObject)
@@ -742,6 +945,7 @@ public class GameCore implements Core
 	 * @param p the Player
 	 * @param message the message to send
 	 */
+	@Override
 	public void sendChatMessage(Player p, String message)
 	{
 		if(message.length() > 0)
@@ -772,6 +976,7 @@ public class GameCore implements Core
 	 * @return true if the unit is placed sucessfully, false otherwise
 	 */
 	// TODO finish
+	@Override
 	public int placeUnit(Player p, MapPoint coords, String name)
 	{
 		synchronized(_turnLockObject)
@@ -791,13 +996,13 @@ public class GameCore implements Core
 					+ "\tAnswer: false", 2);
 				return -1;
 			}
-			if(getUnitAtPoint(coords) == -1 && _startingLocations.get(player).contains(coords))
+			if(CoreActions.getUnitAtPoint(coords, _unitInformation) == -1 && _startingLocations.get(player).contains(coords))
 			{
 				Unit toAdd = new Unit(new String(name), player, _units.size());
 				Block heartBlock = new Block(Constants.HEART_HEALTH);
 				heartBlock._bonuses.put(Block.BonusType.HEART, 1);
 				// Vary heart size based on unit size
-				if(Constants.UNIT_SIZE % 2 == 0)
+				if(toAdd._size % 2 == 0)
 				{
 					// Add a 2x2 block
 					for(int i = Constants.UNIT_SIZE / 2 - 1; i <= Constants.UNIT_SIZE / 2; i++)
@@ -830,7 +1035,7 @@ public class GameCore implements Core
 			else
 			{
 				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but tried to place a unit in an invalid location\n"
-					+ "\tUnit at point: " + getUnitAtPoint(coords) + "\n"
+					+ "\tUnit at point: " + CoreActions.getUnitAtPoint(coords, _unitInformation) + "\n"
 					+ "\tAnswer: -1", 2);
 				return -1;
 			}
@@ -845,6 +1050,7 @@ public class GameCore implements Core
 	 * @param coords the coordinates in the unit to place the piece
 	 * @return true if the piece is added sucessfuly, false otherwise
 	 */
+	@Override
 	public boolean updateUnit(Player p, int unitId, int pieceId, MapPoint coords)
 	{
 		synchronized(_turnLockObject)
@@ -902,14 +1108,7 @@ public class GameCore implements Core
 				toAdd = new Block(piece._blocks.get(key));
 				for(Block.BonusType bonus : toAdd._bonuses.keySet())
 				{
-					if(unit._stats.containsKey(bonus))
-					{
-						unit._stats.put(bonus, new Integer(toAdd._bonuses.get(bonus).intValue() + unit._stats.get(bonus).intValue()));
-					}
-					else
-					{
-						unit._stats.put(bonus, new Integer(toAdd._bonuses.get(bonus)));
-					}
+					unit._stats.put(bonus, toAdd._bonuses.get(bonus) + unit._stats.get(bonus));
 				}
 				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), toAdd);
 			}
@@ -924,6 +1123,7 @@ public class GameCore implements Core
 	 * @param player the player's id
 	 * @return the player's name
 	 */
+	@Override
 	public String getPlayerName(int player)
 	{
 		String name;
@@ -945,6 +1145,7 @@ public class GameCore implements Core
 	 * @param p the Player
 	 * @return the Player's recourses
 	 */
+	@Override
 	public int getResources(Player p)
 	{
 		int resources = _playerInformation.get(getPlayerId(p))._resources;
@@ -959,6 +1160,7 @@ public class GameCore implements Core
 	 * @param unitId the id of the unit
 	 * @return a copy of the Unit
 	 */
+	@Override
 	public Unit getUnit(Player p, int unitId)
 	{
 		if(unitId >= _units.size() && unitId < 0)
@@ -986,12 +1188,12 @@ public class GameCore implements Core
 	private HashSet<MapPoint> getVisible(int player)
 	{
 		HashSet<MapPoint> visible = new HashSet<MapPoint>();
-		HashSet<MapPoint> unitVisible;
+		Set<MapPoint> unitVisible;
 		for(int i = 0; i < _units.size(); i++)
 		{
 			if(_units.get(i)._owner == player)
 			{
-				unitVisible = getAreaForUnit(i, 2);
+				unitVisible = CoreActions.getAreaForUnit(i, 2, _units, _unitInformation, _terrain);
 				for(MapPoint point : unitVisible)
 				{
 					visible.add(point);
@@ -1003,53 +1205,13 @@ public class GameCore implements Core
 			// TODO add back in when we are generating less data
 		return visible;
 	}
-	
-	/**
-	 * Gets the action/visible area for a single unit.
-	 * @param u the Unit
-	 * @return the MapPoints that the unit can act upon/see
-	 */
-	// TODO add support for sight blocks and special movement blocks/terrain
-	private HashSet<MapPoint> getAreaForUnit(int u, int type)
-	{
-		int radius;
-		if(type == 0) // Movement area
-		{
-			radius = 3;
-		}
-		else if(type == 1) // Attack area
-		{
-			radius = 2;
-		}
-		else // Visible area
-		{
-			radius = 60; // TODO change when not testing
-		}
-		UnitInformation info = _unitInformation.get(u);
-		HashSet<MapPoint> visible = new HashSet<MapPoint>();
-		for(int x = info._position._x - radius; x < (info._position._x + radius + 1); x++)
-		{
-			for(int y = info._position._y - radius; y < (info._position._y + radius + 1); y++)
-			{
-				if(x >= 0 && y >= 0 && x < _terrain.length && y < _terrain[0].length) // Check to make sure the point is on the board
-				{
-					if((Math.abs(info._position._x - x) + Math.abs(info._position._y - y)) < radius)
-					{
-						visible.add(new MapPoint(x, y));
-					}
-				}
-			}
-		}
-		/*log("getAreaForUnit(u: " + u + ", type: " + type + ")\n"
-			+ "\tAnswer was: " + visible, 1);*/
-		return visible;
-	}
-	
+		
 	/**
 	 * Returns the number of units left to build for a given player.
 	 * @param p the Player we are checking
 	 * @return the number of units the Player can build
 	 */
+	@Override
 	public int getRemainingUnits(Player p)
 	{
 		int built = 0;
@@ -1120,15 +1282,9 @@ public class GameCore implements Core
 	 * Returns if the game is done.
 	 * @return true if the game is over, false otherwise
 	 */
+	@Override
 	public boolean done()
 	{
-		if(_turn == -2)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return _turn == -2;
 	}
 }

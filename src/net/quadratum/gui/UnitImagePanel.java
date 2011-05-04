@@ -31,9 +31,10 @@ public class UnitImagePanel extends JPanel {
 		addMouseListener(mIL);
 		addMouseMotionListener(mIL);
 		
-		setBackground(_guiPlayer._drawingMethods.BACKGROUND_COLOR);
+		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
+	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
@@ -59,7 +60,7 @@ public class UnitImagePanel extends JPanel {
 		}
 		
 		if(selected!=null) {
-			g.setColor(_guiPlayer._drawingMethods.FOREGROUND_COLOR);
+			g.setColor(DrawingMethods.FOREGROUND_COLOR);
 			g.fillRect(ox, oy, uSSize, uSSize);
 			
 			BufferedImage mask = _guiPlayer._drawingMethods.getBlockMaskImage(scale);
