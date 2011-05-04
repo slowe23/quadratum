@@ -18,7 +18,7 @@ public class PieceListPanel extends JPanel {
 	public PieceListPanel(DrawingMethods drawingMethods) {
 		_drawingMethods = drawingMethods;
 		
-		setBackground(_drawingMethods.BACKGROUND_COLOR);
+		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
 	public void paintComponent(Graphics g) {
