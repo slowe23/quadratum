@@ -18,7 +18,7 @@ public class PieceListPanel extends JPanel {
 	public PieceListPanel(GUIPlayer player) {
 		_guiPlayer = player;
 		
-		setBackground(_guiPlayer._drawingMethods.BACKGROUND_COLOR);
+		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
 	public void paintComponent(Graphics g) {

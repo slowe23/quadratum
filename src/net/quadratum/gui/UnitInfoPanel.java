@@ -11,6 +11,8 @@ import net.quadratum.core.Core;
 import net.quadratum.core.Unit;
 
 public class UnitInfoPanel extends JPanel {
+	
+	/** Core that provides information to this UnitInfoPanel. */
 	private Core _core;
 	
 	private GUIPlayer _guiPlayer;

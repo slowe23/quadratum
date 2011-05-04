@@ -33,7 +33,7 @@ public class MinimapPanel extends JPanel {
 		
 		addMouseListener(new MinimapPanelMouseListener());
 		
-		setBackground(_guiPlayer._drawingMethods.BACKGROUND_COLOR);
+		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
 	public void placementUpdated() {
@@ -173,7 +173,7 @@ public class MinimapPanel extends JPanel {
 				g.drawImage(placementImg, offx, offy, SCALE*placementImg.getWidth(), SCALE*placementImg.getHeight(), null);
 			
 			//Draw a border around the map
-			g.setColor(_guiPlayer._drawingMethods.NEUTRAL_COLOR);
+			g.setColor(DrawingMethods.NEUTRAL_COLOR);
 			g.drawRect(offx-1, offy-1, SCALE*terrainImg.getWidth()+2-1, SCALE*terrainImg.getHeight()+2-1);
 			
 			///Draw in the units
@@ -183,7 +183,7 @@ public class MinimapPanel extends JPanel {
 				int xx = offx + SCALE*p._x;
 				int yy = offy + SCALE*p._y;
 				
-				g.setColor(_guiPlayer._drawingMethods.FOREGROUND_COLOR);
+				g.setColor(DrawingMethods.FOREGROUND_COLOR);
 				g.fillRect(xx, yy, SCALE, SCALE);
 				g.setColor(_guiPlayer._drawingMethods.getPlayerColor(entry.getValue()._owner));
 				g.drawRect(xx, yy, SCALE-1, SCALE-1);
@@ -191,12 +191,12 @@ public class MinimapPanel extends JPanel {
 			
 			//Emphasize the selected unit
 			if(selectedLocation!=null) {
-				g.setColor(_guiPlayer._drawingMethods.FOREGROUND_COLOR);
+				g.setColor(DrawingMethods.FOREGROUND_COLOR);
 				g.drawRect(offx+SCALE*selectedLocation._x-1, offy+SCALE*selectedLocation._y-1, SCALE+2-1, SCALE+2-1);
 			}
 			
 			//Draw the panel border
-			g.setColor(StaticMethods.applyAlpha(_guiPlayer._drawingMethods.BACKGROUND_COLOR, 127));
+			g.setColor(StaticMethods.applyAlpha(DrawingMethods.BACKGROUND_COLOR, 127));
 			g.fillRect(0,0,getWidth(), BORDER);
 			g.fillRect(0,getHeight()-BORDER,getWidth(), BORDER);
 			
@@ -204,7 +204,7 @@ public class MinimapPanel extends JPanel {
 			g.fillRect(getWidth()-BORDER, BORDER, BORDER, getHeight()-2*BORDER);
 			
 			//Draw a box around the currently visible area
-			g.setColor(_guiPlayer._drawingMethods.FOREGROUND_COLOR);
+			g.setColor(DrawingMethods.FOREGROUND_COLOR);
 			int startx = StaticMethods.round(SCALE*viewx), starty = StaticMethods.round(SCALE*viewy), endx = StaticMethods.round(SCALE*(viewx+vieww)), endy = StaticMethods.round(SCALE*(viewy+viewh));
 			g.drawRect(offx+startx-1, offy+starty-1, endx-startx+2-1, endy-starty+2-1);
 		}

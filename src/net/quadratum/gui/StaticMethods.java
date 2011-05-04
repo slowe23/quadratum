@@ -9,12 +9,23 @@ import javax.swing.border.*;
 
 //Static convenience methods
 public class StaticMethods {
-	// Rounds a double to the nearest int value
+
+	/**
+	 * Rounds a double to the nearest int value.
+	 * @param d a double to round
+	 * @return an int which is closest to the given double
+	 */
 	public static int round(double d) {
 		return longToInt(Math.round(d));
 	}
 	
-	//Converts a long to an int, capping it if it excedes the minimum or maximum int values
+	/**
+	 * Converts a long to an int, capping it if it excedes the minimum or 
+	 * maximum int values as if it were using saturation arithmetic.
+	 * @param l a long to convert
+	 * @return an int which is either the same value as or the closest value 
+	 * to the given long.
+	 */
 	public static int longToInt(long l) {
 		if(l<Integer.MIN_VALUE)
 			return Integer.MIN_VALUE;

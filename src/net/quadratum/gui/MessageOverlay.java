@@ -60,7 +60,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 	}
 	
 	public void newMessage(String message) {
-		newMessage(new Message(message.split("\n"), _guiPlayer._drawingMethods.FOREGROUND_COLOR));
+		newMessage(new Message(message.split("\n"), DrawingMethods.FOREGROUND_COLOR));
 	}
 	
 	private void newMessage(Message mess) {
@@ -123,11 +123,10 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 							ny -= FMETR.getHeight();
 						}
 						
-						g.setColor(_guiPlayer._drawingMethods.BACKGROUND_COLOR);
+						g.setColor(DrawingMethods.BACKGROUND_COLOR);
 						g.fillRect(0, ny+FMETR.getHeight()-FMETR.getAscent(), 2*MSG_PAD+max, lines*FMETR.getHeight());
 						
-						
-						g.setColor(_guiPlayer._drawingMethods.FOREGROUND_COLOR);
+						g.setColor(DrawingMethods.FOREGROUND_COLOR);
 						for(int ssss = sss.length-1; ssss>=0 && ny>=FMETR.getAscent()+MSG_PAD; ssss--) {
 							g.drawString(sss[ssss], MSG_PAD, y);
 							y -= FMETR.getHeight();
