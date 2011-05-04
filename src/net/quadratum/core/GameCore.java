@@ -7,6 +7,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -395,30 +397,249 @@ public class GameCore implements Core
 				}
 				_unitInformation.get(unitId)._hasAttacked = true;
 				
-				_unitInformation.get(unit)._position = new MapPoint(-1, -1);
+				// TODO factor out? also potentially increase the number of
+				// attack lines
 				
-				/* TODO real attacking goes here */
+				// Grab some references
 				
-				// Calculate angle between center of attacker and
-				// center of defender
+				Unit attacker = _units.get(unitId);
+				Unit defender = _units.get(unit);
 				
-				// Get perpendicular angle
+				// Calculate centers of attacker and defender in real coordinates
+				// oldCoords = attacker
+				// coords = defender
 				
-				// Calculate start and end positions for each attack line by
-				// following the perpendicular line outward
+				RealPoint attackerPos = new RealPoint(oldCoords._x+0.5,oldCoords._y+0.5);
+				RealPoint defenderPos = new RealPoint(coords._x+0.5,coords._y+0.5);
 				
-				// Calculate damage per line
+				// Get the attack line
 				
-				// Iterate over each attack line, calculate the pixels on each side,
-				// and split the damage across them. Carry damage to the next level
-				// if there is still damage left over to be distributed on this line
+				List<Map<MapPoint,Double>> line = getAttackLine(defender._size,
+						attackerPos,defenderPos);
 				
-				updateMaps(new Action(Action.ActionType.UNIT_DIED, coords, coords));
+				// Distribute the damage
+				
+				int damageLeft = attacker._stats.get(Block.BonusType.ATTACK);
+				int damageDone;
+				for (Map<MapPoint,Double> current : line) {
+					damageDone = 0;
+					for (MapPoint point : current.keySet()) {
+						
+						Block b = defender._blocks.get(point);
+						if (b == null) {
+							continue;
+						}
+						// Get damage at this point and apply it to the block
+						int damage = (int)(damageLeft*current.get(point)+0.5);
+						b._health -= damage;
+						if (b._health < 0) {
+							damage += b._health;
+							defender._blocks.remove(b);
+						}
+						damageDone += damage;
+					}
+					damageLeft -= damageDone;
+					if (damageLeft == 0) {
+						break;
+					}
+				}
+				
+				// We don't need to send out the unit died action unless the heart is totally gone
+				
+				updateCachedStats(defender);
+				
+				if (defender._stats.get(Block.BonusType.HEART) == 0) {
+					updateMaps(new Action(Action.ActionType.UNIT_DIED, coords, coords));
+				}
+				
 				log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ")\n"
 					+ "\tAction taken: attack\n"
 					+ "\tFrom: " + oldCoords, 1);
 			}
 			return true;
+		}
+	}
+	
+	/**
+	 * Adaptation of Xiaolin Wu's line algorithm to determine an attack line
+	 * and corresponding damage spread.
+	 * @param size the internal size of the defending unit
+	 * @param start the point of origin
+	 * @param end the destination point
+	 * @return a representation of damage splits in sequence
+	 */
+	private List<Map<MapPoint,Double>> getAttackLine(int size, 
+			RealPoint start, RealPoint end) {
+		// Get start and end x,y
+		double sx = start._x, sy = start._y;
+		double ex = end._x, ey = end._y;
+		// Get the differentials along the x and y axes
+		double dx = end._x - start._x;
+		double dy = end._y - start._y;
+		// Figure out some properties of the line
+		boolean steep = Math.abs(dx) < Math.abs(dy);
+		boolean swap = dx < 0;
+		// Do some swapping if necessary
+		double tmp;
+		if (steep) {
+			// Swap start x,y
+			tmp = sx;
+			sx = sy;
+			sy = tmp;
+			// Swap end x,y
+			tmp = ex;
+			ex = ey;
+			ey = tmp;
+			// Swap dx,dy
+			tmp = dx;
+			dx = dy;
+			dy = tmp;
+		}
+		if (swap) {
+			// Swap start x, end x
+			tmp = sx;
+			sx = ex;
+			ex = tmp;
+			// Swap start y, end y
+			tmp = sy;
+			sy = ey;
+			ey = tmp;
+		}
+		double grad = dy/dx;
+		
+		// Find the lower bound, accounting for all the swapping we just did
+		RealPoint p = end;
+		int bound;
+		if (swap) {
+			p = start;
+		}
+		if (steep) {
+			bound = getFloorCellPosition(p._y,size);
+		} else {
+			bound = getFloorCellPosition(p._x,size);
+		}
+		
+		// Set up the data structures
+		Map<MapPoint,Double> map;
+		LinkedList<Map<MapPoint,Double>> list = new LinkedList<Map<MapPoint,Double>>();
+		
+		// first endpoint
+		double xend = getRoundedCellPosition(sx, size);
+		double yend = sy + grad * (xend - sx);
+		double xgap = 1 - getFractionalCellPosition(sx + 0.5, size);
+		int xpt1 = (int)xend;
+		int ypt1 = getFloorCellPosition(yend,size);
+		if (swap) {
+			map = new HashMap<MapPoint,Double>();
+			putPoint(map,xpt1%size,ypt1%size,
+					1-getFractionalCellPosition(yend,size)*xgap,steep);
+			putPoint(map,xpt1%size,(ypt1+1)%size,
+					getFractionalCellPosition(yend,size)*xgap,steep);
+			list.add(map);
+		}
+		double intery = yend + grad;
+		
+		// second endpoint, if inside defender
+		xend = getRoundedCellPosition(ex, size);
+		yend = sy + grad * (xend - ex);
+		xgap = 1 - getFractionalCellPosition(ex + 0.5, size);
+		int xpt2 = (int)xend;
+		int ypt2 = getFloorCellPosition(yend,size);
+		if (!swap) {
+			map = new HashMap<MapPoint,Double>();
+			putPoint(map,xpt2%size,ypt2%size,
+					1-getFractionalCellPosition(yend,size)*xgap,steep);
+			putPoint(map,xpt2%size,(ypt2+1)%size,
+					getFractionalCellPosition(yend,size)*xgap,steep);
+			list.add(map);
+		}
+		
+		// main loop
+		for (int x = xpt1+1; x < xpt2; x++) {
+			boolean good = x >= bound;
+			// If we are inside the defender, plot some points
+			if (good) {
+				map = new HashMap<MapPoint,Double>();
+				putPoint(map,x % size,getFloorCellPosition(intery,size),
+						1-getFractionalCellPosition(yend,size),steep);
+				putPoint(map,x % size,getFloorCellPosition(intery,size)+1,
+						getFractionalCellPosition(yend,size),steep);
+				if (swap) {
+					list.addFirst(map);
+				} else {
+					list.addLast(map);
+				}
+			}
+			// Increment the y
+			intery += grad;
+		}
+		return list;
+	}
+	
+	/**
+	 * Helper function that is used to get the closest cell position inside a 
+	 * unit given the unit's internal size.
+	 * @param d the real-valued location
+	 * @param size the internal size of the unit
+	 * @return which cell in the unit this point would be closest to.
+	 */
+	private int getRoundedCellPosition(double d, int size) {
+		return (int)(d*size+0.5);
+	}
+	
+	/**
+	 * Helper function that is used to get the floor cell position inside a unit
+	 * given the unit's internal size. 
+	 * @param d the real-valued location
+	 * @param size the internal size of the unit
+	 * @return which cell in the unit this point is inside.
+	 */
+	private int getFloorCellPosition(double d, int size) {
+		return (int)Math.floor(d*size);
+	}
+	
+	/**
+	 * Helper function that is used to get the fractional part of the cell
+	 * position inside a unit given the unit's internal size.
+	 * @param d the real-valued location
+	 * @param size the internal size of the unit
+	 * @return the fractional position inside the cell this point is in.
+	 */
+	private double getFractionalCellPosition(double d, int size) {
+		return d*size-getFloorCellPosition(d,size);
+	}
+	
+	/**
+	 * Puts a point in the given map.
+	 * @param map a map
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @param d the value
+	 * @param steep whether or not the coordinates should be transposed.
+	 */
+	private void putPoint(Map<MapPoint,Double> map, int x, int y, 
+			double d, boolean steep) {
+		if (steep) {
+			map.put(new MapPoint(y,x),d);
+		} else {
+			map.put(new MapPoint(x,y),d);
+		}
+	}
+	
+	/**
+	 * Updates a unit's cached stats.
+	 * @param u the unit to update
+	 */
+	private void updateCachedStats(Unit u) {
+		// Clear out old values
+		for (Block.BonusType bonus : Block.BonusType.values()) {
+			u._stats.put(bonus, 0);
+		}
+		// Put in new values
+		for (Block b : u._blocks.values()) {
+			for (Block.BonusType bonus : b._bonuses.keySet()) {
+				u._stats.put(bonus, u._stats.get(bonus) + b._bonuses.get(bonus));
+			}
 		}
 	}
 	
@@ -781,7 +1002,7 @@ public class GameCore implements Core
 				Block heartBlock = new Block(Constants.HEART_HEALTH);
 				heartBlock._bonuses.put(Block.BonusType.HEART, 1);
 				// Vary heart size based on unit size
-				if(Constants.UNIT_SIZE % 2 == 0)
+				if(toAdd._size % 2 == 0)
 				{
 					// Add a 2x2 block
 					for(int i = Constants.UNIT_SIZE / 2 - 1; i <= Constants.UNIT_SIZE / 2; i++)
@@ -887,7 +1108,7 @@ public class GameCore implements Core
 				toAdd = new Block(piece._blocks.get(key));
 				for(Block.BonusType bonus : toAdd._bonuses.keySet())
 				{
-					unit._stats.put(bonus, new Integer(toAdd._bonuses.get(bonus).intValue() + unit._stats.get(bonus).intValue()));
+					unit._stats.put(bonus, toAdd._bonuses.get(bonus) + unit._stats.get(bonus));
 				}
 				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), toAdd);
 			}

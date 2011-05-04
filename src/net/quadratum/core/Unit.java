@@ -42,7 +42,7 @@ public class Unit implements Serializable {
 		_size = Constants.UNIT_SIZE;
 		for(Block.BonusType bonus : Block.BonusType.values())
 		{
-			_stats.put(bonus, new Integer(0));
+			_stats.put(bonus, 0);
 		}
 	}
 	
