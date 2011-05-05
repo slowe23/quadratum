@@ -134,7 +134,11 @@ public class MapPanel extends JPanel {
 	
 	public synchronized void scrollTo(net.quadratum.core.Action a, boolean center) {
 		if(a!=null) {
-			if((Math.abs(a._source._x - a._dest._x)+1<=getViewWidth()) && (Math.abs(a._source._y-a._dest._y)+1<=getViewHeight()))
+			if(a._dest==null)
+				scrollTo(a._source, center);
+			else if(a._source==null)
+				scrollTo(a._dest, center);
+			else if((Math.abs(a._source._x - a._dest._x)+1<=getViewWidth()) && (Math.abs(a._source._y-a._dest._y)+1<=getViewHeight()))
 				scrollTo(a._dest, center);
 			else
 				scrollTo((a._source._x + a._dest._x)/2.0+0.5, (a._source._y + a._dest._y)/2.0+0.5, center);
