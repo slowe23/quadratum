@@ -11,6 +11,8 @@ public class PiecesPanel extends JPanel {
 	private PieceListPanel _pieceListPanel;
 	private JButton _scrollUp, _scrollDown;
 	private JTextArea _pieceInfo;
+
+	private int _resources;
 	
 	private UnitImagePanel _unitImagePanel;
 	
@@ -55,12 +57,30 @@ public class PiecesPanel extends JPanel {
 			
 			_scrollUp.setEnabled(pieces!=null && pieces.size()>1);
 			_scrollDown.setEnabled(pieces!=null && pieces.size()>1);
-			
-			_unitImagePanel.pieceSelected(_pieceListPanel.getCurrentPiece());
+			updateUIP();
 		}
 		
 		repaint();
-		_unitImagePanel.repaint();
+	}
+	
+	public void updateResources(int resources) {
+		_resources = resources;
+		updateUIP();
+	}
+	
+	private void updateUIP() {
+		if(isVisible()) {
+			synchronized(_pieceListPanel) {
+				Piece p = _pieceListPanel.getCurrentPiece();
+				
+				if(p!=null && p._cost<_resources)
+					_unitImagePanel.pieceSelected(_pieceListPanel.getCurrentPieceID(), _pieceListPanel.getCurrentPiece());
+				else
+					_unitImagePanel.noPieceSelected();
+			}
+		} else {
+			_unitImagePanel.noPieceSelected();
+		}
 	}
 	
 	private String getPieceString(Piece p) {
@@ -84,12 +104,21 @@ public class PiecesPanel extends JPanel {
 				
 				_pieceInfo.setText(getPieceString(_pieceListPanel.getCurrentPiece()));
 				_pieceInfo.setCaretPosition(0);
-				
-				_unitImagePanel.pieceSelected(_pieceListPanel.getCurrentPiece());
+
+				updateUIP();
 			}
 			
 			repaint();
-			_unitImagePanel.repaint();
+		}
+	}
+	
+	private class PiecesPanelComponentListener extends ComponentAdapter {
+		public void componentShown(ComponentEvent e) {
+			updateUIP();
+		}
+		
+		public void componentHidden(ComponentEvent e) {
+			updateUIP();
 		}
 	}
 }

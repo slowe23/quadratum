@@ -89,7 +89,7 @@ public class MapPanel extends JPanel {
 					
 					Graphics tileGraph = g.create(tilex, tiley, scale, scale);
 					
-					_guiPlayer._drawingMethods.drawTerrainTile(tileGraph, terrain[here._x][here._y], scale);
+					_guiPlayer._drawingMethods.drawTerrainTile(tileGraph, terrain[here._x][here._y], scale, true);
 					
 					if(placement != null)
 						_guiPlayer._drawingMethods.drawPlacementMask(tileGraph, placement, here, scale);

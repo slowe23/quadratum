@@ -22,7 +22,8 @@ public class UnitImagePanel extends JPanel {
 	
 	private boolean _showHover;
 	private Piece _hover;
-	private int _hx, _hy;
+	private int _hIndex;
+	private MapPoint _hPos;
 	
 	public UnitImagePanel(GUIPlayer player) {
 		_guiPlayer = player;
@@ -42,7 +43,7 @@ public class UnitImagePanel extends JPanel {
 		int uSize = 0, scale = 0, uSSize = 0, ox = 0, oy = 0;
 		Piece hover;
 		boolean show;
-		int hx, hy;
+		MapPoint hPos;
 		synchronized(this) {
 			selected = _selected;
 			if(selected!=null) {
@@ -55,8 +56,7 @@ public class UnitImagePanel extends JPanel {
 			
 			show = _showHover;
 			hover = _hover;
-			hx = _hx;
-			hy = _hy;
+			hPos = _hPos;
 		}
 		
 		if(selected!=null) {
@@ -77,8 +77,8 @@ public class UnitImagePanel extends JPanel {
 			if(hover!=null && show) {
 				for(Map.Entry<MapPoint, Block> entry : hover._blocks.entrySet()) {
 					MapPoint p = new MapPoint(entry.getKey());
-					p._x += hx;
-					p._y += hy;
+					p._x += hPos._x;
+					p._y += hPos._y;
 					if(p._x>=0 && p._x<uSize && p._y>=0 && p._y<uSize) {
 						g.setColor(StaticMethods.applyAlpha(_guiPlayer._drawingMethods.getBlockColor(entry.getValue()), 127));
 						g.fillRect(ox + p._x*scale, oy + p._y*scale, scale, scale);
@@ -103,8 +103,14 @@ public class UnitImagePanel extends JPanel {
 		repaint();
 	}
 	
-	public synchronized void pieceSelected(Piece p) {
-		_hover = p;
+	public synchronized void noPieceSelected() {
+		_hover = null;
+		repaint();
+	}
+	
+	public synchronized void pieceSelected(int index, Piece selPiece) {
+		_hover = selPiece;
+		_hIndex = index;
 		repaint();
 	}
 	
@@ -121,8 +127,8 @@ public class UnitImagePanel extends JPanel {
 			synchronized(UnitImagePanel.this) {
 				_showHover = true;
 				if(_selected!=null && _hover!=null) {
-					_hx = (e.getX()-_ox)/_scale;
-					_hy = (e.getY()-_oy)/_scale;
+					_hPos._x = (e.getX()-_ox)/_scale;
+					_hPos._y = (e.getY()-_oy)/_scale;
 					repaint();
 				}
 			}
@@ -136,7 +142,10 @@ public class UnitImagePanel extends JPanel {
 		}
 		
 		public void mouseClicked(MouseEvent e) {
-			//TODO: place piece
+			synchronized(UnitImagePanel.this) {
+				if(_hover!=null)
+					_guiPlayer.placePiece(_selected, _hIndex, _hPos);
+			}
 		}
 	}
 }
