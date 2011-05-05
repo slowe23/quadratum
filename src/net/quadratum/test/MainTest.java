@@ -37,7 +37,7 @@ public class MainTest implements Main
 			lPiece._blocks.put(new MapPoint(1, 2), new Block(attackBlock));
 			pieces.add(lPiece);
 			// Create a core.
-			GameCore core = new GameCore(new MainTest(), "null", new CheckWinner(), pieces, observers);
+			GameCore core = new GameCore(new MainTest(), "null", new CheckWinner(), pieces);
 			core.addPlayer(player1, "AI Player", 5);
 			createNetworkPlayer(player2, "Network AI Player", 5);
 			for (Player p : server.stopListening()) {
