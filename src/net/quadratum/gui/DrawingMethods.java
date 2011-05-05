@@ -109,8 +109,39 @@ public class DrawingMethods {
 		return img;
 	}
 	
+	public Color getBonusTypeColor(Block.BonusType bonus) {
+		switch(bonus) {
+			case ATTACK:
+				return Color.RED;
+			case RANGE:
+				return Color.ORANGE;
+			case DEFENSE:
+				return Color.YELLOW;
+			case MOVEMENT:
+				return Color.CYAN;
+			case SIGHT:
+				return Color.GREEN;
+			case WATER_MOVEMENT:
+				return Color.BLUE;
+			case HEART:
+				return Color.MAGENTA;
+			default:
+				return Color.GRAY;
+		}
+	}
+	
 	public Color getBlockBaseColor(Block b) {
-		return new Color(127, 127, 127);  //TODO: change this
+		int red = 0, green = 0, blue = 0;
+		for(Block.BonusType type : b._bonuses.keySet()) {
+			Color c = getBonusTypeColor(type);
+			red += c.getRed();
+			green += c.getGreen();
+			blue += c.getBlue();
+		}
+		red /= b._bonuses.size();
+		green /= b._bonuses.size();
+		blue /= b._bonuses.size();
+		return new Color(red, green, blue);
 	}
 	
 	public Color getBlockColor(Block b) {
