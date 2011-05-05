@@ -141,6 +141,7 @@ public class GUIPlayer implements Player {
 			selectionUpdated();  //The available actions may change with the turn
 		}
 		_buttonsPanel.turn(turn==_id);
+		resourcesUpdated();
 	}
 	
 	/** Notifies the player that he has lost. */
