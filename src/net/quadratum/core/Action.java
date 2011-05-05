@@ -43,7 +43,21 @@ public class Action implements Serializable {
 	public Action(ActionType action, MapPoint source, MapPoint dest)
 	{
 		_action = action;
-		_source = new MapPoint(source);
-		_dest = new MapPoint(dest);
+		if(source == null)
+		{
+			_source = null;
+		}
+		else
+		{
+			_source = new MapPoint(source);
+		}
+		if(dest == null)
+		{
+			_dest = null;
+		}
+		else
+		{
+			_dest = new MapPoint(dest);
+		}
 	}
 }
