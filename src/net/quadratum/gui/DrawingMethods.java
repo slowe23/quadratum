@@ -116,7 +116,7 @@ public class DrawingMethods {
 			case RANGE:
 				return Color.ORANGE;
 			case DEFENSE:
-				return new Color(191, 191, 0)z;
+				return new Color(191, 191, 0);
 			case MOVEMENT:
 				return Color.CYAN;
 			case SIGHT:
