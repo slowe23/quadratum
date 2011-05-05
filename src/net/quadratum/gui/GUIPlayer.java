@@ -79,7 +79,7 @@ public class GUIPlayer implements Player {
 		
 		_gameWindow.setVisible(true);
 		
-		updateResources();
+		resourcesUpdated();
 		mapUpdated();
 		unitsUpdated();
 		_map.centerAtPlacementArea();
@@ -119,14 +119,7 @@ public class GUIPlayer implements Player {
 		unitsUpdated();
 		_map.scrollTo(lastAction, false);
 		_map.repaintBoth();
-		updateResources();
-	}
-	
-	private void updateResources() {
-		blockUntilReady();
-		
-		_buttonsPanel.updateResources(_core.getResources(this));
-		_pieces.updateResources(_core.getResources(this));
+		resourcesUpdated();
 	}
 	
 	/** Notifies the player that their turn has started. */
@@ -178,8 +171,11 @@ public class GUIPlayer implements Player {
 	public void placePiece(Unit unit, int ind, MapPoint pos) {
 		blockUntilReady();
 		
-		_core.updateUnit(this, unit._id, ind, pos);
-		unitsUpdated();
+		if(_core.updateUnit(this, unit._id, ind, pos)) {
+			_unitsData.refreshUnit(unit._id);
+			resourcesUpdated();
+			unitsUpdated();
+		}
 	}
 	
 	public void click(MapPoint point) {
@@ -238,7 +234,8 @@ public class GUIPlayer implements Player {
 			placementUpdated();
 			
 			_core.ready(this);
-			updateResources();
+			resourcesUpdated();
+			_buttonsPanel.gameStart();
 		}
 	}
 	
@@ -260,6 +257,13 @@ public class GUIPlayer implements Player {
 			selectionUpdated();
 			_map.scrollTo(_unitsData.getSelectedLocation(), false);
 		}
+	}
+	
+	private void resourcesUpdated() {
+		blockUntilReady();
+		
+		_buttonsPanel.updateResources(_core.getResources(this));
+		_pieces.updateResources(_core.getResources(this));
 	}
 	
 	private void placementUpdated() {

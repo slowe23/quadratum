@@ -59,6 +59,7 @@ public class ButtonsPanel extends Container {
 	}
 	
 	public void gameStart() {
+		System.out.println("Game start.");
 		remove(_right);
 		add(_endTurn, BorderLayout.EAST);
 		validate();
