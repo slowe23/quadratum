@@ -203,7 +203,7 @@ public class TestingCore implements Core {
 		return false;
 	}
 
-	public String getObjectives(player p)
+	public String getObjectives(Player p)
 	{
 		return new String("None");
 	}
