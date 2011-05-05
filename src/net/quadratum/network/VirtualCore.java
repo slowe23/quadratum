@@ -254,6 +254,12 @@ public class VirtualCore extends NetworkClient implements Core {
 	}
 	
 	@Override
+	public String getObjectives(Player p) {
+		// Stubbed for now...
+		return "";
+	}
+	
+	@Override
 	public boolean done() {
 		return _done;
 	}
