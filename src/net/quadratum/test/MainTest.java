@@ -55,7 +55,7 @@ public class MainTest implements Main
 		try {
 			Socket sock = new Socket("localhost",_port);
 			VirtualCore vc = new VirtualCore(sock);
-			vc.addPlayer(p, name, maxUnits);
+			vc.addPlayer(p, name, maxUnits, 100);
 			vc.startGame();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();

@@ -26,9 +26,10 @@ public class TestingCore implements Core {
 	 * Adds a player to the game being run by this Core.
 	 * @param p a player to be added
 	 * @param playerName the player to be added
-	 * @param maxUnits the maximum number of units this palyer can add
+	 * @param maxUnits the maximum number of units this player can add
+	 * @param startingResources the starting resources
 	 */
-	public void addPlayer(Player p, String playerName, int maxUnits) {
+	public void addPlayer(Player p, String playerName, int maxUnits, int startingResources) {
 		_player = p;
 		_units = new HashMap<MapPoint, Unit>();
 		_toPlace = 3;
