@@ -1,0 +1,8 @@
+syntax: glob
+
+*~
+*.class
+.DS_Store
+.classpath
+.project
+log.txt
