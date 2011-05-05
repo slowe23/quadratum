@@ -28,7 +28,7 @@ public class MainTest implements Main
 			ArrayList<Piece> pieces = new ArrayList<Piece>();
 			Block attackBlock = new Block(30);
 			attackBlock._bonuses.put(Block.BonusType.ATTACK, 10);
-			Piece lPiece = new Piece(100, -1, "L Block", "Provides +40 attack");
+			Piece lPiece = new Piece(10, -1, "L Block", "Provides +40 attack");
 			lPiece._blocks.put(new MapPoint(0, 0), new Block(attackBlock));
 			lPiece._blocks.put(new MapPoint(0, 1), new Block(attackBlock));
 			lPiece._blocks.put(new MapPoint(0, 2), new Block(attackBlock));

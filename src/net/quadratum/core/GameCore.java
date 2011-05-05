@@ -17,6 +17,7 @@ import java.util.Set;
 import net.quadratum.main.Main;
 
 // TODO add debug constants
+// TODO add starting resources to addPlayer
 public class GameCore implements Core
 {
 	private Main _main;
@@ -260,6 +261,7 @@ public class GameCore implements Core
 	 * @param playerName the name of the player
 	 * @param maxUnits the max units a player can have
 	 */
+	// TODO add starting resources
 	@Override
 	public synchronized void addPlayer(Player p, String playerName, int maxUnits)
 	{
@@ -1034,6 +1036,7 @@ public class GameCore implements Core
 					resourcesGained += Constants.RESOURCES_PER_TURN;
 				}
 			}
+			_playerInformation.get(i)._resources += resourcesGained;
 			sendChatMessage(_turn, "You have gained " + resourcesGained + " resources.");
 			TurnStartThread turnStartThread = new TurnStartThread(_players.get(_turn));
 			turnStartThread.start();
@@ -1299,6 +1302,7 @@ public class GameCore implements Core
 				}
 				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), toAdd);
 			}
+			_playerInformation.get(player)._resources -= piece._cost;
 			log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ")\n"
 				+ "\tAnswer: true", 1);
 			return true;
