@@ -1300,6 +1300,7 @@ public class GameCore implements Core
 					log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but piece went out of bounds\n"
 						+ "\tLocation out of bounds: " + (new MapPoint(coords._x + key._x, coords._y + key._y)) + "\n"
 						+ "\tAnswer: false", 2);
+					return false;
 				}
 			}
 			Block toAdd;
