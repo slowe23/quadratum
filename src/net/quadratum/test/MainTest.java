@@ -1,4 +1,4 @@
-package net.quadratum.main.test;
+package net.quadratum.test;
 
 import java.io.IOException;
 import java.net.Socket;
