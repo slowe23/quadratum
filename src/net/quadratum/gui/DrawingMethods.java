@@ -31,7 +31,7 @@ public class DrawingMethods {
 		return col;
 	}
 	
-	public void drawTerrainTile(Graphics g, int terrainValue, int size) {
+	public void drawTerrainTile(Graphics g, int terrainValue, int size, boolean showGrid) {
 		g.setColor(getTerrainTileColor(terrainValue));
 		g.fillRect(0, 0, size, size);
 		
@@ -47,13 +47,18 @@ public class DrawingMethods {
 		
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.RESOURCES)) {
 			g.setColor(new Color(191,191, 0));
-			g.fillPolygon(new Polygon(new int[] {0, size/2, size, (3*size)/4, size, size/2, 0, size/4}, new int[] {0, size/4, 0, size/2, size, (3*size)/4, size, size/2}, 8));
+			g.fillPolygon(new Polygon(new int[]{0, size/2, size, size/2}, new int[]{size/2, 0, size/2, size}, 4));
+		}
+		
+		if(showGrid) {
+			g.setColor(StaticMethods.applyAlpha(NEUTRAL_COLOR, 191));
+			g.drawRect(0, 0, size-1, size-1);
 		}
 	}
 	
-	public BufferedImage getTerrainTileImage(int terrainValue, int size) {
+	public BufferedImage getTerrainTileImage(int terrainValue, int size, boolean showGrid) {
 		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-		drawTerrainTile(img.getGraphics(), terrainValue, size);
+		drawTerrainTile(img.getGraphics(), terrainValue, size, showGrid);
 		return img;
 	}
 	
@@ -212,8 +217,6 @@ public class DrawingMethods {
 			return Color.CYAN;
 		else if(actionType==ActionType.ATTACK)
 			return Color.RED;
-		else if(actionType==ActionType.GATHER_RESOURCES)
-			return Color.YELLOW;
 		else
 			return Color.WHITE;
 	}

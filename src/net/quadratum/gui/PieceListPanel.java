@@ -83,6 +83,13 @@ public class PieceListPanel extends JPanel {
 		return _pieces[_index];
 	}
 	
+	public synchronized Integer getCurrentPieceID() {
+		if(_pieces==null || _pieces.length==0)
+			return null;
+
+		return _index;
+	}
+	
 	public synchronized void scrollUp() {
 		scroll(_index-1);
 	}

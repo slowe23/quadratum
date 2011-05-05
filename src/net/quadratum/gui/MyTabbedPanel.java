@@ -59,7 +59,8 @@ public class MyTabbedPanel extends JPanel {
 	
 	private void selectFirst() {
 		_selected = 0;
-		_view.getComponent(_selected).setVisible(true);
+		Component selected = _view.getComponent(_selected);
+		selected.setVisible(true);
 	}
 	
 	public void setSelected(int s) {
@@ -77,8 +78,6 @@ public class MyTabbedPanel extends JPanel {
 					nC.setVisible(true);
 					_view.validate();
 				}
-				
-				firePropertyChange("Tab", osel, _selected);
 				
 				repaint();
 			}
