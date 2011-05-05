@@ -25,8 +25,6 @@ public class MainTest implements Main
 			Player player1 = new TestAI_MTC();
 			Player player2 = new TestAI_MTC();
 			Player player3 = new GUIPlayer();
-			HashSet<Integer> observers = new HashSet<Integer>();
-			observers.add(new Integer(2));
 			ArrayList<Piece> pieces = new ArrayList<Piece>();
 			Block attackBlock = new Block(30);
 			attackBlock._bonuses.put(Block.BonusType.ATTACK, 10);
@@ -37,24 +35,16 @@ public class MainTest implements Main
 			lPiece._blocks.put(new MapPoint(1, 2), new Block(attackBlock));
 			pieces.add(lPiece);
 			// Create a core.
-			GameCore core = new GameCore(new MainTest(), "null", new CheckWinner(), pieces);
+			GameCore core = new GameCore(new MainTest(), "src/net/quadratum/test/test.qmap", new CheckWinner(), pieces);
 			core.addPlayer(player1, "AI Player", 5);
 			createNetworkPlayer(player2, "Network AI Player", 5);
 			for (Player p : server.stopListening()) {
 				// XXX Massively hacky
 				core.addPlayer(p, "Network AI Player", 5);
 			}
-			core.addPlayer(player3, "GUI Player", 1);
+			core.addPlayer(player3, "GUI Player", 5);
+			//core.addObserver(player3);
 			core.startGame();
-			try
-			{
-				Thread.sleep(1000);
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-			core.sendChatMessage(player3, "Place a unit for the game to start!");
 			while(!core.done()) {}
 		} catch (NullPointerException e) {
 			e.printStackTrace();

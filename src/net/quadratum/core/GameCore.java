@@ -1,6 +1,8 @@
 package net.quadratum.core;
 
 import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -31,6 +33,7 @@ public class GameCore implements Core
 	private Object _chatLockObject, _turnLockObject;
 	private Writer _log;
 	private HashSet<ObserverContainer> _observers;
+	private int _maxPlayers;
 	
 	/**
 	 * Constructor for GameCore.
@@ -52,6 +55,7 @@ public class GameCore implements Core
 		_chatLockObject = new Object();
 		_turnLockObject = new Object();
 		_observers = new HashSet<ObserverContainer>();
+		_maxPlayers = 0;
 		try
 		{
 			if (Constants.DEBUG_TO_FILE) {
@@ -74,7 +78,181 @@ public class GameCore implements Core
 	// TODO Finish
 	private void readMap(String map)
 	{
-		
+		try
+		{			
+			FileReader file = new FileReader(map);
+			BufferedReader reader = new BufferedReader(file);
+			String line;
+			int width = 0;
+			int height = 0;
+			String[] locations, temp;
+			HashSet<MapPoint> points;
+			HashSet<MapPoint> water = new HashSet<MapPoint>();
+			HashSet<MapPoint> bunkers = new HashSet<MapPoint>();
+			HashSet<MapPoint> mountains = new HashSet<MapPoint>();
+			HashSet<MapPoint> resources = new HashSet<MapPoint>();
+			while((line = reader.readLine()) != null)
+			{
+				if(line.startsWith("height|") && line.length() > 7)
+				{
+					height = new Integer(line.split("\\|")[1]).intValue();
+				}
+				else if(line.startsWith("width|") && line.length() > 6)
+				{
+					width = new Integer(line.split("\\|")[1]).intValue();
+				}
+				else if(line.startsWith("players|") && line.length() > 8)
+				{
+					_maxPlayers = new Integer(line.split("\\|")[1]).intValue();
+				}
+				else if(line.startsWith("start|") && line.length() > 6)
+				{
+					points = new HashSet<MapPoint>();
+					locations = line.split("\\|");
+					for(int i = 1; i < locations.length; i++)
+					{
+						temp = locations[i].split(",");
+						if(temp.length != 2)
+						{
+							log("Invalid starting location in map file", 3);
+							throw new RuntimeException();
+						}
+						points.add(new MapPoint((new Integer(temp[0])).intValue(), (new Integer(temp[1])).intValue()));
+					}
+					_startingLocations.add(points);
+				}
+				else if(line.startsWith("water|"))
+				{
+					locations = line.split("\\|");
+					for(int i = 1; i < locations.length; i++)
+					{
+						temp = locations[i].split(",");
+						if(temp.length != 2)
+						{
+							log("Invalid water location(s) in map file", 3);
+							throw new RuntimeException();
+						}
+						water.add(new MapPoint((new Integer(temp[0])).intValue(), (new Integer(temp[1])).intValue()));
+					}
+				}
+				else if(line.startsWith("bunkers|"))
+				{
+					locations = line.split("\\|");
+					for(int i = 1; i < locations.length; i++)
+					{
+						temp = locations[i].split(",");
+						if(temp.length != 2)
+						{
+							log("Invalid bunker location(s) in map file", 3);
+							throw new RuntimeException();
+						}
+						bunkers.add(new MapPoint((new Integer(temp[0])).intValue(), (new Integer(temp[1])).intValue()));
+					}
+				}
+				else if(line.startsWith("mountains|"))
+				{
+					locations = line.split("\\|");
+					for(int i = 1; i < locations.length; i++)
+					{
+						temp = locations[i].split(",");
+						if(temp.length != 2)
+						{
+							log("Invalid mountain location(s) in map file", 3);
+							throw new RuntimeException();
+						}
+						mountains.add(new MapPoint((new Integer(temp[0])).intValue(), (new Integer(temp[1])).intValue()));
+					}
+				}
+				else if(line.startsWith("resources|"))
+				{
+					locations = line.split("\\|");
+					for(int i = 1; i < locations.length; i++)
+					{
+						temp = locations[i].split(",");
+						if(temp.length != 2)
+						{
+							log("Invalid resources location(s) in map file", 3);
+							throw new RuntimeException();
+						}
+						resources.add(new MapPoint((new Integer(temp[0])).intValue(), (new Integer(temp[1])).intValue()));
+					}
+				}
+				else
+				{
+					log("Invalid input line in map file", 3);
+					throw new RuntimeException();
+				}
+			}
+			if(width == 0 || height == 0 || _maxPlayers == 0 || _maxPlayers != _startingLocations.size() || _maxPlayers > Constants.MAX_PLAYERS)
+			{
+				log("Map file was missing important data", 3);
+				throw new RuntimeException();
+			}
+			_terrain = new int[width][height];
+			for(int i = 0; i < width; i++)
+			{
+				for(int j = 0; j < height; j++)
+				{
+					_terrain[i][j] = 0;
+				}
+			}
+			for(MapPoint point : water)
+			{
+				if(point._x < 0 || point._x >= width || point._y < 0 || point._y >= height)
+				{
+					log("Invalid water coordinates in map data", 3);
+					throw new RuntimeException();
+				}
+				else
+				{
+					_terrain[point._x][point._y] = _terrain[point._x][point._y] ^ TerrainConstants.WATER;
+				}
+			}
+			for(MapPoint point : bunkers)
+			{
+				if(point._x < 0 || point._x >= width || point._y < 0 || point._y >= height)
+				{	
+					log("Invalid bunker coordinates in map data", 3);
+					throw new RuntimeException();
+				}
+				else
+				{
+					_terrain[point._x][point._y] = _terrain[point._x][point._y] ^ TerrainConstants.BUNKER;
+				}
+			}
+			for(MapPoint point : mountains)
+			{
+				if(point._x < 0 || point._x >= width || point._y < 0 || point._y >= height)
+				{
+					log("Invalid mountain coordinates in map data", 3);
+					throw new RuntimeException();
+				}
+				else
+				{
+					_terrain[point._x][point._y] = _terrain[point._x][point._y] ^ TerrainConstants.MOUNTAIN;
+				}
+			}
+			for(MapPoint point : resources)
+			{
+				if(point._x < 0 || point._x >= width || point._y < 0 || point._y >= height)
+				{
+					log("Invalid resource coordinates in map data", 3);
+					throw new RuntimeException();
+				}
+				else
+				{
+					_terrain[point._x][point._y] = _terrain[point._x][point._y] ^ TerrainConstants.RESOURCES;
+				}
+			}
+			file.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			log("Invalid map file", 3);
+			// TODO add exception to throw
+			throw new IllegalArgumentException();
+		}
 	}
 	
 	/**
@@ -86,7 +264,7 @@ public class GameCore implements Core
 	@Override
 	public synchronized void addPlayer(Player p, String playerName, int maxUnits)
 	{
-		if(!_started && _players.size() < Constants.MAX_PLAYERS)
+		if(!_started && _players.size() < _maxPlayers)
 		{
 			_players.add(p);
 			_playerInformation.add(new PlayerInformation(new String(playerName), maxUnits));
@@ -109,7 +287,7 @@ public class GameCore implements Core
 			{
 				log("Tried to add more than the max number of players\n"
 					+ "\tPlayers: " + _players.size() + "\n"
-					+ "\tMax players: " + Constants.MAX_PLAYERS, 2);
+					+ "\tMax players: " + _maxPlayers, 2);
 			}
 		}
 	}
@@ -161,9 +339,9 @@ public class GameCore implements Core
 	{
 		if(_players.size() == 0)
 		{
-			// TODO add exception to throw
 			log("Tried to start game with 0 players", 3);
-			return;
+			// TODO add exception to throw
+			throw new RuntimeException();
 		}
 		if(!_started)
 		{
@@ -188,6 +366,18 @@ public class GameCore implements Core
 			playerStartThread = new PlayerStartThread(_players.get(i), this, tempMap, i, _players.size());
 			playerStartThread.start();
 			_players.get(i).updatePieces(tempPieces);
+		}
+		for(ObserverContainer obv : _observers)
+		{
+			tempMap = new MapData(_terrain, new HashSet<MapPoint>());
+			tempPieces = new ArrayList<Piece>();
+			for(int j = 0; j < _pieces.size(); j++)
+			{
+				tempPieces.add(new Piece(_pieces.get(j)));
+			}
+			playerStartThread = new PlayerStartThread(obv._p, this, tempMap, -2, _players.size());
+			playerStartThread.start();
+			obv._p.updatePieces(tempPieces);
 		}
 		log("start() has been called, starting unit placement phase", 1);
 		// Send a welcome message, can be removed
