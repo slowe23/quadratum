@@ -71,16 +71,16 @@ public class VirtualCore extends NetworkClient implements Core {
 	}
 
 	@Override
-	public void addPlayer(Player p, String playerName, int maxUnits) {
+	public void addPlayer(Player p, String playerName, int maxUnits, int startingResources) {
 		if (p instanceof VirtualPlayer) {
 			// A VirtualPlayer represents somebody on the actual game, but over the
 			// network.
 			_virtualPlayers.add((VirtualPlayer) p);
-			_virtualInfo.add(new PlayerInformation(playerName, maxUnits));
+			_virtualInfo.add(new PlayerInformation(playerName, maxUnits, startingResources));
 		} else {
 			// A VirtualCore should only have one local player associated.
 			_localPlayer = p;
-			_localInfo = new PlayerInformation(playerName, maxUnits);
+			_localInfo = new PlayerInformation(playerName, maxUnits, startingResources);
 		}
 		
 	}

@@ -35,12 +35,12 @@ public class MainTest implements Main
 			pieces.add(lPiece);
 			// Create a core.
 			GameCore core = new GameCore(new MainTest(), "src/net/quadratum/test/test.qmap", new CheckWinner(), pieces);
-			core.addPlayer(player1, "GUI Player", 5);
-			core.addPlayer(player2, "AI Player", 5);
+			core.addPlayer(player1, "GUI Player", 5, 100);
+			core.addPlayer(player2, "AI Player", 5, 100);
 			createNetworkPlayer(player3, "Network AI Player", 5);
 			for (Player p : server.stopListening()) {
 				// XXX Massively hacky
-				core.addPlayer(p, "Network AI Player", 5);
+				core.addPlayer(p, "Network AI Player", 5, 100);
 			}
 			//core.addObserver(player3);
 			core.startGame();
@@ -55,7 +55,7 @@ public class MainTest implements Main
 		try {
 			Socket sock = new Socket("localhost",_port);
 			VirtualCore vc = new VirtualCore(sock);
-			vc.addPlayer(p, name, maxUnits);
+			vc.addPlayer(p, name, maxUnits, 100);
 			vc.startGame();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
