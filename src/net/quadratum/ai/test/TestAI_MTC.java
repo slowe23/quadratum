@@ -91,7 +91,9 @@ public class TestAI_MTC extends AIPlayer {
 				}
 			}
 			// Move the unit.
-			_core.unitAction(this,id,closest);
+			if (closest != null) {
+				_core.unitAction(this,id,closest);
+			}
 			// We need to refresh the valid actions.
 			map = _core.getValidActions(this,id);
 			// Try to attack something.
@@ -108,7 +110,13 @@ public class TestAI_MTC extends AIPlayer {
 		_core.endTurn(this);
 	}
 	
-	/** Calculates the Manhattan distance between two points. */
+	/** 
+	 * Calculates the Manhattan distance between two points.
+	 * @param mp1 the first point
+	 * @param mp2 the second point
+	 * @return the Manhattan distance, given by taking the sum of the differences
+	 * of the respective x and y coordinates
+	 */
 	private int distance(MapPoint mp1, MapPoint mp2) {
 		return Math.abs(mp1._x-mp2._x) + Math.abs(mp1._y-mp2._y);
 	}
