@@ -30,7 +30,7 @@ public class GameCore implements Core
 	private boolean _started;
 	private Object _chatLockObject, _turnLockObject;
 	private Writer _log;
-	private HashSet<Integer> _observers;
+	private HashSet<ObserverContainer> _observers;
 	
 	/**
 	 * Constructor for GameCore.
@@ -51,7 +51,7 @@ public class GameCore implements Core
 		_started = false;
 		_chatLockObject = new Object();
 		_turnLockObject = new Object();
-		_observers = new HashSet<Integer>();
+		_observers = new HashSet<ObserverContainer>();
 		try
 		{
 			if (Constants.DEBUG_TO_FILE) {
@@ -66,43 +66,7 @@ public class GameCore implements Core
 		}
 		readMap(map);
 	}
-	
-	/**
-	 * Constructor for GameCore with observers.
-	 * @param map the map file name
-	 * @param winCondition the win condition
-	 */
-	// TODO make observers more legit
-	public GameCore(Main m, String map, WinCondition winCondition, ArrayList<Piece> pieces, HashSet<Integer> observers)
-	{
-		_main = m;
-		_startingLocations = new ArrayList<HashSet<MapPoint>>();
-		_units = new ArrayList<Unit>();
-		_unitInformation = new ArrayList<UnitInformation>();
-		_players = new ArrayList<Player>();
-		_playerInformation = new ArrayList<PlayerInformation>();
-		_pieces = pieces;
-		_winCondition = winCondition;
-		_turn = -1;
-		_started = false;
-		_chatLockObject = new Object();
-		_turnLockObject = new Object();
-		_observers = observers;
-		try
-		{
-			if (Constants.DEBUG_TO_FILE) {
-				_log = new FileWriter("log.txt");
-			} else {
-				_log = new OutputStreamWriter(System.out);
-			}
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		readMap(map);
-	}
-	
+		
 	/**
 	 * Reads in the map.
 	 * @param map the map file name
@@ -110,69 +74,14 @@ public class GameCore implements Core
 	// TODO Finish
 	private void readMap(String map)
 	{
-		// TODO read real map data
-		double random;
-		_terrain = new int[30][30];
-		for(int i = 0; i < 30; i++)
-		{
-			for(int j = 0; j < 30; j++)
-			{
-				random = Math.random() * 10;
-				if(random < 5)
-				{
-					_terrain[i][j] = TerrainConstants.LAND;
-				}
-				else if(random < 6.5)
-				{
-					_terrain[i][j] = TerrainConstants.WATER;
-				}
-				else if(random < 8)
-				{
-					_terrain[i][j] = TerrainConstants.MOUNTAIN;
-				}
-				else if(random < 9)
-				{
-					_terrain[i][j] = TerrainConstants.BUNKER;
-				}
-				else
-				{
-					_terrain[i][j] = TerrainConstants.RESOURCES;
-				}
-			}
-		}
-		HashSet<MapPoint> startingLocations = new HashSet<MapPoint>();
-		for(int i = 0; i < 10; i++)
-		{
-			for(int j = 0; j < 10; j++)
-			{
-				startingLocations.add(new MapPoint(i, j));
-			}
-		}
-		_startingLocations.add(startingLocations);
-		startingLocations = new HashSet<MapPoint>();
-		for(int i = 20; i < 30; i++)
-		{
-			for(int j = 20; j < 30; j++)
-			{
-				startingLocations.add(new MapPoint(i, j));
-			}
-		}
-		_startingLocations.add(startingLocations);
-		startingLocations = new HashSet<MapPoint>();
-		for(int i = 20; i < 30; i++)
-		{
-			for(int j = 0; j < 10; j++)
-			{
-				startingLocations.add(new MapPoint(i, j));
-			}
-		}
-		_startingLocations.add(startingLocations);
+		
 	}
 	
 	/**
 	 * Adds a player to the game
 	 * @param p the actual player
 	 * @param playerName the name of the player
+	 * @param maxUnits the max units a player can have
 	 */
 	@Override
 	public synchronized void addPlayer(Player p, String playerName, int maxUnits)
@@ -204,6 +113,24 @@ public class GameCore implements Core
 			}
 		}
 	}
+	
+	/**
+	 * Adds an observer.
+	 * @param p the actual player
+	 */
+	@Override
+	public synchronized void addObserver(Player p)
+	{
+		if(_started)
+		{
+			log("Tried to add a player but the game has already started", 2);
+		}
+		else
+		{
+			log("Added an observer", 1);
+			_observers.add(new ObserverContainer(p));
+		}
+	}
 		
 	/**
 	 * Gets a player's id from a reference.
@@ -212,6 +139,10 @@ public class GameCore implements Core
 	 */
 	private int getPlayerId(Player p)
 	{
+		if(_observers.contains(p))
+		{
+			return -2;
+		}
 		for(int i = 0; i < _players.size(); i++)
 		{
 			if(_players.get(i) == p)
@@ -271,6 +202,10 @@ public class GameCore implements Core
 	public synchronized void ready(Player p)
 	{
 		int player = getPlayerId(p);
+		if(player == -2)
+		{
+			return;
+		}
 		if(_turn != -1)
 		{
 			log("Player " + player + " called ready() but the game had already started", 2);
@@ -300,6 +235,10 @@ public class GameCore implements Core
 		synchronized(_turnLockObject)
 		{
 			int player = getPlayerId(p);
+			if(player == -2)
+			{
+				return;
+			}
 			if(player == _turn)
 			{
 				log("Player " + player + " called endTurn(), moving on to next turn", 1);
@@ -319,14 +258,16 @@ public class GameCore implements Core
 	 * @param coords the point at which the action should be taken
 	 * @return true if the action has been taken, false if otherwise
 	 */
-	// TODO finish
 	@Override
 	public boolean unitAction(Player p, int unitId, MapPoint coords)
 	{
-		// TODO logging in this function and then all functions above
 		synchronized(_turnLockObject)
 		{
 			int player = getPlayerId(p);
+			if(player == -2)
+			{
+				return false;
+			}
 			if(_turn != player)
 			{
 				log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but it was not their turn\n"
@@ -655,20 +596,23 @@ public class GameCore implements Core
 		int player = getPlayerId(p);
 		if(unitId < 0 || unitId >= _units.size() || _units.get(unitId)._owner != player || _turn != player)
 		{
-			String toLog;
-			toLog = "Player " + player + " called getValidActions(unitId: " + unitId + ") but they did not own the unit, it was an invalid unit, or it was not their turn\n";
-			if(unitId >= 0 && unitId < _units.size())
+			if(player != -2)
 			{
-				toLog += "\tOwner: " + _units.get(unitId)._owner + "\n";
+				String toLog;
+				toLog = "Player " + player + " called getValidActions(unitId: " + unitId + ") but they did not own the unit, it was an invalid unit, or it was not their turn\n";
+				if(unitId >= 0 && unitId < _units.size())
+				{
+					toLog += "\tOwner: " + _units.get(unitId)._owner + "\n";
+				}
+				else
+				{
+					toLog += "\tOwner: (none)\n";
+				}
+				toLog += "\tTurn: " + _turn + "\n";
+				toLog += "\tAnswer: null";
+				log(toLog, 2);
+				return null;
 			}
-			else
-			{
-				toLog += "\tOwner: (none)\n";
-			}
-			toLog += "\tTurn: " + _turn + "\n";
-			toLog += "\tAnswer: null";
-			log(toLog, 2);
-			return null;
 		}
 		if(_unitInformation.get(unitId)._position.equals(new MapPoint(-1, -1)))
 		{
@@ -720,6 +664,16 @@ public class GameCore implements Core
 		HashMap<MapPoint, Integer> playerMap;
 		HashSet<MapPoint> visible;
 		MapPoint newDestination;
+		HashMap<MapPoint, Integer> allUnits;
+		for(ObserverContainer obv : _observers)
+		{
+			allUnits = new HashMap<MapPoint, Integer>();
+			for(int i = 0; i < _unitInformation.size(); i++)
+			{
+				allUnits.put(new MapPoint(_unitInformation.get(i)._position), new Integer(i));
+			}
+			obv._p.updateMap(allUnits, new Action(action));
+		}
 		for(int i = 0; i < _players.size(); i++)
 		{
 			if(!_playerInformation.get(i)._quit)
@@ -761,23 +715,37 @@ public class GameCore implements Core
 		synchronized(_turnLockObject)
 		{
 			int player = getPlayerId(p);
-			log("Player " + player + " has quit", 1);
-			_playerInformation.get(player)._lost = true;
-			_playerInformation.get(player)._quit = true;
-			if(_turn == player)
+			if(player != -2)
 			{
-				log("\tMoving on to next turn", 1);
-				nextTurn();
+				log("Player " + player + " has quit", 1);
+				_playerInformation.get(player)._lost = true;
+				_playerInformation.get(player)._quit = true;
+				if(_turn == player)
+				{
+					log("\tMoving on to next turn", 1);
+					nextTurn();
+				}
+				else
+				{
+					log("Player " + player + " has quit", 1);
+					int winner = checkWinLoss();
+					if(winner != -1)
+					{
+						log("Player " + winner + " has won the game, ending...", 1);
+						endGame(winner);
+						return;
+					}
+				}
 			}
 			else
 			{
-				log("Player " + player + " has quit", 1);
-				int winner = checkWinLoss();
-				if(winner != -1)
+				for(ObserverContainer obv : _observers)
 				{
-					log("Player " + winner + " has won the game, ending...", 1);
-					endGame(winner);
-					return;
+					if(obv._p == p)
+					{
+						log("Observer has quit", 1);
+						obv._quit = true;
+					}
 				}
 			}
 		}
@@ -899,6 +867,13 @@ public class GameCore implements Core
 				_players.get(i).end(new GameStats(winner));
 			}
 		}
+		for(ObserverContainer obv : _observers)
+		{
+			if(!obv._quit)
+			{
+				obv._p.end(new GameStats(winner));
+			}
+		}
 		sendChatMessage("Game over! Player " + getPlayerName(winner) + " has won!");
 		log("GAME OVER\n"
 			+ "Player " + winner + " won!", 1);
@@ -935,6 +910,10 @@ public class GameCore implements Core
 			{
 				_players.get(i).chatMessage(-1, new String(message));
 			}
+			for(ObserverContainer obv : _observers)
+			{
+				obv._p.chatMessage(-1, new String(message));
+			}
 			log("System chat message\n"
 				+ "\tMessage: " + message, 1);
 		}
@@ -954,9 +933,17 @@ public class GameCore implements Core
 			{
 				message = new String(message);
 				int from = getPlayerId(p);
+				if(from == -2)
+				{
+					return;
+				}
 				for(int i = 0; i < _players.size(); i++)
 				{
 					_players.get(i).chatMessage(from, new String(message));
+				}
+				for(ObserverContainer obv : _observers)
+				{
+					obv._p.chatMessage(from, new String(message));
 				}
 				log("Chat message from player " + from + "\n"
 					+ "\tMessage: " + message, 1);
@@ -975,7 +962,6 @@ public class GameCore implements Core
 	 * @param name the name of the unit
 	 * @return true if the unit is placed sucessfully, false otherwise
 	 */
-	// TODO finish
 	@Override
 	public int placeUnit(Player p, MapPoint coords, String name)
 	{
@@ -983,6 +969,10 @@ public class GameCore implements Core
 		{
 			coords = new MapPoint(coords);
 			int player = getPlayerId(p);
+			if(player == -2)
+			{
+				return -1;
+			}
 			if(_turn != -1)
 			{
 				log("Player " + player + " called placeUnit(coords: " + coords + ", name: " + name + ") but the game had started\n"
@@ -996,7 +986,7 @@ public class GameCore implements Core
 					+ "\tAnswer: false", 2);
 				return -1;
 			}
-			if(CoreActions.getUnitAtPoint(coords, _unitInformation) == -1 && _startingLocations.get(player).contains(coords))
+			if(CoreActions.getUnitAtPoint(coords, _unitInformation) == -1 && _startingLocations.get(player).contains(coords) && !TerrainConstants.isOfType(_terrain[coords._x][coords._y], TerrainConstants.WATER))
 			{
 				Unit toAdd = new Unit(new String(name), player, _units.size());
 				Block heartBlock = new Block(Constants.HEART_HEALTH);
@@ -1056,6 +1046,10 @@ public class GameCore implements Core
 		synchronized(_turnLockObject)
 		{
 			int player = getPlayerId(p);
+			if(player == -2)
+			{
+				return false;
+			}
 			coords = new MapPoint(coords);
 			if(_turn != -1 && _turn != player)
 			{
@@ -1131,6 +1125,10 @@ public class GameCore implements Core
 		{
 			name = "System Message";
 		}
+		else if(player == -2)
+		{
+			name = "Observer";
+		}
 		else
 		{
 			name = new String(_playerInformation.get(player)._name);
@@ -1148,8 +1146,13 @@ public class GameCore implements Core
 	@Override
 	public int getResources(Player p)
 	{
-		int resources = _playerInformation.get(getPlayerId(p))._resources;
-		log("Player " + getPlayerId(p) + " called getResources()\n"
+		int player = getPlayerId(p);
+		if(player == -2)
+		{
+			return 0;
+		}
+		int resources = _playerInformation.get(player)._resources;
+		log("Player " + player + " called getResources()\n"
 			+ "\tAnswer: " + resources, 1);
 		return resources;
 	}
@@ -1163,18 +1166,19 @@ public class GameCore implements Core
 	@Override
 	public Unit getUnit(Player p, int unitId)
 	{
+		int player = getPlayerId(p);
 		if(unitId >= _units.size() && unitId < 0)
 		{
-			log("Player " + getPlayerId(p) + " called getUnit(unitId: " + unitId + ") on a unit that did not exist", 2);
+			log("Player " + player + " called getUnit(unitId: " + unitId + ") on a unit that did not exist", 2);
 			return null;
 		}
 		Unit unit = new Unit(_units.get(unitId));
-		if(!getVisible(getPlayerId(p)).contains(_unitInformation.get(unitId)._position))
+		if(!getVisible(player).contains(_unitInformation.get(unitId)._position) && player != -2)
 		{
-			log("Player " + getPlayerId(p) + " called getUnit(unitId: " + unitId + ") on a unit that did belong to them", 2);
+			log("Player " + player + " called getUnit(unitId: " + unitId + ") on a unit that did belong to them", 2);
 			return null;
 		}
-		log("Player " + getPlayerId(p) + " called getUnit(unitId: " + unitId + ")\n"
+		log("Player " + player + " called getUnit(unitId: " + unitId + ")\n"
 			+ "\tAnswer: (success)", 1);
 		return unit;
 		
@@ -1216,6 +1220,10 @@ public class GameCore implements Core
 	{
 		int built = 0;
 		int player = getPlayerId(p);
+		if(player == -2)
+		{
+			return 0;
+		}
 		for(int i = 0; i < _units.size(); i++)
 		{
 			if(_units.get(i)._owner == player)

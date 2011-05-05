@@ -13,6 +13,12 @@ public interface Core {
 	public void addPlayer(Player p, String playerName, int maxUnits);
 	
 	/**
+	 * Adds an observer to the game.
+	 * @param p the player to be added as an observer
+	 */
+	public void addObserver(Player p);
+	
+	/**
 	 * Starts the game.
 	 */
 	public void startGame();
