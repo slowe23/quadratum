@@ -1,3 +1,5 @@
+//TODO: placing units during placement phase
+
 package net.quadratum.gui;
 
 import java.util.*;
@@ -77,6 +79,7 @@ public class GUIPlayer implements Player {
 		
 		_gameWindow.setVisible(true);
 		
+		updateResources();
 		mapUpdated();
 		unitsUpdated();
 		_map.centerAtPlacementArea();
@@ -89,16 +92,6 @@ public class GUIPlayer implements Player {
 	/** Notifies the player of the pieces that are now available */
 	public void updatePieces(List<Piece> pieces) {
 		blockUntilReady();
-		
-		//For testing purposes
-		HashMap<MapPoint, Block> map = new HashMap<MapPoint, Block>();
-		Block block = new Block(100);
-		block._bonuses.put(Block.BonusType.ATTACK, 10);
-		map.put(new MapPoint(0, 0), new Block(block));
-		map.put(new MapPoint(1, 0), new Block(block));
-		map.put(new MapPoint(0, 1), new Block(block));
-		
-		pieces.add(new Piece(map, 0, -1, "Attack", "This piece increases the unit's attack power."));
 		
 		_pieces.setPieces(pieces);
 	}
@@ -126,7 +119,14 @@ public class GUIPlayer implements Player {
 		unitsUpdated();
 		_map.scrollTo(lastAction, false);
 		_map.repaintBoth();
+		updateResources();
+	}
+	
+	private void updateResources() {
+		blockUntilReady();
+		
 		_buttonsPanel.updateResources(_core.getResources(this));
+		_pieces.updateResources(_core.getResources(this));
 	}
 	
 	/** Notifies the player that their turn has started. */
@@ -175,34 +175,43 @@ public class GUIPlayer implements Player {
 		_chat.incomingMessage(from, message);
 	}
 	
+	public void placePiece(Unit unit, int ind, MapPoint pos) {
+		blockUntilReady();
+		
+		_core.updateUnit(this, unit._id, ind, pos);
+		unitsUpdated();
+	}
+	
 	public void click(MapPoint point) {
 		blockUntilReady();
 		
 		synchronized(_mapData) {
 			synchronized(_unitsData) {
-				Unit clicked = _unitsData.getUnit(point);
-				if(clicked!=null) {
-					selectUnit(clicked);
+				Map<MapPoint, Action.ActionType> selActions = _unitsData.getSelectedActions();
+				if(selActions!=null && selActions.containsKey(point)) {
+					_core.unitAction(this, _unitsData.getSelectedID(), point);
+					if(_unitsData.getUnit(point)!=null)
+						unitsUpdated();
 				} else {
-					if(_mapData._placementArea!=null && _mapData._placementArea.contains(point)) {
-						String newUnitName = "Unit "+_unitNumber;
-						int newUnitID = _core.placeUnit(this, point, newUnitName);
-						if(newUnitID!=-1) {
-							_unitNumber++;
-							
-							_unitsData.addUnit(point, newUnitID, true);
-							_mapData._placementArea.remove(point);
-							
-							unitsUpdated();
-							placementUpdated();
-							
-							_buttonsPanel.updateToPlace(_core.getRemainingUnits(this));
-						}
+					Unit clicked = _unitsData.getUnit(point);
+					if(clicked!=null) {
+						selectUnit(clicked);
 					} else {
-						Map<MapPoint, Action.ActionType> selActions = _unitsData.getSelectedActions();
-						if(selActions!=null && selActions.containsKey(point))
-							_core.unitAction(this, _unitsData.getSelectedID(), point);
-						else {
+						if(_mapData._placementArea!=null && _mapData._placementArea.contains(point)) {
+							String newUnitName = "Unit "+_unitNumber;
+							int newUnitID = _core.placeUnit(this, point, newUnitName);
+							if(newUnitID!=-1) {
+								_unitNumber++;
+								
+								_unitsData.addUnit(point, newUnitID, true);
+								_mapData._placementArea.remove(point);
+								
+								unitsUpdated();
+								placementUpdated();
+								
+								_buttonsPanel.updateToPlace(_core.getRemainingUnits(this));
+							}
+						} else {
 							_unitsData.deselect();
 							selectionUpdated();
 						}
@@ -229,7 +238,7 @@ public class GUIPlayer implements Player {
 			placementUpdated();
 			
 			_core.ready(this);
-			_buttonsPanel.gameStart(_core.getResources(this));
+			updateResources();
 		}
 	}
 	

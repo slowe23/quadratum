@@ -44,7 +44,7 @@ public class MainTest implements Main
 			}
 			//core.addObserver(player3);
 			core.startGame();
-			while(!core.done()) {}
+//			while(!core.done()) {}  //DON'T DO THIS!
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 			System.exit(0);
