@@ -46,6 +46,8 @@ public class PiecesPanel extends JPanel {
 		
 		_scrollUp.setEnabled(false);
 		_scrollDown.setEnabled(false);
+		
+		addComponentListener(new PiecesPanelComponentListener());
 	}
 	
 	public void setPieces(List<Piece> pieces) {
@@ -73,7 +75,7 @@ public class PiecesPanel extends JPanel {
 			synchronized(_pieceListPanel) {
 				Piece p = _pieceListPanel.getCurrentPiece();
 				
-				if(p!=null && p._cost<_resources)
+				if(p!=null && p._cost<=_resources)
 					_unitImagePanel.pieceSelected(_pieceListPanel.getCurrentPieceID(), _pieceListPanel.getCurrentPiece());
 				else
 					_unitImagePanel.noPieceSelected();

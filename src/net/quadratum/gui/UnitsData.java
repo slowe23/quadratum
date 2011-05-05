@@ -24,7 +24,7 @@ public class UnitsData {
 		_core = core;
 	}
 	
-	public void setUnits(Map<MapPoint, Integer> units) {
+	public synchronized void setUnits(Map<MapPoint, Integer> units) {
 		clearUnits();
 		
 		for(Map.Entry<MapPoint, Integer> entry : units.entrySet())
@@ -34,12 +34,12 @@ public class UnitsData {
 			_selectedID = null;
 	}
 	
-	private void clearUnits() {
+	private synchronized void clearUnits() {
 		_pointMap.clear();
 		_idMap.clear();
 	}
 	
-	public void addUnit(MapPoint mapPoint, Integer id, boolean select) {
+	public synchronized void addUnit(MapPoint mapPoint, Integer id, boolean select) {
 		Unit u = _core.getUnit(_player, id);
 		if(u!=null) {  //To avoid a certain potential synchronization problem
 			_pointMap.put(mapPoint, u);
@@ -51,11 +51,22 @@ public class UnitsData {
 				_selectedID = null;
 	}
 	
-	public Integer getSelectedID() {
+	public synchronized void refreshUnit(int id) {
+		MapPoint m = _idMap.get(id);
+		if(m!=null) {
+			Unit u =  _core.getUnit(_player, id);
+			if(u!=null) {
+				_pointMap.put(m, u);
+				_idMap.put(id, m);
+			}
+		}
+	}
+	
+	public synchronized Integer getSelectedID() {
 		return _selectedID;
 	}
 	
-	public Unit getSelectedUnit() {
+	public synchronized Unit getSelectedUnit() {
 		if(_selectedID==null)
 			return null;
 		
@@ -66,25 +77,25 @@ public class UnitsData {
 		return _pointMap.get(sMP);
 	}
 	
-	public MapPoint getSelectedLocation() {
+	public synchronized MapPoint getSelectedLocation() {
 		if(_selectedID!=null)
 			return _idMap.get(_selectedID);
 		else
 			return null;
 	}
 	
-	public MapPoint getMapPoint(Unit u) {
+	public synchronized MapPoint getMapPoint(Unit u) {
 		if(u==null)
 			return null;
 		else
 			return getMapPoint(u._id);
 	}
 	
-	public MapPoint getMapPoint(int id) {
+	public synchronized MapPoint getMapPoint(int id) {
 		return _idMap.get(id);
 	}
 	
-	public Unit getUnit(MapPoint p) {
+	public synchronized Unit getUnit(MapPoint p) {
 		if(p==null)
 			return null;
 		else
@@ -92,30 +103,30 @@ public class UnitsData {
 	}
 	
 	//Returns the unit with the given ID, or null if no such unit exists
-	private Unit getUnit(int id) {
+	private synchronized Unit getUnit(int id) {
 		if(_idMap.containsKey(id))
 			return _pointMap.get(_idMap.get(id));
 		else
 			return null;
 	}
 	
-	public void setSelected(int id) {
+	public synchronized void setSelected(int id) {
 		_selectedID = id;
 	}
 	
-	public void setSelected(Unit u) {
+	public synchronized void setSelected(Unit u) {
 		if(u==null)
 			deselect();
 		else
 			setSelected(u._id);
 	}
 	
-	public void deselect() {
+	public synchronized void deselect() {
 		_selectedID = null;
 	}
 	
 	//Returns a map of actions of the selected unit, or null if something fails
-	public Map<MapPoint, Action.ActionType> getSelectedActions() {
+	public synchronized Map<MapPoint, Action.ActionType> getSelectedActions() {
 		if(_selectedID==null)
 			return null;
 		else {
@@ -128,7 +139,7 @@ public class UnitsData {
 	}
 	
 	//Gets a list of the player's units, sorted in ascending order of unit ID
-	public List<Unit> getPlayerUnits() {
+	public synchronized List<Unit> getPlayerUnits() {
 		List<Unit> playerUnits = new ArrayList<Unit>();
 		for(int id : _idMap.keySet()) {
 			Unit unit = getUnit(id);
@@ -142,7 +153,7 @@ public class UnitsData {
 	}
 	
 	//Gets a map of all the units, mapped to their locations
-	public Map<MapPoint, Unit> getAllUnits() {
+	public synchronized Map<MapPoint, Unit> getAllUnits() {
 		Map<MapPoint, Unit> units = new HashMap<MapPoint, Unit>();
 		for(Map.Entry<MapPoint, Unit> entry : _pointMap.entrySet())
 			units.put(entry.getKey(), entry.getValue());

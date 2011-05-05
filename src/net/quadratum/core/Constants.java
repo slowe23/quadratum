@@ -9,7 +9,7 @@ public class Constants
 	/** Resources gained per turn per unit on a resource square. */
 	public static final int RESOURCES_PER_TURN = 10;
 	/** Initial move radius of units. */
-	public static final int INITIAL_MOVE = 2;
+	public static final int INITIAL_MOVE = 0;
 	/** Initial sight radius of units. */
 	public static final int INITIAL_SIGHT = 3;
 	/** Health of heart blocks. */
