@@ -79,6 +79,11 @@ public class VirtualCore extends NetworkClient implements Core {
 		}
 		
 	}
+	
+	@Override
+	public void addObserver(Player p) {
+		// XXX There should be no local observers while over the network?
+	}
 
 	@Override
 	public void startGame() {

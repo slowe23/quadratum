@@ -35,6 +35,10 @@ public class TestingCore implements Core {
 		_uC = new Unit[_toPlace];
 	}
 	
+	public void addObserver(Player p) {
+		// Nobody cares.
+	}
+	
 	/**
 	 * Starts the game.
 	 */
