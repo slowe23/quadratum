@@ -1295,7 +1295,7 @@ public class GameCore implements Core
 						+ "\tAnswer: false", 2);
 					return false;
 				}
-				if((coords._x + key._x) < 0 || (coords._x + key._x) >= Constants.UNIT_SIZE && (coords._y + key._y) < 0 || (coords._y + key._y) >= Constants.UNIT_SIZE)
+				if((coords._x + key._x) < 0 || (coords._x + key._x) >= Constants.UNIT_SIZE || (coords._y + key._y) < 0 || (coords._y + key._y) >= Constants.UNIT_SIZE)
 				{
 					log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but piece went out of bounds\n"
 						+ "\tLocation out of bounds: " + (new MapPoint(coords._x + key._x, coords._y + key._y)) + "\n"
