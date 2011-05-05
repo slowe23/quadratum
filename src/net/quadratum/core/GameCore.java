@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -541,6 +542,7 @@ public class GameCore implements Core
 				
 				List<Map<MapPoint,Double>> line = getAttackLine(defender._size,
 						attackerPos,defenderPos);
+				log("Attack line: "+line,1);
 				
 				// Distribute the damage
 				
@@ -595,12 +597,16 @@ public class GameCore implements Core
 	 */
 	private List<Map<MapPoint,Double>> getAttackLine(int size, 
 			RealPoint start, RealPoint end) {
+		log("Starting attack line algorithm...\n"
+				+ "\tStart position: "+start+"\n"
+				+ "\tEnd position: "+end,1);
 		// Get start and end x,y
 		double sx = start._x, sy = start._y;
 		double ex = end._x, ey = end._y;
 		// Get the differentials along the x and y axes
 		double dx = end._x - start._x;
 		double dy = end._y - start._y;
+		log("Found differentials...",1);
 		// Make the line go at <45 degrees from the horizontal
 		boolean steep = Math.abs(dx) < Math.abs(dy);
 		double tmp;
@@ -631,6 +637,10 @@ public class GameCore implements Core
 			ey = tmp;
 		}
 		double grad = dy/dx;
+		log("Attack line properties:\n"
+				+ "\tsteep = "+steep+"\n"
+				+ "\tswap = "+swap+"\n"
+				+ "\tgrad = "+grad,1);
 		
 		// Find the lower bound, accounting for all the swapping we just did
 		int xbound, ybound1, ybound2;
@@ -640,7 +650,7 @@ public class GameCore implements Core
 				ybound1 = getFloorCellPosition((int)start._x,size);
 				ybound2 = getFloorCellPosition(((int)start._x)+1,size)-1;
 			} else {
-				xbound = getFloorCellPosition(((int)start._x)+1,size)-1;
+				xbound = getFloorCellPosition((int)start._x,size);
 				ybound1 = getFloorCellPosition((int)start._y,size);
 				ybound2 = getFloorCellPosition(((int)start._y)+1,size)-1;
 			}
@@ -650,75 +660,81 @@ public class GameCore implements Core
 				ybound1 = getFloorCellPosition((int)end._x,size);
 				ybound2 = getFloorCellPosition(((int)end._x)+1,size)-1;
 			} else {
-				xbound = getFloorCellPosition((int)end._x,size);
+				xbound = getFloorCellPosition(((int)end._x)+1,size)-1;
 				ybound1 = getFloorCellPosition((int)end._y,size);
 				ybound2 = getFloorCellPosition(((int)end._y)+1,size)-1;
 			}
 		}
+		log("Attack line boundaries:\n"
+				+ "\txbound = "+xbound+"\n"
+				+ "\tybound1 = "+ybound1+"\n"
+				+ "\tybound2 = "+ybound2,1);
 		
 		// Set up the data structures
-		Map<MapPoint,Double> map;
+		Map<MapPoint,Double> endmap = new HashMap<MapPoint,Double>(), map;
 		LinkedList<Map<MapPoint,Double>> list = new LinkedList<Map<MapPoint,Double>>();
 		
-		// first endpoint
+		// first endpoint, if inside defender
 		double xend = getRoundedCellPosition(sx, size);
-		double yend = sy + grad * (xend - sx);
+		double yend = sy*size + grad * (xend - sx*size);
 		double xgap = 1 - getFractionalCellPosition(sx + 0.5, size);
 		int xpt1 = (int)xend;
-		int ypt1 = getFloorCellPosition(yend,size);
+		int ypt1 = (int)yend;
 		if (swap) {
-			map = new HashMap<MapPoint,Double>();
-			putPoint(map,xpt1%size,ypt1%size,
-					1-getFractionalCellPosition(yend,size)*xgap,steep);
-			putPoint(map,xpt1%size,(ypt1+1)%size,
-					getFractionalCellPosition(yend,size)*xgap,steep);
-			list.add(map);
+			putPoint(endmap,xpt1%size,ypt1%size,
+					1-(yend-ypt1)*xgap,steep,swap,size);
+			putPoint(endmap,xpt1%size,(ypt1+1)%size,
+					(yend-ypt1)*xgap,steep,swap,size);
 		}
 		double intery = yend + grad;
 		
 		// second endpoint, if inside defender
 		xend = getRoundedCellPosition(ex, size);
-		yend = sy + grad * (xend - ex);
+		yend = ey*size + grad * (xend - ex*size);
 		xgap = 1 - getFractionalCellPosition(ex + 0.5, size);
 		int xpt2 = (int)xend;
-		int ypt2 = getFloorCellPosition(yend,size);
+		int ypt2 = (int)yend;
 		if (!swap) {
-			map = new HashMap<MapPoint,Double>();
-			putPoint(map,xpt2%size,ypt2%size,
-					1-getFractionalCellPosition(yend,size)*xgap,steep);
-			putPoint(map,xpt2%size,(ypt2+1)%size,
-					getFractionalCellPosition(yend,size)*xgap,steep);
-			list.add(map);
+			putPoint(endmap,xpt2%size,ypt2%size,
+					1-(yend-ypt2)*xgap,steep,swap,size);
+			putPoint(endmap,xpt2%size,(ypt2+1)%size,
+					(yend-ypt2)*xgap,steep,swap,size);
 		}
 		
 		// main loop
 		for (int x = xpt1+1; x < xpt2; x++) {
-			boolean good = swap ? x <= xbound : x >= xbound;
+			log("Current iterative value: "+x+"\n"
+					+ "\tCurrent coordinate: "+intery+"\n"
+					+ "\tAttack line: "+list,1);
+			boolean good = swap ? x >= xbound : x <= xbound;
 			// If we are inside the defender, plot some points
 			if (good) {
 				map = new HashMap<MapPoint,Double>();
-				int y = getFloorCellPosition(intery,size);
+				int y = (int)Math.floor(intery);
+				double fracy = intery-y;
 				// Check for inclusion in the bounds (fix for corner overlap)
 				// One of these should always be in the bounds.
 				if (ybound1 <= y && y <= ybound2) {
 					putPoint(map,x % size,y % size,
-							1-getFractionalCellPosition(yend,size),steep);
+							1-fracy,steep,swap,size);
 				}
 				y++;
 				if (ybound1 <= y && y <= ybound2) {
 					putPoint(map,x % size,y % size,
-							getFractionalCellPosition(yend,size),steep);
+							fracy,steep,swap,size);
 				}
 				// Add the map.
 				if (swap) {
-					list.addFirst(map);
-				} else {
 					list.addLast(map);
+				} else {
+					list.addFirst(map);
 				}
 			}
 			// Increment the y
 			intery += grad;
 		}
+		// Reverse the list since we built it in reverse order.
+		list.add(endmap);
 		return list;
 	}
 	
@@ -764,10 +780,16 @@ public class GameCore implements Core
 	 * @param steep whether or not the coordinates should be transposed.
 	 */
 	private void putPoint(Map<MapPoint,Double> map, int x, int y, 
-			double d, boolean steep) {
+			double d, boolean steep, boolean swap, int size) {
+		if (swap) {
+			x = size - 1 - x;
+			y = size - 1 - y;
+		}
 		if (steep) {
+			log("Adding point at "+y+","+x+" with value "+d,0);
 			map.put(new MapPoint(y,x),d);
 		} else {
+			log("Adding point at "+y+","+x+" with value "+d,0);
 			map.put(new MapPoint(x,y),d);
 		}
 	}
