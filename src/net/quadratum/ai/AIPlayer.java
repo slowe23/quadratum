@@ -58,7 +58,7 @@ public abstract class AIPlayer implements Player {
 
 	@Override
 	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
-		if (lastAction == null) {
+		if (lastAction == null || lastAction._dest == null || lastAction._source == null) {
 			return;
 		} else if (lastAction._action == Action.ActionType.UNIT_DIED) {
 			int id = -1;
