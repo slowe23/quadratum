@@ -89,7 +89,7 @@ public class CoreActions
 		if(type == 0) // Movement area
 		{
 			Unit actionUnit = units.get(unit);
-			radius = 3 + actionUnit._stats.get(Block.BonusType.MOVEMENT) / 100; // TODO change when not testing
+			radius = Constants.INITIAL_MOVE + actionUnit._stats.get(Block.BonusType.MOVEMENT) / 100;
 			boolean canMoveOnWater;
 			if(actionUnit._stats.get(Block.BonusType.WATER_MOVEMENT).intValue() > 0)
 			{
@@ -157,13 +157,12 @@ public class CoreActions
 				}
 				else
 				{
-					radius = 2 + units.get(unit)._stats.get(Block.BonusType.RANGE) / 100; // TODO change when not testing
+					radius = units.get(unit)._stats.get(Block.BonusType.RANGE) / 100;
 				}
 			}
 			else // Visible area
 			{
-				// radius = 1 + units.get(units)._stats.get(Block.BonusType.SIGHT) / 100;
-				radius = 60; // TODO change when not testing
+				radius = Constants.INITIAL_SIGHT + units.get(units)._stats.get(Block.BonusType.SIGHT) / 100;
 			}
 			for(int x = info._position._x - radius; x < (info._position._x + radius + 1); x++)
 			{
