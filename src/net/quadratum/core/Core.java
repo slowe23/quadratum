@@ -118,7 +118,12 @@ public interface Core {
 	public int getResources(Player p);
 	
 	/**
-	 * Returns wether or not the game is done.
+	 * Returns whether or not the game is done.
 	 */
 	public boolean done();
+
+	/**
+	 * Return the objectives for this game.
+	 */
+	public String getObjectives(Player p);
 }
