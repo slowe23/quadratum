@@ -17,8 +17,6 @@ public class CoreActions
 	 * @param terrain the terrain
 	 * @return a map of MapPoints to Action.ActionTypes that represents what actions can be taken where
 	 */
-	// TODO finish
-	// TODO add support for different types of terrain
 	public static Map<MapPoint, Action.ActionType> getValidActions(int unit, int player, List<Unit> units, List<UnitInformation> unitInformation, int[][] terrain)
 	{
 		HashMap<MapPoint, Action.ActionType> actions = new HashMap<MapPoint, Action.ActionType>();

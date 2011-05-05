@@ -28,6 +28,8 @@ public class UnitImagePanel extends JPanel {
 	public UnitImagePanel(GUIPlayer player) {
 		_guiPlayer = player;
 		
+		_hPos = new MapPoint(0, 0);
+		
 		MouseInputListener mIL = new UnitImagePanelMouseInputListener();
 		addMouseListener(mIL);
 		addMouseMotionListener(mIL);
@@ -129,8 +131,8 @@ public class UnitImagePanel extends JPanel {
 				if(_selected!=null && _hover!=null) {
 					_hPos._x = (e.getX()-_ox)/_scale;
 					_hPos._y = (e.getY()-_oy)/_scale;
-					repaint();
 				}
+				repaint();
 			}
 		}
 		
@@ -143,7 +145,7 @@ public class UnitImagePanel extends JPanel {
 		
 		public void mouseClicked(MouseEvent e) {
 			synchronized(UnitImagePanel.this) {
-				if(_hover!=null)
+				if(_showHover && _hover!=null)
 					_guiPlayer.placePiece(_selected, _hIndex, _hPos);
 			}
 		}
