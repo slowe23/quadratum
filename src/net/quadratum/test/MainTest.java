@@ -26,7 +26,7 @@ public class MainTest implements Main
 			Player player2 = new TestAI_MTC();
 			Player player3 = new GUIPlayer();
 			HashSet<Integer> observers = new HashSet<Integer>();
-			observers.add(2);
+			observers.add(new Integer(2));
 			ArrayList<Piece> pieces = new ArrayList<Piece>();
 			Block attackBlock = new Block(30);
 			attackBlock._bonuses.put(Block.BonusType.ATTACK, 10);
@@ -37,7 +37,7 @@ public class MainTest implements Main
 			lPiece._blocks.put(new MapPoint(1, 2), new Block(attackBlock));
 			pieces.add(lPiece);
 			// Create a core.
-			GameCore core = new GameCore(new MainTest(), "null", new CheckWinner(), pieces, observers);
+			GameCore core = new GameCore(new MainTest(), "null", new CheckWinner(), pieces);
 			core.addPlayer(player1, "AI Player", 5);
 			createNetworkPlayer(player2, "Network AI Player", 5);
 			for (Player p : server.stopListening()) {

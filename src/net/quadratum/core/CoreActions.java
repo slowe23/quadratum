@@ -81,7 +81,6 @@ public class CoreActions
 	 * @param terrain the terrain
 	 * @return the MapPoints that the unit can act upon/see
 	 */
-	// TODO add support for sight blocks and special movement blocks/terrain
 	public static Set<MapPoint> getAreaForUnit(int unit, int type, List<Unit> units, List<UnitInformation> unitInformation, int[][] terrain)
 	{
 		int radius;
@@ -90,7 +89,7 @@ public class CoreActions
 		if(type == 0) // Movement area
 		{
 			Unit actionUnit = units.get(unit);
-			radius = 3 + actionUnit._stats.get(Block.BonusType.MOVEMENT) / 100;
+			radius = 3 + actionUnit._stats.get(Block.BonusType.MOVEMENT) / 100; // TODO change when not testing
 			boolean canMoveOnWater;
 			if(actionUnit._stats.get(Block.BonusType.WATER_MOVEMENT).intValue() > 0)
 			{
@@ -149,7 +148,14 @@ public class CoreActions
 		{
 			if(type == 1) // Attack area
 			{
-				radius = 2 + units.get(unit)._stats.get(Block.BonusType.RANGE) / 100;
+				if(TerrainConstants.isOfType(terrain[info._position._x][info._position._y], TerrainConstants.MOUNTAIN))
+				{
+					radius = 3 + units.get(unit)._stats.get(Block.BonusType.RANGE) / 100;
+				}
+				else
+				{
+					radius = 2 + units.get(unit)._stats.get(Block.BonusType.RANGE) / 100; // TODO change when not testing
+				}
 			}
 			else // Visible area
 			{
