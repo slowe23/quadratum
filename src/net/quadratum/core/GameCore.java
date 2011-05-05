@@ -641,18 +641,26 @@ public class GameCore implements Core
 		double grad = dy/dx;
 		
 		// Find the lower bound, accounting for all the swapping we just did
-		int bound;
+		int xbound, ybound1, ybound2;
 		if (swap) {
 			if (steep) {
-				bound = getFloorCellPosition((int)start._y,size);
+				xbound = getFloorCellPosition((int)start._y,size);
+				ybound1 = getFloorCellPosition((int)start._x,size);
+				ybound2 = getFloorCellPosition(((int)start._x)+1,size)-1;
 			} else {
-				bound = getFloorCellPosition(((int)start._x)+1,size);
+				xbound = getFloorCellPosition(((int)start._x)+1,size)-1;
+				ybound1 = getFloorCellPosition((int)start._y,size);
+				ybound2 = getFloorCellPosition(((int)start._y)+1,size)-1;
 			}
 		} else {
 			if (steep) {
-				bound = getFloorCellPosition(((int)end._y)+1,size);
+				xbound = getFloorCellPosition(((int)end._y)+1,size)-1;
+				ybound1 = getFloorCellPosition((int)end._x,size);
+				ybound2 = getFloorCellPosition(((int)end._x)+1,size)-1;
 			} else {
-				bound = getFloorCellPosition((int)end._x,size);
+				xbound = getFloorCellPosition((int)end._x,size);
+				ybound1 = getFloorCellPosition((int)end._y,size);
+				ybound2 = getFloorCellPosition(((int)end._y)+1,size)-1;
 			}
 		}
 		
@@ -693,14 +701,23 @@ public class GameCore implements Core
 		
 		// main loop
 		for (int x = xpt1+1; x < xpt2; x++) {
-			boolean good = swap ? x <= bound : x >= bound;
+			boolean good = swap ? x <= xbound : x >= xbound;
 			// If we are inside the defender, plot some points
 			if (good) {
 				map = new HashMap<MapPoint,Double>();
-				putPoint(map,x % size,getFloorCellPosition(intery,size),
-						1-getFractionalCellPosition(yend,size),steep);
-				putPoint(map,x % size,getFloorCellPosition(intery,size)+1,
-						getFractionalCellPosition(yend,size),steep);
+				int y = getFloorCellPosition(intery,size);
+				// Check for inclusion in the bounds (fix for corner overlap)
+				// One of these should always be in the bounds.
+				if (ybound1 <= y && y <= ybound2) {
+					putPoint(map,x % size,y % size,
+							1-getFractionalCellPosition(yend,size),steep);
+				}
+				y++;
+				if (ybound1 <= y && y <= ybound2) {
+					putPoint(map,x % size,y % size,
+							getFractionalCellPosition(yend,size),steep);
+				}
+				// Add the map.
 				if (swap) {
 					list.addFirst(map);
 				} else {
