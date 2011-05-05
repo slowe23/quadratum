@@ -147,7 +147,7 @@ public class DrawingMethods {
 	public Color getBlockColor(Block b) {
 		Color c = getBlockBaseColor(b);
 		double healthAmount = b._health/((double)(b._totalHealth));
-		return new Color((int)(c.getRed()*healthAmount), (int)(c.getBlue()*healthAmount), (int)(c.getGreen()*healthAmount));
+		return new Color((int)(c.getRed()*healthAmount), (int)(c.getGreen()*healthAmount), (int)(c.getBlue()*healthAmount));
 	}
 	
 	public void drawBlock(Graphics g, Block b, int size) {
