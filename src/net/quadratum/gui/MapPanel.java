@@ -43,7 +43,7 @@ public class MapPanel extends JPanel {
 		addMouseWheelListener(new MapPanelMouseWheelListener());
 		addComponentListener(new MapPanelComponentListener());
 		
-		setBackground(_guiPlayer._drawingMethods.BACKGROUND_COLOR);
+		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -100,7 +100,7 @@ public class MapPanel extends JPanel {
 						
 						if(selectedLocation!=null) {
 							if(selectedLocation.equals(here)) {
-								g.setColor(_guiPlayer._drawingMethods.FOREGROUND_COLOR);
+								g.setColor(DrawingMethods.FOREGROUND_COLOR);
 								g.drawRect(tilex, tiley, scale-1, scale-1);
 							}
 						}
@@ -112,7 +112,7 @@ public class MapPanel extends JPanel {
 			}
 		} else {
 			//Draw waiting screen
-			g.setColor(_guiPlayer._drawingMethods.FOREGROUND_COLOR);
+			g.setColor(DrawingMethods.FOREGROUND_COLOR);
 			FontMetrics fM = g.getFontMetrics();
 			String waiting = "Waiting for map data...";
 			g.drawString(waiting, (getWidth()-fM.stringWidth(waiting))/2, (getHeight()-(fM.getAscent()+fM.getDescent()))/2+fM.getAscent());

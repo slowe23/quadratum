@@ -180,29 +180,29 @@ public class GUIPlayer implements Player {
 		
 		synchronized(_mapData) {
 			synchronized(_unitsData) {
-				Unit clicked = _unitsData.getUnit(point);
-				if(clicked!=null) {
-					selectUnit(clicked);
+				Map<MapPoint, Action.ActionType> selActions = _unitsData.getSelectedActions();
+				if(selActions!=null && selActions.containsKey(point)) {
+					_core.unitAction(this, _unitsData.getSelectedID(), point);
 				} else {
-					if(_mapData._placementArea!=null && _mapData._placementArea.contains(point)) {
-						String newUnitName = "Unit "+_unitNumber;
-						int newUnitID = _core.placeUnit(this, point, newUnitName);
-						if(newUnitID!=-1) {
-							_unitNumber++;
-							
-							_unitsData.addUnit(point, newUnitID, true);
-							_mapData._placementArea.remove(point);
-							
-							unitsUpdated();
-							placementUpdated();
-							
-							_buttonsPanel.updateToPlace(_core.getRemainingUnits(this));
-						}
+					Unit clicked = _unitsData.getUnit(point);
+					if(clicked!=null) {
+						selectUnit(clicked);
 					} else {
-						Map<MapPoint, Action.ActionType> selActions = _unitsData.getSelectedActions();
-						if(selActions!=null && selActions.containsKey(point))
-							_core.unitAction(this, _unitsData.getSelectedID(), point);
-						else {
+						if(_mapData._placementArea!=null && _mapData._placementArea.contains(point)) {
+							String newUnitName = "Unit "+_unitNumber;
+							int newUnitID = _core.placeUnit(this, point, newUnitName);
+							if(newUnitID!=-1) {
+								_unitNumber++;
+								
+								_unitsData.addUnit(point, newUnitID, true);
+								_mapData._placementArea.remove(point);
+								
+								unitsUpdated();
+								placementUpdated();
+								
+								_buttonsPanel.updateToPlace(_core.getRemainingUnits(this));
+							}
+						} else {
 							_unitsData.deselect();
 							selectionUpdated();
 						}

@@ -37,7 +37,7 @@ public class ScrollableUnitsPanel extends JPanel implements Scrollable {
 		
 		addMouseListener(new ScrollableUnitsPanelMouseListener());
 		
-		setBackground(_guiPlayer._drawingMethods.BACKGROUND_COLOR);
+		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -64,13 +64,13 @@ public class ScrollableUnitsPanel extends JPanel implements Scrollable {
 				int xx = offx + which*WIDTH;
 				
 				if(selID!=null && u._id == selID) {
-					g.setColor(_guiPlayer._drawingMethods.FOREGROUND_COLOR);
+					g.setColor(DrawingMethods.FOREGROUND_COLOR);
 					g.drawRect(xx, offy, WIDTH-1, HEIGHT-1);
 				}
 				
 				_guiPlayer._drawingMethods.drawUnit(g.create(xx+uoffx, uoffy, maxUSize, maxUSize), u, BLOCK_SIZE, maxUSize);
 				
-				g.setColor(_guiPlayer._drawingMethods.FOREGROUND_COLOR);
+				g.setColor(DrawingMethods.FOREGROUND_COLOR);
 				String uname = u._name.substring(0, StaticMethods.findOnscreenLength(FMETR, u._name, WIDTH-2*PAD));
 				int noffx = (WIDTH-(FMETR.stringWidth(uname)))/2;
 				g.drawString(uname, xx+noffx, offy+HEIGHT-PAD-FMETR.getDescent());
