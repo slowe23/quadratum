@@ -22,9 +22,9 @@ public class MainTest implements Main
 			ServerThread server = new ServerThread(_port);
 			server.start();
 			// Make some players.
-			Player player1 = new TestAI_MTC();
+			Player player1 = new GUIPlayer();
 			Player player2 = new TestAI_MTC();
-			Player player3 = new GUIPlayer();
+			Player player3 = new TestAI_MTC();
 			ArrayList<Piece> pieces = new ArrayList<Piece>();
 			Block attackBlock = new Block(30);
 			attackBlock._bonuses.put(Block.BonusType.ATTACK, 10);
@@ -36,13 +36,13 @@ public class MainTest implements Main
 			pieces.add(lPiece);
 			// Create a core.
 			GameCore core = new GameCore(new MainTest(), "src/net/quadratum/test/test.qmap", new CheckWinner(), pieces);
-			core.addPlayer(player1, "AI Player", 5);
-			createNetworkPlayer(player2, "Network AI Player", 5);
+			core.addPlayer(player1, "GUI Player", 5);
+			core.addPlayer(player2, "AI Player", 5);
+			createNetworkPlayer(player3, "Network AI Player", 5);
 			for (Player p : server.stopListening()) {
 				// XXX Massively hacky
 				core.addPlayer(p, "Network AI Player", 5);
 			}
-			core.addPlayer(player3, "GUI Player", 5);
 			//core.addObserver(player3);
 			core.startGame();
 			while(!core.done()) {}

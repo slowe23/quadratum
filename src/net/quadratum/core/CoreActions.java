@@ -102,7 +102,10 @@ public class CoreActions
 			HashSet<MapPoint> alreadyChecked = new HashSet<MapPoint>();
 			Queue<MapPoint> queue = new LinkedList<MapPoint>();
 			MapPoint temp;
-			queue.add(new MapPoint(info._position));
+			queue.add(new MapPoint(info._position._x + 1, info._position._y));
+			queue.add(new MapPoint(info._position._x - 1, info._position._y));
+			queue.add(new MapPoint(info._position._x, info._position._y + 1));
+			queue.add(new MapPoint(info._position._x, info._position._y - 1));
 			while(queue.size() > 0)
 			{
 				temp = new MapPoint(queue.remove());

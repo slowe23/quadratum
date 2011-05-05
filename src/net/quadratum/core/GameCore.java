@@ -248,7 +248,6 @@ public class GameCore implements Core
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
 			log("Invalid map file", 3);
 			// TODO add exception to throw
 			throw new IllegalArgumentException();
