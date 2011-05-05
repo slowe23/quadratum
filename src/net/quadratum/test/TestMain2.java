@@ -16,8 +16,8 @@ public class TestMain2 implements Main {
 		Player player1 = new TestAI_MTC();
 		Player player2 = new GUIPlayer();
 		GameCore core = new GameCore(new TestMain2(), "null", new CheckWinner(), new ArrayList<Piece>());
-		core.addPlayer(player1, "Test Player 1", 5);
-		core.addPlayer(player2, "Test Player 2", 5);
+		core.addPlayer(player1, "Test Player 1", 5, 100);
+		core.addPlayer(player2, "Test Player 2", 5, 100);
 		core.startGame();
 	}
 

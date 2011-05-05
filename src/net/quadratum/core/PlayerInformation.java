@@ -6,11 +6,12 @@ public class PlayerInformation {
 	 * Constructor for PlayerInformation.
 	 * @param name the Player's name
 	 * @param maxUnits the maximum number of units for this Player
+	 * @param startingResources the starting resources for this player
 	 */
-	public PlayerInformation(String name, int maxUnits)
+	public PlayerInformation(String name, int maxUnits, int startingResources)
 	{
 		_name = new String(name); // Just to be safe
-		_resources = 0;
+		_resources = startingResources;
 		_ready = false;
 		_quit = false;
 		_lost = false;
