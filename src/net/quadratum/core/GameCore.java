@@ -819,7 +819,7 @@ public class GameCore implements Core
 				return null;
 			}
 		}
-		if(_unitInformation.get(unitid)._updated)
+		if(_unitInformation.get(unitId)._updated)
 		{
 			log("Player " + player + " called getValidActions(unitId: " + unitId + ") but the unit had already been updated this turn\n"
 				+ "\tAnswer: null", 2);
