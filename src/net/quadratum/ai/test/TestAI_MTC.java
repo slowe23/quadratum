@@ -1,7 +1,6 @@
 package net.quadratum.ai.test;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
