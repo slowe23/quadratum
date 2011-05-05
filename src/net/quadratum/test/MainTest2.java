@@ -24,6 +24,7 @@ public class MainTest2 implements Main {
 		awesomeBlock._bonuses.put(Block.BonusType.RANGE, 100);
 		awesomeBlock._bonuses.put(Block.BonusType.DEFENSE, 100);
 		awesomeBlock._bonuses.put(Block.BonusType.SIGHT, 100);
+		awesomeBlock._bonuses.put(Block.BonusType.MOVEMENT, 100);
 		awesomeBlock._bonuses.put(Block.BonusType.WATER_MOVEMENT, 100);
 		Piece awesomePiece = new Piece(10, -1, "Awesome Piece", "Provides awesome");
 		awesomePiece._blocks.put(new MapPoint(0, 0), new Block(awesomeBlock));
