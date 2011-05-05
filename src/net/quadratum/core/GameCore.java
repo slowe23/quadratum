@@ -1511,4 +1511,14 @@ public class GameCore implements Core
 	{
 		return _turn == -2;
 	}
+
+	/**
+	 * Returns the objectives for this game.
+	 * @param p the Player who is requesting the objectives
+	 * @return the objectives as a string
+	 */
+	 public String getObjectives(Player p)
+	 {
+	 	return new String("Kill all opposing units");
+	 }
 }
