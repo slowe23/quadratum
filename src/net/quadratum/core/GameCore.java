@@ -382,8 +382,6 @@ public class GameCore implements Core
 			obv._p.updatePieces(tempPieces);
 		}
 		log("start() has been called, starting unit placement phase", 1);
-		// Send a welcome message, can be removed
-		sendChatMessage("Welcome to Quadratum!");
 	}
 	
 	/**
@@ -987,7 +985,7 @@ public class GameCore implements Core
 			{
 				return i;
 			}
-			if(_winCondition.hasPlayerLost(units, new PlayerInformation(_playerInformation.get(i))))
+			if(_winCondition.hasPlayerLost(units, new PlayerInformation(_playerInformation.get(i))) && !_playerInformation.get(i)._lost && !_playerInformation.get(i)._quit)
 			{
 				log("Player " + i + " has lost", 1);
 				_playerInformation.get(i)._lost = true;
