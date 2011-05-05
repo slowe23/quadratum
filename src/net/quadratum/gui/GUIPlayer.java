@@ -23,6 +23,7 @@ public class GUIPlayer implements Player {
 	private UnitsPanel _units;  //Displays the player's units
 	private PiecesPanel _pieces;  //Displays the available pieces
 	private ButtonsPanel _buttonsPanel;  //Displays some stuff
+	private ObjectivesPanel _objectives;  //Game objectives
 	
 	private final GameWindow _gameWindow;
 	
@@ -47,13 +48,14 @@ public class GUIPlayer implements Player {
 		_readyLock = new Object();
 	}
 	
-	public void setStuff(MapPanel map, UnitInfoPanel selectedInfo, UnitImagePanel selectedImage, UnitsPanel units, PiecesPanel pieces, ButtonsPanel buttons) {
+	public void setStuff(MapPanel map, UnitInfoPanel selectedInfo, UnitImagePanel selectedImage, UnitsPanel units, PiecesPanel pieces, ButtonsPanel buttons, ObjectivesPanel objectives) {
 		_map = map;
 		_selectedInfo = selectedInfo;
 		_selectedImage = selectedImage;
 		_units = units;
 		_pieces = pieces;
 		_buttonsPanel = buttons;
+		_objectives = objectives;
 	}
 	
 	/** Notifies the player that there is a new game. */
@@ -71,6 +73,8 @@ public class GUIPlayer implements Player {
 		_selectedInfo.start(_core);
 		
 		_buttonsPanel.start(_core.getRemainingUnits(this));
+		
+		_objectives.setText(_core.getObjectives(this));
 		
 		synchronized(_readyLock) {
 			_ready = true;
