@@ -16,8 +16,6 @@ import java.util.Set;
 
 import net.quadratum.main.Main;
 
-// TODO add debug constants
-// TODO add starting resources to addPlayer
 public class GameCore implements Core
 {
 	private Main _main;
@@ -76,7 +74,6 @@ public class GameCore implements Core
 	 * Reads in the map.
 	 * @param map the map file name
 	 */
-	// TODO Finish
 	private void readMap(String map)
 	{
 		try
@@ -250,7 +247,6 @@ public class GameCore implements Core
 		catch(Exception e)
 		{
 			log("Invalid map file", 3);
-			// TODO add exception to throw
 			throw new IllegalArgumentException();
 		}
 	}
@@ -262,7 +258,6 @@ public class GameCore implements Core
 	 * @param maxUnits the max units a player can have
 	 * @param startingResources the starting resources for this player
 	 */
-	// TODO add starting resources
 	@Override
 	public synchronized void addPlayer(Player p, String playerName, int maxUnits, int startingResources)
 	{
@@ -342,7 +337,6 @@ public class GameCore implements Core
 		if(_players.size() == 0)
 		{
 			log("Tried to start game with 0 players", 3);
-			// TODO add exception to throw
 			throw new RuntimeException();
 		}
 		if(!_started)
