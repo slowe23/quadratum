@@ -53,6 +53,9 @@ public class VirtualCore extends NetworkClient implements Core {
 	/** List of cached unit info. */
 	Map<Integer,UnitInformation> _unitInfo;
 	
+	/** True if the units list is currently being built. */
+	boolean _buildingUnits;
+	
 	public VirtualCore(Socket sock) {
 		super(sock);
 		
@@ -60,9 +63,11 @@ public class VirtualCore extends NetworkClient implements Core {
 		
 		_responses = Collections.synchronizedMap(new HashMap<String,String>());
 		
-		_playerNames = new HashMap<Integer,String>();
-		_units = new TreeMap<Integer,Unit>();
-		_unitInfo = new TreeMap<Integer,UnitInformation>();
+		_playerNames = Collections.synchronizedMap(new HashMap<Integer,String>());
+		_units = Collections.synchronizedMap(new TreeMap<Integer,Unit>());
+		_unitInfo = Collections.synchronizedMap(new TreeMap<Integer,UnitInformation>());
+		
+		_buildingUnits = false;
 	}
 
 	@Override
@@ -117,6 +122,8 @@ public class VirtualCore extends NetworkClient implements Core {
 
 	@Override
 	public Map<MapPoint, ActionType> getValidActions(Player p, int unitID) {
+		while (_buildingUnits) { }
+		System.out.println(_units);
 		return CoreActions.getValidActions(unitID,_localID,
 				new ArrayList<Unit>(_units.values()),
 				new ArrayList<UnitInformation>(_unitInfo.values()),
@@ -169,10 +176,10 @@ public class VirtualCore extends NetworkClient implements Core {
 
 	@Override
 	public Unit getUnit(Player p, int unitID) {
+		// check to see if we have the unit already
 		if (_units.containsKey(unitID)) {
 			return _units.get(unitID);
 		}
-		// this should be cached also
 		write("getunit\t"+unitID+"\n");
 		// protocol: <unit \t> id \t unitobject
 		String[] s = getResponse("unit");
@@ -306,6 +313,7 @@ public class VirtualCore extends NetworkClient implements Core {
 			HashMap<MapPoint,Integer> map = Serializer.getObject(parts[1]);
 			Action act = Serializer.getObject(parts[2]);
 			// Cache the unit info and units
+			_buildingUnits = true;
 			_unitInfo.clear();
 			for (MapPoint point : map.keySet()) {
 				_unitInfo.put(map.get(point),new UnitInformation(point));
@@ -314,6 +322,7 @@ public class VirtualCore extends NetworkClient implements Core {
 			for (int i : map.values()) {
 				_units.put(i,getUnit(_localPlayer,i));
 			}
+			_buildingUnits = false;
 			// Update the local player's map.
 			_localPlayer.updateMap(map,act);
 		} else if (parts[0].equals("chat")) {
@@ -336,6 +345,8 @@ public class VirtualCore extends NetworkClient implements Core {
 			}
 		} else {
 			// A response was sent. Put it in the response map.
+			// First, wait until the spot is free.
+			while (_responses.containsKey(parts[0])) { }
 			String resp = "";
 			for (int i = 1; i < parts.length; i++) {
 				resp += parts[i];
