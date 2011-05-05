@@ -977,7 +977,7 @@ public class GameCore implements Core
 	 * @param p the Player
 	 * @param coords the MapPoint at which the unit should be placed
 	 * @param name the name of the unit
-	 * @return true if the unit is placed sucessfully, false otherwise
+	 * @return the ID of the unit that has been placed, or -1 if placement fails
 	 */
 	// TODO finish
 	@Override
