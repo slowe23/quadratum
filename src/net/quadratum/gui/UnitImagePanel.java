@@ -129,8 +129,8 @@ public class UnitImagePanel extends JPanel {
 			synchronized(UnitImagePanel.this) {
 				_showHover = true;
 				if(_selected!=null && _hover!=null) {
-					_hPos._x = (e.getX()-_ox)/_scale;
-					_hPos._y = (e.getY()-_oy)/_scale;
+					_hPos._x = StaticMethods.floor((e.getX()-_ox)/((double)_scale));
+					_hPos._y = StaticMethods.floor((e.getY()-_oy)/((double)_scale));
 				}
 				repaint();
 			}
