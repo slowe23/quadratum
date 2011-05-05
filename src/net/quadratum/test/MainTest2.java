@@ -19,14 +19,18 @@ public class MainTest2 implements Main {
 		Player player2 = new GUIPlayer();
 		// piece
 		ArrayList<Piece> pieces = new ArrayList<Piece>();
-		Block attackBlock = new Block(30);
-		attackBlock._bonuses.put(Block.BonusType.ATTACK, 10);
-		Piece lPiece = new Piece(10, -1, "L Block", "Provides +40 attack");
-		lPiece._blocks.put(new MapPoint(0, 0), new Block(attackBlock));
-		lPiece._blocks.put(new MapPoint(0, 1), new Block(attackBlock));
-		lPiece._blocks.put(new MapPoint(0, 2), new Block(attackBlock));
-		lPiece._blocks.put(new MapPoint(1, 2), new Block(attackBlock));
-		pieces.add(lPiece);
+		Block awesomeBlock = new Block(30);
+		awesomeBlock._bonuses.put(Block.BonusType.ATTACK, 100);
+		awesomeBlock._bonuses.put(Block.BonusType.RANGE, 100);
+		awesomeBlock._bonuses.put(Block.BonusType.DEFENSE, 100);
+		awesomeBlock._bonuses.put(Block.BonusType.SIGHT, 100);
+		awesomeBlock._bonuses.put(Block.BonusType.WATER_MOVEMENT, 100);
+		Piece awesomePiece = new Piece(10, -1, "Awesome Piece", "Provides awesome");
+		awesomePiece._blocks.put(new MapPoint(0, 0), new Block(awesomeBlock));
+		awesomePiece._blocks.put(new MapPoint(0, 1), new Block(awesomeBlock));
+		awesomePiece._blocks.put(new MapPoint(1, 0), new Block(awesomeBlock));
+		awesomePiece._blocks.put(new MapPoint(1, 1), new Block(awesomeBlock));
+		pieces.add(awesomePiece);
 		// core
 		GameCore core = new GameCore(new MainTest2(),
 				"src/net/quadratum/test/smalltest.qmap",

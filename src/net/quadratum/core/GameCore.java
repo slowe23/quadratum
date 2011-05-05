@@ -405,7 +405,7 @@ public class GameCore implements Core
 			}
 		}
 		log("Player " + player + " called ready() and every other player was ready, starting game", 1);
-		updateMaps(new Action(Action.ActionType.GAME_START, new MapPoint(-1, -1), new MapPoint(-1, -1)));
+		updateMaps(new Action(Action.ActionType.GAME_START, null, null));
 		nextTurn();
 	}
 	
