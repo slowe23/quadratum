@@ -521,7 +521,7 @@ public class GameCore implements Core
 					return false;
 				}
 				_unitInformation.get(unitId)._hasAttacked = true;
-				
+				_unitInformation.get(unitId)._hasMoved = true;
 				// TODO factor out? also potentially increase the number of
 				// attack lines
 				
@@ -1278,6 +1278,12 @@ public class GameCore implements Core
 					+ "\tAnswer: false", 2);
 				return false;
 			}
+			if(_unitInformation.get(unitId)._hasMoved)
+			{
+				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but they unit has already moved this turn\n"
+					+ "\tAnswer: false", 2);
+				return false;
+			}
 			int resources = _playerInformation.get(player)._resources;
 			if(piece._cost > resources)
 			{
@@ -1313,6 +1319,8 @@ public class GameCore implements Core
 				}
 				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), toAdd);
 			}
+			_unitInformation.get(unitId)._hasMoved = true;
+			_unitInformation.get(unitId)._hasAttacked = true;
 			_playerInformation.get(player)._resources -= piece._cost;
 			log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ")\n"
 				+ "\tAnswer: true", 1);
