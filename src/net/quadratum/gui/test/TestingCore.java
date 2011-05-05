@@ -202,4 +202,9 @@ public class TestingCore implements Core {
 	{
 		return false;
 	}
+
+	public String getObjectives(player p)
+	{
+		return new String("None");
+	}
 }
