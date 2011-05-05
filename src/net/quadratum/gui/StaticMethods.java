@@ -19,6 +19,13 @@ public class StaticMethods {
 		return longToInt(Math.round(d));
 	}
 	
+	public static int floor(double d) {
+		if(d<0)
+			return -1*floor(-d);
+		else
+			return (int)d;
+	}
+	
 	/**
 	 * Converts a long to an int, capping it if it excedes the minimum or 
 	 * maximum int values as if it were using saturation arithmetic.
