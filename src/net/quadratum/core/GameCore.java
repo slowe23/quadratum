@@ -260,15 +260,16 @@ public class GameCore implements Core
 	 * @param p the actual player
 	 * @param playerName the name of the player
 	 * @param maxUnits the max units a player can have
+	 * @param startingResources the starting resources for this player
 	 */
 	// TODO add starting resources
 	@Override
-	public synchronized void addPlayer(Player p, String playerName, int maxUnits)
+	public synchronized void addPlayer(Player p, String playerName, int maxUnits, int startingResources)
 	{
 		if(!_started && _players.size() < _maxPlayers)
 		{
 			_players.add(p);
-			_playerInformation.add(new PlayerInformation(new String(playerName), maxUnits));
+			_playerInformation.add(new PlayerInformation(new String(playerName), maxUnits, startingResources));
 			if(_observers.contains(new Integer(_players.size() - 1)))
 			{
 				_playerInformation.get(_players.size() - 1)._lost = true;

@@ -9,8 +9,9 @@ public interface Core {
 	 * @param p a player to be added
 	 * @param playerName the player to be added
 	 * @param maxUnits the maximum number of units this palyer can add
+	 * @param startingResources the starting resources for this player
 	 */
-	public void addPlayer(Player p, String playerName, int maxUnits);
+	public void addPlayer(Player p, String playerName, int maxUnits, int startingResources);
 	
 	/**
 	 * Adds an observer to the game.
