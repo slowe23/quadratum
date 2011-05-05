@@ -162,7 +162,7 @@ public class CoreActions
 			}
 			else // Visible area
 			{
-				radius = Constants.INITIAL_SIGHT + units.get(units)._stats.get(Block.BonusType.SIGHT) / 100;
+				radius = Constants.INITIAL_SIGHT + units.get(unit)._stats.get(Block.BonusType.SIGHT) / 100;
 			}
 			for(int x = info._position._x - radius; x < (info._position._x + radius + 1); x++)
 			{
