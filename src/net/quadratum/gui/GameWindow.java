@@ -82,12 +82,7 @@ public class GameWindow extends JFrame implements WindowListener {
 		infoArea.addTab("Pieces", pieces);
 		
 		//Add objectives tab
-		JPanel objectives = new JPanel();
-		objectives.setBorder(StaticMethods.getTitleBorder("Game Objectives"));
-		objectives.setLayout(new FillLayout());
-		StaticMethods.STD objSTD = StaticMethods.createScrollingTextDisplay(5);
-		objSTD._jta.setText("-Win the game.\n-Don't lose.");
-		objectives.add(objSTD._jsp);
+		ObjectivesPanel objectives = new ObjectivesPanel();
 		infoArea.addTab("Objectives", objectives, true);
 		
 		//Add chat tab
@@ -99,7 +94,7 @@ public class GameWindow extends JFrame implements WindowListener {
 		
 		content.add(controls, BorderLayout.SOUTH);
 		
-		_guiPlayer.setStuff(map, uInfo, uImg, units, pieces, buttons);
+		_guiPlayer.setStuff(map, uInfo, uImg, units, pieces, buttons, objectives);
 	}
 	
 	public void windowDeactivated(WindowEvent e) { }
