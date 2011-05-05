@@ -23,11 +23,11 @@ public class Block implements Serializable {
 		MOVEMENT("Movement", false),
 		SIGHT("Sight", false),
 		WATER_MOVEMENT("Water Movement", true),
-		CLOAK("Cloaking", true),
-		HEART("Life", true),
-		JUMP("Jump", true);
-		// TODO add more
-		
+		HEART("Life", true);
+		/*CLOAK("Cloaking", true),
+		JUMP("Jump", true);*/
+		// TODO add support for these blocks
+				
 		private final String _name;
 		private final boolean _isAbility;
 		BonusType(String name, boolean isAbility) {
