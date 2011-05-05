@@ -137,8 +137,8 @@ public class MainGui extends JFrame
 		Player ai = new TestAI_MTC();
 		
 		int maxU = set.getMaxUnits();
-		gc.addPlayer(human, "human", maxU);
-		gc.addPlayer(ai, "ai", maxU);
+		gc.addPlayer(human, "human", maxU, 0);
+		gc.addPlayer(ai, "ai", maxU, 0);
 		
 		gc.startGame();
 		hideMe();
