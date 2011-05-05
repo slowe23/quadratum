@@ -819,6 +819,12 @@ public class GameCore implements Core
 				return null;
 			}
 		}
+		if(_unitInformation.get(unitid)._updated)
+		{
+			log("Player " + player + " called getValidActions(unitId: " + unitId + ") but the unit had already been updated this turn\n"
+				+ "\tAnswer: null", 2);
+			return null;
+		}
 		if(_unitInformation.get(unitId)._position.equals(new MapPoint(-1, -1)))
 		{
 			log("Player " + player + " called getValidActions(unitId: " + unitId + ") but the unit was dead\n"
@@ -1020,6 +1026,7 @@ public class GameCore implements Core
 		{
 			_unitInformation.get(i)._hasMoved = false;
 			_unitInformation.get(i)._hasAttacked = false;
+			_unitInformation.get(i)._updated = false;
 		}
 		for(int i = 0; i < _players.size() - 1; i++)
 		{
@@ -1319,8 +1326,7 @@ public class GameCore implements Core
 				}
 				unit._blocks.put(new MapPoint(coords._x + key._x, coords._y + key._y), toAdd);
 			}
-			_unitInformation.get(unitId)._hasMoved = true;
-			_unitInformation.get(unitId)._hasAttacked = true;
+			_unitInformation.get(unitId)._updated = true;
 			_playerInformation.get(player)._resources -= piece._cost;
 			log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ")\n"
 				+ "\tAnswer: true", 1);

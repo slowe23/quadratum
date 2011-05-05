@@ -5,9 +5,11 @@ public class UnitInformation
 	/** Has the unit moved this turn? */
 	public boolean _hasMoved;
 	/** Has the unit attacked this turn? */
-	boolean _hasAttacked;
+	public boolean _hasAttacked;
 	/** The position of the unit. */
-	MapPoint _position;
+	public MapPoint _position;
+	/** Has the unit been updated this turn? */
+	public boolean _updated;
 	
 	/**
 	 * Constructor for UnitInformation.
@@ -18,5 +20,6 @@ public class UnitInformation
 		_position = new MapPoint(position);
 		_hasMoved = false;
 		_hasAttacked = false;
+		_updated = false;
 	}
 }
