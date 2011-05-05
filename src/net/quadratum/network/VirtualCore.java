@@ -46,15 +46,15 @@ public class VirtualCore extends NetworkClient implements Core {
 	// CACHEING ----------------------------
 	/** Map data for this game. */
 	MapData _mapData;
-	/** Maps number to player name. */
+	/** Maps ID to player name. */
 	Map<Integer,String> _playerNames;
 	/** Map of cached units.*/
 	Map<Integer,Unit> _units;
 	/** List of cached unit info. */
 	Map<Integer,UnitInformation> _unitInfo;
 	
-	/** True if the units list is currently being built. */
-	boolean _buildingUnits;
+	/** Helps synchronization with parallel unit requests. */
+	int _unitRequests;
 	
 	public VirtualCore(Socket sock) {
 		super(sock);
@@ -66,8 +66,6 @@ public class VirtualCore extends NetworkClient implements Core {
 		_playerNames = Collections.synchronizedMap(new HashMap<Integer,String>());
 		_units = Collections.synchronizedMap(new TreeMap<Integer,Unit>());
 		_unitInfo = Collections.synchronizedMap(new TreeMap<Integer,UnitInformation>());
-		
-		_buildingUnits = false;
 	}
 
 	@Override
@@ -122,12 +120,28 @@ public class VirtualCore extends NetworkClient implements Core {
 
 	@Override
 	public Map<MapPoint, ActionType> getValidActions(Player p, int unitID) {
-		while (_buildingUnits) { }
-		System.out.println(_units);
-		return CoreActions.getValidActions(unitID,_localID,
-				new ArrayList<Unit>(_units.values()),
-				new ArrayList<UnitInformation>(_unitInfo.values()),
-				_mapData._terrain);
+		// Busyloop until we're done building the list (synchronization sucks)
+		while (_units.size() != _unitRequests) { }
+		// Convert unitID into the position in the list we are going
+		// to pass in.
+		List<Integer> uids = new ArrayList<Integer>(_units.keySet());
+		int localUnitID = -1;
+		for (int i = 0; i < uids.size(); i++) {
+			if (uids.get(i) == unitID) {
+				localUnitID = i;
+			}
+		}
+		// If we didn't find the unit, return null. Otherwise, get some
+		// actions.
+		if (localUnitID == -1) {
+			return null;
+		} else {
+			return CoreActions.getValidActions(localUnitID,_localID,
+					new ArrayList<Unit>(_units.values()),
+					new ArrayList<UnitInformation>(_unitInfo.values()),
+					_mapData._terrain);
+		}
+		
 		/*
 		write("getvalidactions\t"+unitID+"\n");
 		// protocol: <validactions \t> id \t mapobject
@@ -180,6 +194,7 @@ public class VirtualCore extends NetworkClient implements Core {
 		if (_units.containsKey(unitID)) {
 			return _units.get(unitID);
 		}
+		_unitRequests++;
 		write("getunit\t"+unitID+"\n");
 		// protocol: <unit \t> id \t unitobject
 		String[] s = getResponse("unit");
@@ -192,6 +207,7 @@ public class VirtualCore extends NetworkClient implements Core {
 		}
 		Unit u = Serializer.<Unit>getObject(s[1]);
 		_units.put(i,u);
+		_unitRequests--;
 		return u;
 	}
 
@@ -313,7 +329,7 @@ public class VirtualCore extends NetworkClient implements Core {
 			HashMap<MapPoint,Integer> map = Serializer.getObject(parts[1]);
 			Action act = Serializer.getObject(parts[2]);
 			// Cache the unit info and units
-			_buildingUnits = true;
+			_unitRequests = map.keySet().size();
 			_unitInfo.clear();
 			for (MapPoint point : map.keySet()) {
 				_unitInfo.put(map.get(point),new UnitInformation(point));
@@ -322,7 +338,6 @@ public class VirtualCore extends NetworkClient implements Core {
 			for (int i : map.values()) {
 				_units.put(i,getUnit(_localPlayer,i));
 			}
-			_buildingUnits = false;
 			// Update the local player's map.
 			_localPlayer.updateMap(map,act);
 		} else if (parts[0].equals("chat")) {
