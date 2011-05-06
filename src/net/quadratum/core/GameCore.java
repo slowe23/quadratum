@@ -477,7 +477,7 @@ public class GameCore implements Core
 				return false;
 			}
 			coords = new MapPoint(coords);
-			Set<MapPoint> valid;
+			Map<MapPoint, Action.ActionType> valid;
 			MapPoint oldCoords = new MapPoint(_unitInformation.get(unitId)._position);
 			int unit = CoreActions.getUnitAtPoint(coords, _unitInformation);
 			if(unit == -1) // Movement
@@ -487,8 +487,8 @@ public class GameCore implements Core
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but the unit had already moved", 2);
 					return false;
 				}
-				valid = CoreActions.getAreaForUnit(unitId, 0, _units, _unitInformation, _terrain);
-				if(!valid.contains(coords))
+				valid = CoreActions.getValidActions(unitId, player, _units, _unitInformation, _terrain);
+				if(valid.get(coords) != Action.ActionType.MOVE)
 				{
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but did provide a valid movement coordinate\n"
 						+ "\tValid: " + valid, 2);
@@ -508,8 +508,8 @@ public class GameCore implements Core
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but the unit had already attacked", 2);
 					return false;
 				}
-				valid = CoreActions.getAreaForUnit(unitId, 1, _units, _unitInformation, _terrain);
-				if(!valid.contains(coords))
+				valid = CoreActions.getValidActions(unitId, player, _units, _unitInformation, _terrain);
+				if(valid.get(coords) != Action.ActionType.ATTACK)
 				{
 					log("Player " + player + " called unitAction(unitId: " + unitId + ", coords: " + coords + ") but did provide a valid attack coordinate\n"
 						+ "\tValid: " + valid, 2);
@@ -937,7 +937,7 @@ public class GameCore implements Core
 	 * @param player the player
 	 * @return a map of MapPoints to unit ids
 	 */
-	private HashMap<MapPoint, Integer> generateMapForPlayer(int player, HashSet<MapPoint> visible)
+	private HashMap<MapPoint, Integer> generateMapForPlayer(int player, Set<MapPoint> visible)
 	{
 		HashMap<MapPoint, Integer> units = new HashMap<MapPoint, Integer>();
  		for(int i = 0; i < _unitInformation.size(); i++)
@@ -959,7 +959,7 @@ public class GameCore implements Core
 	{
 		log("Updating maps for all players", 1);
 		HashMap<MapPoint, Integer> playerMap;
-		HashSet<MapPoint> visible;
+		Set<MapPoint> visible;
 		MapPoint newDestination;
 		HashMap<MapPoint, Integer> allUnits;
 		for(ObserverContainer obv : _observers)
@@ -975,7 +975,7 @@ public class GameCore implements Core
 		{
 			if(!_playerInformation.get(i)._quit)
 			{
-				visible = getVisible(i);
+				visible = CoreActions.getTotalSightArea(i, _units, _unitInformation, _terrain);
 				if(visible.contains(action._dest) || action._action == Action.ActionType.GAME_START)
 				{
 					_players.get(i).updateMap(generateMapForPlayer(i, visible), new Action(action));
@@ -1477,7 +1477,7 @@ public class GameCore implements Core
 			return null;
 		}
 		Unit unit = new Unit(_units.get(unitId));
-		if(!getVisible(player).contains(_unitInformation.get(unitId)._position) && player != -2)
+		if(!CoreActions.getTotalSightArea(player, _units, _unitInformation, _terrain).contains(_unitInformation.get(unitId)._position) && player != -2)
 		{
 			log("Player " + player + " called getUnit(unitId: " + unitId + ") on a unit that did belong to them", 2);
 			return null;
@@ -1487,33 +1487,7 @@ public class GameCore implements Core
 		return unit;
 		
 	}
-	
-	/**
-	 * Gets the visible area for a player.
-	 * @param p the Player
-	 * @return the MapPoints that the player can see
-	 */
-	private HashSet<MapPoint> getVisible(int player)
-	{
-		HashSet<MapPoint> visible = new HashSet<MapPoint>();
-		Set<MapPoint> unitVisible;
-		for(int i = 0; i < _units.size(); i++)
-		{
-			if(_units.get(i)._owner == player)
-			{
-				unitVisible = CoreActions.getAreaForUnit(i, 2, _units, _unitInformation, _terrain);
-				for(MapPoint point : unitVisible)
-				{
-					visible.add(point);
-				}
-			}
-		}
-		/*log("getVisible(player: " + player + ")\n"
-			+ "\tAnswer was: " + visible, 1);*/
-			// TODO add back in when we are generating less data
-		return visible;
-	}
-		
+			
 	/**
 	 * Returns the number of units left to build for a given player.
 	 * @param p the Player we are checking

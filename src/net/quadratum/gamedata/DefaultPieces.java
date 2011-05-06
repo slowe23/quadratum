@@ -40,8 +40,8 @@ public class DefaultPieces
 		Piece attackPiece = new Piece(10, -1, "Attack", "Provides +120 damage (50 hp per block)");
 		attackPiece._blocks.put(new MapPoint(0, 0), new Block(attackBlock));
 		attackPiece._blocks.put(new MapPoint(0, 1), new Block(attackBlock));
-		attackPiece._blocks.put(new MapPoint(1, 0), new Block(attackBlock));
 		attackPiece._blocks.put(new MapPoint(1, 1), new Block(attackBlock));
+		attackPiece._blocks.put(new MapPoint(1, 2), new Block(attackBlock));
 		pieces.add(attackPiece);
 
 		// Movment piece
@@ -73,8 +73,8 @@ public class DefaultPieces
 		Piece defensePiece = new Piece(30, -1, "Defense", "Provides +20 defense - +1 damage reduction (100 hp per block)");
 		defensePiece._blocks.put(new MapPoint(0, 0), new Block(defenseBlock));
 		defensePiece._blocks.put(new MapPoint(0, 1), new Block(defenseBlock));
+		defensePiece._blocks.put(new MapPoint(1, 0), new Block(defenseBlock));
 		defensePiece._blocks.put(new MapPoint(1, 1), new Block(defenseBlock));
-		defensePiece._blocks.put(new MapPoint(1, 2), new Block(defenseBlock));
 		pieces.add(defensePiece);
 
 		// Water movement piece
