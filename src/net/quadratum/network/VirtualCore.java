@@ -46,6 +46,10 @@ public class VirtualCore extends NetworkClient implements Core {
 	// CACHEING ----------------------------
 	/** Map data for this game. */
 	MapData _mapData;
+	
+	/** Objectives for this game. */
+	String _objectives;
+	
 	/** Maps ID to player name. */
 	Map<Integer,String> _playerNames;
 	/** Map of cached units.*/
@@ -62,6 +66,8 @@ public class VirtualCore extends NetworkClient implements Core {
 		_done = false;
 		
 		_responses = Collections.synchronizedMap(new HashMap<String,String>());
+		
+		_objectives = null;
 		
 		_playerNames = Collections.synchronizedMap(new HashMap<Integer,String>());
 		_units = Collections.synchronizedMap(new TreeMap<Integer,Unit>());
@@ -230,7 +236,6 @@ public class VirtualCore extends NetworkClient implements Core {
 		if (_playerNames.containsKey(player)) {
 			return _playerNames.get(player);
 		} else {
-			// trivial to cache
 			write("getplayername\t"+player+"\n");
 			// protocol: <playername \t> id \t name
 			String[] s = getResponse("playername");
@@ -255,8 +260,23 @@ public class VirtualCore extends NetworkClient implements Core {
 	
 	@Override
 	public String getObjectives(Player p) {
-		// Stubbed for now...
-		return "";
+		if (_objectives != null) {
+			return _objectives;
+		} else {
+			// trivial to cache
+			write("getobjectives\n");
+			// protocol: <objectives \t> obj1 \t obj2...
+			String objs = "";
+			String[] s = getResponse("objectives");
+			for(int i = 0; i < s.length; i++) {
+				objs += s[i];
+				if (i < s.length - 1) {
+					objs += System.getProperty("line.separator");
+				}
+			}
+			_objectives = null;
+			return _objectives;
+		}
 	}
 	
 	@Override
