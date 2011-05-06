@@ -9,12 +9,12 @@ import net.quadratum.core.WinCondition;
 
 public class CheckWinnerTest implements WinCondition
 {
-	public boolean hasPlayerWon(Map<MapPoint, Unit> units, PlayerInformation playerInformation)
+	public boolean hasPlayerWon(Map<MapPoint, Unit> units, PlayerInformation playerInformation, int playerNumber)
 	{
 		return false;
 	}
 	
-    public boolean hasPlayerLost(Map<MapPoint, Unit> units, PlayerInformation playerInformation)
+	public boolean hasPlayerLost(Map<MapPoint, Unit> units, PlayerInformation playerInformation, int playerNumber)
 	{
 		if(units.size() == 0)
 		{
@@ -24,5 +24,10 @@ public class CheckWinnerTest implements WinCondition
 		{
 			return false;
 		}
+	}
+
+	public String getObjectives()
+	{
+		return new String("Kill all enemy units!");
 	}
 }
