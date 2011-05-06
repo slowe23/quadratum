@@ -1,4 +1,3 @@
-rm -f */*/*/*/*.class
-rm -f */*/*/*/*/*.class
+rm -rf bin
 rm -rf javadoc/
 rm -f log.txt
