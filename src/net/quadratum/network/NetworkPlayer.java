@@ -202,6 +202,11 @@ public class NetworkPlayer extends NetworkClient implements Player {
 			int res = _core.getResources(this);
 			// send back the amount of resources
 			write("resources\t"+res+"\n");
+		} else if (parts[0].equals("getobjectives")) {
+			// The player wants to know the objectives.
+			String objectives = _core.getObjectives(this);
+			// send back the objectives, replacing all newlines with tabs
+			write("objectives\t"+objectives.replaceAll("(\r)?\n","\t"));
 		}
 	}
 
