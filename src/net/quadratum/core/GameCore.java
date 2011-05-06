@@ -1084,10 +1084,6 @@ public class GameCore implements Core
 			{
 				continue;
 			}
-			for(int j = 0; j < _players.size(); j++)
-			{
-				_players.get(j).updateTurn(_turn);
-			}
 			int resourcesGained = 0;
 			MapPoint point;
 			for(int j = 0; j < _unitInformation.size(); j++)
@@ -1098,10 +1094,14 @@ public class GameCore implements Core
 					resourcesGained += Constants.RESOURCES_PER_TURN;
 				}
 			}
-			_playerInformation.get(i)._resources += resourcesGained;
+			_playerInformation.get(_turn)._resources += resourcesGained;
 			sendChatMessage(_turn, "You have gained " + resourcesGained + " resources.");
 			TurnStartThread turnStartThread = new TurnStartThread(_players.get(_turn));
 			turnStartThread.start();
+			for(int j = 0; j < _players.size(); j++)
+			{
+				_players.get(j).updateTurn(_turn);
+			}
 			log("Start of turn for player " + _turn + "\n"
 				+ "\tResources gained: " + resourcesGained, 1);
 			return;
