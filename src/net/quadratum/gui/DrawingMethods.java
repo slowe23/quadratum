@@ -16,6 +16,7 @@ public class DrawingMethods {
 	public static final Color MOUNTAIN_COLOR = new Color(126, 72, 19);
 	public static final Color BUNKER_COLOR = new Color(63, 63, 63);
 	public static final Color RESOURCES_COLOR = new Color(191, 191, 0);
+	public static final Color IMPASSIBLE_COLOR = new Color(255, 63, 0);
 	
 	private static final Color[] PLAYER_COLORS = {Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.PINK};
 	
@@ -29,31 +30,45 @@ public class DrawingMethods {
 	}
 	
 	public Color getTerrainTileColor(int terrainValue) {
-		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.WATER))
+		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.IMPASSIBLE))
+			return IMPASSIBLE_COLOR;
+		else if(TerrainConstants.isOfType(terrainValue, TerrainConstants.WATER))
 			return WATER_COLOR;
+		else if(TerrainConstants.isOfType(terrainValue, TerrainConstants.RESOURCES))
+			return RESOURCES_COLOR;
 		else
 			return LAND_COLOR;
 	}
 	
 	public void drawTerrainFeatures(Graphics g, int terrainValue, int size) {
+		
+		int s = size-4;
+		int sta = 2;
+		int end = size-1-2;
+		
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.WATER)) {
 			g.setColor(WATER_COLOR);
-			g.fillRoundRect(2, 2, size-4, size-4, (size-4)/2, (size-4)/2);
+			g.fillRoundRect(sta, sta, s, s, s/2, s/2);
 		}
 		   
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.MOUNTAIN)) {
 			g.setColor(MOUNTAIN_COLOR);
-			g.fillPolygon(new Polygon(new int[]{0, size/2, size}, new int[]{size, 0, size}, 3));
+			g.fillPolygon(new Polygon(new int[]{sta, sta+s/2, end}, new int[]{end, sta, end}, 3));
 		}
 		
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.BUNKER)) {
 			g.setColor(BUNKER_COLOR);
-			g.fillPolygon(new Polygon(new int[]{0, size/4, (3*size)/4, size}, new int[]{(3*size)/4, size/4, size/4, (3*size)/4}, 4));
+			g.fillPolygon(new Polygon(new int[]{sta, sta+s/4, end-s/4, end}, new int[]{end-s/4, sta+s/4, sta+s/4, end-s/4}, 4));
 		}
 		
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.RESOURCES)) {
 			g.setColor(RESOURCES_COLOR);
-			g.fillPolygon(new Polygon(new int[]{0, size/2, size, size/2}, new int[]{size/2, 0, size/2, size}, 4));
+			g.fillPolygon(new Polygon(new int[]{sta, sta+s/2, end, sta+s/2}, new int[]{sta+s/2, sta, sta+s/2, end}, 4));
+		}
+		
+		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.IMPASSIBLE)) {
+			g.setColor(IMPASSIBLE_COLOR);
+			g.fillRoundRect(sta, sta, s, s, s/2, s/2);
 		}
 	}
 	

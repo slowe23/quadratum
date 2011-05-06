@@ -7,11 +7,13 @@ public class TerrainConstants
 	/** Constant representing water. */
 	public static final int WATER = 1;
 	/** Constant representing a bunker overlay. */
-	public static final int BUNKER = 2;
+	public static final int BUNKER = 1 << 1;
 	/** Constant representing mountains. */
-	public static final int MOUNTAIN = 4;
+	public static final int MOUNTAIN = 1 << 2;
 	/** Constant representing a resource-gathering location. */
-	public static final int RESOURCES = 8;
+	public static final int RESOURCES = 1 << 3;
+	/** Constant representing an impassible square*/
+	public static final int IMPASSIBLE = 1 << 4;
 	
 	/**
 	 * Checks if the given terrain is of the given type.
