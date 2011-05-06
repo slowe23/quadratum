@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.quadratum.core.Action;
 import net.quadratum.core.Core;
@@ -54,13 +55,17 @@ public class Level1 implements Level
 	{
 		Core _core;
 		Map<MapPoint, Integer> _units;
+		Object _lockObject;
 
-		public Level1AI() {}
+		public Level1AI()
+		{
+			_lockObject = new Object();
+			_units = new HashMap<MapPoint, Integer>();
+		}
 
 		public void start(Core core, MapData mapData, int id, int totalPlayers)
 		{
 			_core = core;
-			_units = new HashMap<MapPoint, Integer>();
 			int unit;
 
 			// Place kings
@@ -186,7 +191,7 @@ public class Level1 implements Level
 			_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
 			_core.updateUnit(this, unit, 3, new MapPoint(5, 4));
 			_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
-			
+
 			_core.ready(this);
 		}
 
@@ -198,12 +203,46 @@ public class Level1 implements Level
 
 		public void turnStart()
 		{
-			_core.endTurn(this);
+			synchronized(_units)
+			{
+				Map<MapPoint, Action.ActionType> valid;
+				Set<MapPoint> keys = _units.keySet();
+				for(MapPoint key : keys)
+				{
+					valid = _core.getValidActions(this, _units.get(key).intValue());
+					if(valid == null)
+					{
+						continue;
+					}
+					for(MapPoint point : valid.keySet())
+					{
+						if(valid.get(point) == Action.ActionType.ATTACK)
+						{
+							_core.unitAction(this, _units.get(key), point);
+							continue;
+						}
+					}
+				}
+				_core.endTurn(this);
+			}
 		}
 
 		public void updateMapData(MapData mapData) {}
 
-		public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {}
+		public void updateMap(Map<MapPoint, Integer> units, Action lastAction)
+		{
+			synchronized(_units)
+			{
+				_units.clear();
+				for(MapPoint key : units.keySet())
+				{
+					if(_core.getUnit(this, units.get(key).intValue())._owner == 1)
+					{
+						_units.put(key, units.get(key));
+					}
+				}
+			}
+		}
 
 		public void chatMessage(int from, String message) {}
 
