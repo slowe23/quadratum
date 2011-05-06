@@ -8,7 +8,7 @@ public interface Settings {
 	
 	public boolean usingPresetMap();
 	public String getPresetMap();
-	public String generateMap();
+	public String getMap();
 	
 	//public boolean mapDimensionSet();
 	public int getMapWidth();

@@ -61,16 +61,132 @@ public class Level1 implements Level
 		{
 			_core = core;
 			_units = new HashMap<MapPoint, Integer>();
-			_core.placeUnit(this, new MapPoint(19, 4), new String("King"));
-			_core.placeUnit(this, new MapPoint(19, 5), new String("Queen"));
-			_core.placeUnit(this, new MapPoint(16, 3), new String("Royal Guard"));
-			_core.placeUnit(this, new MapPoint(16, 6), new String("Royal Guard"));
-			_core.placeUnit(this, new MapPoint(10, 1), new String("Defender"));
-			_core.placeUnit(this, new MapPoint(10, 8), new String("Defender"));
-			_core.placeUnit(this, new MapPoint(12, 3), new String("Defender"));
-			_core.placeUnit(this, new MapPoint(12, 6), new String("Defender"));
-			_core.placeUnit(this, new MapPoint(13, 3), new String("Defender"));
-			_core.placeUnit(this, new MapPoint(13, 6), new String("Defender"));
+			int unit;
+
+			// Place kings
+			unit = _core.placeUnit(this, new MapPoint(19, 4), new String("King"));
+			for(int i = 0; i < 7; i += 2)
+			{
+				for(int j = 0; j < 7; j += 2)
+				{
+					_core.updateUnit(this, unit, 4, new MapPoint(i, j));
+				}
+			}
+
+			// Place queen
+			unit = _core.placeUnit(this, new MapPoint(19, 5), new String("Queen"));
+			for(int i = 0; i < 7; i += 2)
+			{
+				for(int j = 0; j < 7; j += 2)
+				{
+					_core.updateUnit(this, unit, 4, new MapPoint(i, j));
+				}
+			}
+
+			// Add royal guard
+			unit = _core.placeUnit(this, new MapPoint(16, 3), new String("Royal Guard"));
+			for(int i = 0; i < 7; i += 2)
+			{
+				_core.updateUnit(this, unit, 4, new MapPoint(0, i));
+			}
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 0));
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
+			_core.updateUnit(this, unit, 0, new MapPoint(6, 0));
+			_core.updateUnit(this, unit, 0, new MapPoint(5, 1));
+			_core.updateUnit(this, unit, 0, new MapPoint(5, 3));
+			_core.updateUnit(this, unit, 0, new MapPoint(5, 5));
+			
+			// Add royal guard
+			unit = _core.placeUnit(this, new MapPoint(16, 6), new String("Royal Guard"));
+			for(int i = 0; i < 7; i += 2)
+			{
+				_core.updateUnit(this, unit, 4, new MapPoint(0, i));
+			}
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 0));
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
+			_core.updateUnit(this, unit, 0, new MapPoint(6, 0));
+			_core.updateUnit(this, unit, 0, new MapPoint(5, 1));
+			_core.updateUnit(this, unit, 0, new MapPoint(5, 3));
+			_core.updateUnit(this, unit, 0, new MapPoint(5, 5));
+			
+			// Place defender
+			unit = _core.placeUnit(this, new MapPoint(10, 1), new String("Defender"));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
+			_core.updateUnit(this, unit, 0, new MapPoint(1, 0));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 1));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 3));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 5));
+			_core.updateUnit(this, unit, 2, new MapPoint(3, 0));
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
+			_core.updateUnit(this, unit, 3, new MapPoint(5, 4));
+			_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+
+			// Place defender
+			unit = _core.placeUnit(this, new MapPoint(10, 8), new String("Defender"));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
+			_core.updateUnit(this, unit, 0, new MapPoint(1, 0));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 1));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 3));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 5));
+			_core.updateUnit(this, unit, 2, new MapPoint(3, 0));
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
+			_core.updateUnit(this, unit, 3, new MapPoint(5, 4));
+			_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+
+			// Place defender
+			unit = _core.placeUnit(this, new MapPoint(12, 3), new String("Defender"));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
+			_core.updateUnit(this, unit, 0, new MapPoint(1, 0));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 1));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 3));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 5));
+			_core.updateUnit(this, unit, 2, new MapPoint(3, 0));
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
+			_core.updateUnit(this, unit, 3, new MapPoint(5, 4));
+			_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+
+			// Place defender
+			unit = _core.placeUnit(this, new MapPoint(12, 6), new String("Defender"));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
+			_core.updateUnit(this, unit, 0, new MapPoint(1, 0));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 1));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 3));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 5));
+			_core.updateUnit(this, unit, 2, new MapPoint(3, 0));
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
+			_core.updateUnit(this, unit, 3, new MapPoint(5, 4));
+			_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+
+			// Place defender
+			unit = _core.placeUnit(this, new MapPoint(13, 3), new String("Defender"));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
+			_core.updateUnit(this, unit, 0, new MapPoint(1, 0));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 1));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 3));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 5));
+			_core.updateUnit(this, unit, 2, new MapPoint(3, 0));
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
+			_core.updateUnit(this, unit, 3, new MapPoint(5, 4));
+			_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+
+			// Place defender
+			unit = _core.placeUnit(this, new MapPoint(13, 6), new String("Defender"));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
+			_core.updateUnit(this, unit, 0, new MapPoint(1, 0));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 1));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 3));
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 5));
+			_core.updateUnit(this, unit, 2, new MapPoint(3, 0));
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
+			_core.updateUnit(this, unit, 3, new MapPoint(5, 4));
+			_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+			
 			_core.ready(this);
 		}
 
