@@ -12,6 +12,8 @@ public class Constants
 	public static final int INITIAL_MOVE = 0;
 	/** Initial sight radius of units. */
 	public static final int INITIAL_SIGHT = 3;
+	/** Initial attack width of units. */
+	public static final int INITIAL_ATTACK_WIDTH = 3;
 	/** Health of heart blocks. */
 	public static final int HEART_HEALTH = 100;
 	
