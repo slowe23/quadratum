@@ -7,15 +7,17 @@ import javax.swing.*;
 
 import net.quadratum.core.*;
 
-public class GameWindow extends JFrame implements WindowListener {
+public class GameWindow extends JFrame {
 	private GUIPlayer _guiPlayer;
+	private Core _core;
 	
 	public GameWindow(GUIPlayer player, ChatHandler chatHandler) {
 		setTitle("Quadratum");
 		setSize(800, 600);
 		setResizable(false);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
-		addWindowListener(this);
+		addWindowListener(new GameWindowWindowListener());
 		
 		_guiPlayer = player;
 		
@@ -97,16 +99,23 @@ public class GameWindow extends JFrame implements WindowListener {
 		_guiPlayer.setStuff(map, uInfo, uImg, units, pieces, buttons, objectives);
 	}
 	
-	public void windowDeactivated(WindowEvent e) { }
-	public void windowActivated(WindowEvent e) { }
-	public void windowDeiconified(WindowEvent e) { }
-	public void windowIconified(WindowEvent e) { }
-	public void windowClosed(WindowEvent e) { }
-	public void windowOpened(WindowEvent e) { }
+	public void start(Core core) {
+		_core = core;
+	}
 	
-	public void windowClosing(WindowEvent e) {
-		//TODO: some kind of confirmation?
-		_guiPlayer.closing();
+	public void end(GameStats stats) {
+		JOptionPane.showMessageDialog(this, "Game over.\n\n"+stats.toString());
+		quit();
+	}
+	
+	public void quit() {
 		setVisible(false);
+		System.exit(0);
+	}
+	
+	private class GameWindowWindowListener extends WindowAdapter {
+		public void windowClosing(WindowEvent e) {
+			_guiPlayer.closing();
+		}
 	}
 }

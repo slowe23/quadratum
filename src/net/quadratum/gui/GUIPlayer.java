@@ -128,24 +128,25 @@ public class GUIPlayer implements Player {
 	
 	/** Notifies the player that their turn has started. */
 	public void turnStart() {
-		//Do nothing because this is completely redundant (see updateTurn, below)
+		blockUntilReady();
+		
+		resourcesUpdated();
+		
+		_map.scrollTo(_unitsData.getSelectedLocation(), false);
+		_map.repaintBoth();
 	}
 	
 	/** Notifies the player that the turn has changed. */
 	public void updateTurn(int turn) {
 		blockUntilReady();
 		
-		if(turn==_id) {
+		if(turn==_id)
 			_chat.incomingMessage(-1, "Your turn.");
-			selectionUpdated();
-			_map.scrollTo(_unitsData.getSelectedLocation(), false);
-			_map.repaintBoth();
-		} else {
+		else
 			_chat.incomingMessage(-1, _core.getPlayerName(turn)+"'s turn.");
-			selectionUpdated();  //The available actions may change with the turn
-		}
+
+		selectionUpdated();
 		_buttonsPanel.turn(turn==_id);
-		resourcesUpdated();
 	}
 	
 	/** Notifies the player that he has lost. */
@@ -153,17 +154,13 @@ public class GUIPlayer implements Player {
 		blockUntilReady();
 		
 		_chat.incomingMessage(-1, "You have lost.");
-		
-		//TODO: stuff?
 	}
 	
 	/** Notifies the player that the game has ended. */
 	public void end(GameStats stats) {
 		blockUntilReady();
 		
-		_chat.incomingMessage(-1, "The game has ended.");
-
-		//TODO: stuff?
+		_gameWindow.end(stats);
 	}
 	
 	/** Notifies the player of a chat message (can be from self). */

@@ -1118,18 +1118,14 @@ public class GameCore implements Core
 	private void endGame(int winner)
 	{
 		_turn = -2;
-		for(int i = 0; i < _players.size(); i++)
-		{
-			if(!_playerInformation.get(i)._quit)
-			{
-				_players.get(i).end(new GameStats(winner));
+		for(int i = 0; i < _players.size(); i++) {
+			if(!_playerInformation.get(i)._quit) {
+				_players.get(i).end(new GameStats(winner, getPlayerName(winner)));
 			}
 		}
-		for(ObserverContainer obv : _observers)
-		{
-			if(!obv._quit)
-			{
-				obv._p.end(new GameStats(winner));
+		for(ObserverContainer obv : _observers) {
+			if(!obv._quit) {
+				obv._p.end(new GameStats(winner, getPlayerName(winner)));
 			}
 		}
 		sendChatMessage("Game over! Player " + getPlayerName(winner) + " has won!");
