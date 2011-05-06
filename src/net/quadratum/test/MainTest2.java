@@ -34,7 +34,7 @@ public class MainTest2 implements Main {
 		pieces.add(awesomePiece);
 		// core
 		GameCore core = new GameCore(new MainTest2(),
-				"src/net/quadratum/test/smalltest.qmap",
+				"maps/smalltest.qmap",
 				new CheckWinner(), pieces);
 		core.addPlayer(player1, "Test Player 1", 5, 100);
 		core.addPlayer(player2, "Test Player 2", 5, 100);
