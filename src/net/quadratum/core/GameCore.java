@@ -580,10 +580,14 @@ public class GameCore implements Core
 				// Distribute the damage
 				
 				int totalDamage = attacker._stats.get(Block.BonusType.ATTACK), damageLeft;
+				int defense = defender._stats.get(Block.BonusType.DEFENSE) +
+					(TerrainConstants.isOfType(
+							_terrain[coords._x][coords._y], TerrainConstants.BUNKER) ? 
+									Constants.BUNKER_DEFENSE_BONUS : 0);
 				
 				// Account for the defending unit's defense.
 				totalDamage = adjustedDamage(totalDamage,
-						defender._stats.get(Block.BonusType.DEFENSE));
+						defense);
 				
 				for (int i = 0; i < attackLines; i++) {
 					
@@ -851,7 +855,7 @@ public class GameCore implements Core
 	 * @return the adjusted amount of damage
 	 */
 	private int adjustedDamage(int attack, int defense) {
-		return (int)(attack/(1+9*Math.tanh(defense/20)));
+		return (int)(attack/(1+9*Math.tanh(defense/Constants.DEFENSE_MODIFIER)));
 	}
 	
 	/**

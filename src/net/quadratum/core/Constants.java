@@ -14,6 +14,12 @@ public class Constants
 	public static final int INITIAL_SIGHT = 3;
 	/** Initial attack width of units. */
 	public static final int INITIAL_ATTACK_WIDTH = 3;
+	/** Range bonus if the unit is on a mountain. */
+	public static final int MOUNTAIN_RANGE_BONUS = 3;
+	/** Defense bonus on a bunker. */
+	public static final int BUNKER_DEFENSE_BONUS = 4;
+	/** Defense modifier. As this goes up, actual defensive power goes down. */
+	public static final double DEFENSE_MODIFIER = 100.0;
 	/** Health of heart blocks. */
 	public static final int HEART_HEALTH = 100;
 	

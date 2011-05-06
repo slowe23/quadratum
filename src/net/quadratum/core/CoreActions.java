@@ -156,7 +156,8 @@ public class CoreActions
 			{
 				if(TerrainConstants.isOfType(terrain[info._position._x][info._position._y], TerrainConstants.MOUNTAIN))
 				{
-					radius = 3 + units.get(unit)._stats.get(Block.BonusType.RANGE) / 120;
+					radius = Constants.MOUNTAIN_RANGE_BONUS + 
+						units.get(unit)._stats.get(Block.BonusType.RANGE) / 120;
 				}
 				else
 				{
