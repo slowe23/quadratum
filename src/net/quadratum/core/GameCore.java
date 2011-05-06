@@ -1063,11 +1063,11 @@ public class GameCore implements Core
 					units.put(new MapPoint(_unitInformation.get(j)._position), new Unit(_units.get(j)));
 				}
 			}
-			if(_winCondition.hasPlayerWon(units, new PlayerInformation(_playerInformation.get(i))))
+			if(_winCondition.hasPlayerWon(units, new PlayerInformation(_playerInformation.get(i)), i) && !_playerInformation.get(i)._lost && !_playerInformation.get(i)._quit)
 			{
 				return i;
 			}
-			if(_winCondition.hasPlayerLost(units, new PlayerInformation(_playerInformation.get(i))) && !_playerInformation.get(i)._lost && !_playerInformation.get(i)._quit)
+			if(_winCondition.hasPlayerLost(units, new PlayerInformation(_playerInformation.get(i)), i) && !_playerInformation.get(i)._lost && !_playerInformation.get(i)._quit)
 			{
 				log("Player " + i + " has lost", 1);
 				_playerInformation.get(i)._lost = true;
@@ -1603,6 +1603,6 @@ public class GameCore implements Core
 	 */
 	 public String getObjectives(Player p)
 	 {
-	 	return new String("Kill all opposing units");
+	 	return new String(_winCondition.getObjectives());
 	 }
 }

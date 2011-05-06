@@ -84,10 +84,15 @@ public class CoreActions
 		int radius;
 		UnitInformation info = unitInformation.get(unit);
 		HashSet<MapPoint> area = new HashSet<MapPoint>();
+		int sightRadius = Constants.INITIAL_SIGHT + units.get(unit)._stats.get(Block.BonusType.SIGHT) / 120;
 		if(type == 0) // Movement area
 		{
 			Unit actionUnit = units.get(unit);
-			radius = Constants.INITIAL_MOVE + actionUnit._stats.get(Block.BonusType.MOVEMENT) / 100;
+			radius = Constants.INITIAL_MOVE + actionUnit._stats.get(Block.BonusType.MOVEMENT) / 120;
+			if(radius > sightRadius)
+			{
+				radius = sightRadius;
+			}
 			boolean canMoveOnWater;
 			if(actionUnit._stats.get(Block.BonusType.WATER_MOVEMENT).intValue() > 0)
 			{
@@ -111,7 +116,7 @@ public class CoreActions
 				{
 					alreadyChecked.add(temp);
 					// Make sure the point is in the movement radius
-					if((Math.abs(info._position._x - temp._x) + Math.abs(info._position._y - temp._y)) < radius)
+					if((Math.abs(info._position._x - temp._x) + Math.abs(info._position._y - temp._y)) <= radius)
 					{
 						// Make sure the coordinate is in the map
 						if(temp._x >= 0 && temp._y >= 0 && temp._x < terrain.length && temp._y < terrain[0].length)
@@ -151,16 +156,20 @@ public class CoreActions
 			{
 				if(TerrainConstants.isOfType(terrain[info._position._x][info._position._y], TerrainConstants.MOUNTAIN))
 				{
-					radius = 3 + units.get(unit)._stats.get(Block.BonusType.RANGE) / 100;
+					radius = 3 + units.get(unit)._stats.get(Block.BonusType.RANGE) / 120;
 				}
 				else
 				{
-					radius = units.get(unit)._stats.get(Block.BonusType.RANGE) / 100;
+					radius = units.get(unit)._stats.get(Block.BonusType.RANGE) / 120;
+				}
+				if(radius > sightRadius)
+				{
+					radius = sightRadius;
 				}
 			}
 			else // Visible area
 			{
-				radius = Constants.INITIAL_SIGHT + units.get(unit)._stats.get(Block.BonusType.SIGHT) / 100;
+				radius = sightRadius;
 			}
 			for(int x = info._position._x - radius; x < (info._position._x + radius + 1); x++)
 			{
@@ -168,7 +177,7 @@ public class CoreActions
 				{
 					if(x >= 0 && y >= 0 && x < terrain.length && y < terrain[0].length) // Check to make sure the point is on the board
 					{
-						if((Math.abs(info._position._x - x) + Math.abs(info._position._y - y)) < radius)
+						if((Math.abs(info._position._x - x) + Math.abs(info._position._y - y)) <= radius)
 						{
 							area.add(new MapPoint(x, y));
 						}
