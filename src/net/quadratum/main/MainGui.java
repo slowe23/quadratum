@@ -83,6 +83,8 @@ public class MainGui extends JFrame
 		//System.err.println("Main: Passing off control, hiding.");
 		//setEnabled(false);
 		getContentPane().setVisible(false);
+		getContentPane().setEnabled(false);
+		setVisible(false);
 		//wait(); //? Makes it truly dormant, but requires threads and notify()
 	}
 	
@@ -143,6 +145,7 @@ public class MainGui extends JFrame
 		gc.addPlayer(human, "human", maxU, 0);
 		gc.addPlayer(ai, "ai", maxU, 0);
 		
+		hideMe();
 		gc.startGame();
 //		//start workaround
 //		_gc = gc;
@@ -154,7 +157,7 @@ public class MainGui extends JFrame
 //		//end workaround
 		
 		
-		hideMe();
+		//hideMe();
 	}
 	
 	private void createNetworkGame() {
@@ -191,11 +194,11 @@ public class MainGui extends JFrame
 		for(int i = 1; i < maxU; i++) {
 			gc.addPlayer(new VirtualPlayer(), "virtual player"+i, maxU, i);
 		}
-		
+		hideMe();
 		//tell core to start
 		gc.startGame();
 		//go to sleep
-		hideMe();
+		//hideMe();
 	}
 	
 	private void handOff() {
@@ -232,6 +235,11 @@ public class MainGui extends JFrame
 		
 		if(MainConstants.RETURN_MAIN.equals(e.getActionCommand())) {
 			changePanel(_mainMenuPanel);
+			return;
+		}
+		
+		if(MainConstants.HOST.equals(e.getActionCommand())) {
+			changePanel(_settingsPanel);
 			return;
 		}
 		

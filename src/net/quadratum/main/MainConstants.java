@@ -41,23 +41,23 @@ public class MainConstants {
 		public static final boolean ALLOW_WATER =     true;
 		public static final boolean ALLOW_BUNKERS =   true;
 		public static final boolean ALLOW_MOUNTAINS = true;
-		public static final int MAP_TILE_WIDTH =  60;
-		public static final int MAP_TILE_HEIGHT = 40;
+		public static final int MAP_TILE_WIDTH =  25;
+		public static final int MAP_TILE_HEIGHT = 25;
 		
-		public static final int MIN_MAP_WIDTH =  20;
-		public static final int MIN_MAP_HEIGHT = 20;
-		public static final int MAX_MAP_WIDTH = 120;
+		public static final int MIN_MAP_WIDTH =   8;
+		public static final int MIN_MAP_HEIGHT =  8;
+		public static final int MAX_MAP_WIDTH =  80;
 		public static final int MAX_MAP_HEIGHT = 80;
 		public static final int GRID_SIZE_INCREMENT = 5;
 		
 		// Player-related defaults
-		public static final int INIT_NUM_RESOURCES = 5000;
-		public static final int INIT_NUM_UNITS = 8;
+		public static final int INIT_NUM_RESOURCES = 500;
+		public static final int INIT_NUM_UNITS = 5;
 		public static final int NUM_PLAYERS = 2;
 		
-		public static final int MIN_RESOURCES = 1000;
+		public static final int MIN_RESOURCES = 50;
 		public static final int MAX_RESOURCES = 9999;
-		public static final int RESOURCES_INCREMENT = 500;
+		public static final int RESOURCES_INCREMENT = 50;
 		public static final int MIN_UNITS = 1;
 		public static final int MAX_UNITS = 18;
 		public static final int MIN_PLAYERS = 2;

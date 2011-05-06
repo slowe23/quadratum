@@ -660,7 +660,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 				return (String)(((ItemSelectable)_mapSelector).getSelectedObjects()[0]);
 			}
 			else {
-				//System.err.println("Preset maps not yet selectable.");
+				System.err.println("Preset maps not yet selectable.");
 			}
 		}
 		return null;
