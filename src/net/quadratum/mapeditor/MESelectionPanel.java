@@ -22,7 +22,7 @@ public class MESelectionPanel extends JPanel {
 	
 	private int _selection;
 	private static final int ERASE = -1;
-	private static final int[] TCONST = {TerrainConstants.WATER, TerrainConstants.BUNKER, TerrainConstants.MOUNTAIN, TerrainConstants.RESOURCES};
+	private static final int[] TCONST = {TerrainConstants.WATER, TerrainConstants.BUNKER, TerrainConstants.MOUNTAIN, TerrainConstants.RESOURCES, TerrainConstants.IMPASSIBLE};
 	private static final int NPLAY = net.quadratum.core.Constants.MAX_PLAYERS;
 	
 	public MESelectionPanel(boolean isHorizontal) {
@@ -36,12 +36,16 @@ public class MESelectionPanel extends JPanel {
 		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
-	public int getAppropriateTerrain(int curTerrain, boolean shift) {
+	public int getAppropriateTerrain(int curTerrain, boolean option, boolean shift) {
 		if(_selection==ERASE)
 			return 0;
 		
 		if(_selection>=0 && _selection<TCONST.length) {
-			if(shift)
+			if(option && shift)
+				return 0;
+			else if(option)
+				return TCONST[_selection];
+			else if(shift)
 				return curTerrain & ~(TCONST[_selection]);
 			else
 				return curTerrain | TCONST[_selection];
