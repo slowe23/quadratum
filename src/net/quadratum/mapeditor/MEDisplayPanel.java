@@ -54,6 +54,12 @@ public class MEDisplayPanel extends JPanel implements Scrollable {
 	public boolean getScrollableTracksViewportHeight() { return false; }
 	public boolean getScrollableTracksViewportWidth() { return false; }
 	
+	public void setNewMapData(int[][] terrain, Set<MapPoint>[] places) {
+		_terrain = terrain;
+		_places = places;
+		repaint();
+	}
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		

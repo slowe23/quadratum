@@ -1,30 +1,26 @@
 package net.quadratum.mapeditor;
 
-import net.quadratum.gui.DrawingMethods;
-import net.quadratum.gui.StaticMethods;
-
 import net.quadratum.core.Constants;
-import net.quadratum.core.TerrainConstants;
 import net.quadratum.core.MapPoint;
 
 import java.util.*;
-import java.util.regex.*;
 
 import java.io.*;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
 public class MapEditor extends JFrame {
+	
 	private MEDisplayPanel _display;
-	private String _saveFile;
 	
 	@SuppressWarnings({"unchecked"})
 	public static void main(String[] args) {
 		int[][] terrain;
 		Set<MapPoint>[] places;
-		String save;
 		if(args.length==1 || args.length==2) {
 			TP tp;
 			try {
@@ -36,10 +32,6 @@ public class MapEditor extends JFrame {
 			}
 			terrain = tp._terrain;
 			places = tp._places;
-			if(args.length==1)
-				save = args[0];
-			else
-				save = args[1];
 		} else if(args.length==3) {
 			try {
 				terrain = new int[Integer.parseInt(args[0])][Integer.parseInt(args[1])];
@@ -48,56 +40,133 @@ public class MapEditor extends JFrame {
 				return;
 			}
 			places = (Set<MapPoint>[])(new Set[Constants.MAX_PLAYERS]);
-			for(int i = 0; i<places.length; i++)
+			for(int i = 0; i<places.length; i++) {
 				places[i] = new HashSet<MapPoint>();
-			save = args[2];
+			}
+		} else if (args.length == 0) {
+			// make a default size terrain full of land
+			terrain = new int[MEConstants.DEFAULT_SIZE_X][MEConstants.DEFAULT_SIZE_Y];
+			// make empty placement areas
+			places = (Set<MapPoint>[])(new Set[Constants.MAX_PLAYERS]);
+			for(int i = 0; i<places.length; i++) {
+				places[i] = new HashSet<MapPoint>();
+			}
 		} else {
 			System.out.println("Invalid args.");
 			return;
 		}
 		
-		new MapEditor(terrain, places, save).setVisible(true);
+		new MapEditor(terrain, places).setVisible(true);
 	}
 	
-	public MapEditor(int[][] terrain, Set<MapPoint>[] places, String save) {
+	public MapEditor(int[][] terrain, Set<MapPoint>[] places) {
+		
+		// Set frame vitals
 		setSize(800, 600);
 		setTitle("Quadratum Map Editor");
 		setLayout(new BorderLayout());
 		
+		// Set selection panel
 		MESelectionPanel select = new MESelectionPanel(MESelectionPanel.VERTICAL);
 		add(select, BorderLayout.WEST);
 		
+		// Set display panel
 		_display = new MEDisplayPanel(select, terrain, places);
 		JScrollPane jsp = new JScrollPane(_display, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(jsp, BorderLayout.CENTER);
 		
-		_saveFile = save;
+		// Set menu bar
+		final JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
 		
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		addWindowListener(new MapEditorWindowListener());
-	}
-	
-	private class MapEditorWindowListener extends WindowAdapter {
-		public void windowClosing(WindowEvent e) {
-			String[] options = {"Save and Quit", "Quit", "Cancel"};
-			int option = JOptionPane.showOptionDialog(MapEditor.this, "Do you want to save before quitting?", "Quit", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-			if(option==JOptionPane.CLOSED_OPTION || option==2) {
-				//Cancel quitting - do nothing
-			} else {
-				if(option==0) {
-					//Save
+		// File menu
+		final JMenu fileMenu = new JMenu("File");
+		fileMenu.setMnemonic('F');
+		menuBar.add(fileMenu);
+		
+		// New item
+		final JMenuItem newMenuItem = new JMenuItem("New");
+		newMenuItem.setMnemonic('N');
+		newMenuItem.addActionListener(new ActionListener() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO add modal dialog to allow changing of size
+				int[][] terrain = new int[MEConstants.DEFAULT_SIZE_X][MEConstants.DEFAULT_SIZE_Y];
+				// make empty placement areas
+				Set<MapPoint>[] places = (Set<MapPoint>[])(new Set[Constants.MAX_PLAYERS]);
+				for(int i = 0; i<places.length; i++) {
+					places[i] = new HashSet<MapPoint>();
+				}
+				_display.setNewMapData(terrain, places);
+				validate();
+			}
+		});
+		fileMenu.add(newMenuItem);
+		
+		// Open item
+		final JMenuItem openMenuItem = new JMenuItem("Open");
+		openMenuItem.setMnemonic('O');
+		openMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Create file chooser
+				final JFileChooser chooser = new JFileChooser();
+				// chooser.setFileFilter(new QMapFileFilter());
+				
+				// Get a location
+				int success = chooser.showOpenDialog(MapEditor.this);
+				if (success == JFileChooser.APPROVE_OPTION) {
+					File f = chooser.getSelectedFile();
 					try {
-						_display.save(_saveFile);
-					} catch(IOException ee) {
-						System.out.println("Could not save file.");
-						ee.printStackTrace();
+						TP tp = load(f.getAbsolutePath());
+						_display.setNewMapData(tp._terrain, tp._places);
+						validate();
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(MapEditor.this,"Error opening file.");
 					}
 				}
-				//Close window and quit
-				setVisible(false);
+			}
+		});
+		fileMenu.add(openMenuItem);
+		
+		// Save item
+		final JMenuItem saveMenuItem = new JMenuItem("Save");
+		saveMenuItem.setMnemonic('S');
+		saveMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Create file chooser
+				final JFileChooser chooser = new JFileChooser();
+				
+				// Get a location
+				int success = chooser.showSaveDialog(MapEditor.this);
+				if (success == JFileChooser.APPROVE_OPTION) {
+					File f = chooser.getSelectedFile();
+					try {
+						_display.save(f.getAbsolutePath());
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(MapEditor.this,"Error saving file.");
+					}
+				}
+			}
+		});
+		fileMenu.add(saveMenuItem);
+		
+		fileMenu.addSeparator();
+		
+		// Exit item
+		final JMenuItem exitMenuItem = new JMenuItem("Exit");
+		exitMenuItem.setMnemonic('E');
+		exitMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
 			}
-		}
+		});
+		fileMenu.add(exitMenuItem);
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	@SuppressWarnings({"unchecked"})
@@ -269,5 +338,14 @@ public class MapEditor extends JFrame {
 			_terrain = t;
 			_places = p;
 		}
+	}
+	
+	private class QMapFileFilter implements FileFilter {
+		@Override
+		public boolean accept(File pathname) {
+			String name = pathname.getName();
+			return pathname.isDirectory() || name.endsWith(".qmap");
+		}
+		
 	}
 }
