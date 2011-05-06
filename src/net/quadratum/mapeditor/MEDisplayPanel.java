@@ -93,11 +93,11 @@ public class MEDisplayPanel extends JPanel implements Scrollable {
 			int xx = (e.getX()-_offx)/SCALE;
 			int yy = (e.getY()-_offy)/SCALE;
 			if(e.getX()>=_offx && xx<_terrain.length && e.getY()>=_offy && yy<_terrain[xx].length) {
-				_terrain[xx][yy] = _select.getAppropriateTerrain(_terrain[xx][yy], e.isShiftDown());
+				_terrain[xx][yy] = _select.getAppropriateTerrain(_terrain[xx][yy], e.isAltDown(), e.isShiftDown());
 				
 				int player = _select.getSelectedPlayer();
 				MapPoint location = new MapPoint(xx, yy);
-				if(player==-1) {
+				if(player==-1 || (player!=-2 && e.isShiftDown() && e.isAltDown())) {
 					for(int i = 0; i<_places.length; i++)
 						_places[i].remove(location);
 				} else if(player!=-2) {
@@ -143,6 +143,7 @@ public class MEDisplayPanel extends JPanel implements Scrollable {
 			HashSet<MapPoint> bunkers = new HashSet<MapPoint>();
 			HashSet<MapPoint> mountains = new HashSet<MapPoint>();
 			HashSet<MapPoint> resources = new HashSet<MapPoint>();
+			HashSet<MapPoint> impassibles = new HashSet<MapPoint>();
 			for(int xx = 0; xx<_terrain.length; xx++) {
 				for(int yy = 0; yy<_terrain[xx].length; yy++) {
 					int i = _terrain[xx][yy];
@@ -155,6 +156,8 @@ public class MEDisplayPanel extends JPanel implements Scrollable {
 						mountains.add(m);
 					if(TerrainConstants.isOfType(i, TerrainConstants.RESOURCES))
 						resources.add(m);
+					if(TerrainConstants.isOfType(i, TerrainConstants.IMPASSIBLE))
+						impassibles.add(m);
 				}
 			}
 			
@@ -179,6 +182,12 @@ public class MEDisplayPanel extends JPanel implements Scrollable {
 			if(resources.size()>0) {
 				w.print("resources");
 				for(MapPoint m : resources)
+					w.print("|"+m._x+","+m._y);
+				w.println();
+			}
+			if(impassibles.size()>0) {
+				w.print("impassibles");
+				for(MapPoint m : impassibles)
 					w.print("|"+m._x+","+m._y);
 				w.println();
 			}

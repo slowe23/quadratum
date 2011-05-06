@@ -112,9 +112,9 @@ public class MapEditor extends JFrame {
 			Map<MapPoint, Integer> placePts = new HashMap<MapPoint, Integer>();
 			int nextPlayer = 0;
 			
-			boolean[] tsets = new boolean[4];
-			int[] ts = {1, 2, 4, 8};
-			String[] strs = {"water", "bunkers", "mountains", "resources"};
+			String[] strs = {"water", "bunkers", "mountains", "resources", "impassibles"};
+			int[] ts = {1, 2, 4, 8, 16};
+			boolean[] tsets = new boolean[ts.length];
 			
 			String line;
 			while((line = r.readLine())!=null) {
