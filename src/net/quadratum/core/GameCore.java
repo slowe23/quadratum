@@ -535,47 +535,83 @@ public class GameCore implements Core
 				// oldCoords = attacker
 				// coords = defender
 				
-				RealPoint attackerPos = new RealPoint(oldCoords._x+0.5,oldCoords._y+0.5);
-				RealPoint defenderPos = new RealPoint(coords._x+0.5,coords._y+0.5);
+				double attackerX = oldCoords._x+0.5;
+				double attackerY = oldCoords._y+0.5;
+				double defenderX = coords._x+0.5;
+				double defenderY = coords._y+0.5;
 				
-				// Get the attack line
+				// Calculate the angle of incidence and its orthogonal angle
 				
-				List<Map<MapPoint,Double>> line = getAttackLine(defender._size,
-						attackerPos,defenderPos);
-				log("Final attack line: "+line,1);
+				double incidentAngle = Math.atan2(defenderY-attackerY,
+						defenderX-attackerX);
+				double perpAngle = incidentAngle + Math.PI/2;				
+				
+				// Calculate the start and end positions of the attack lines
+				
+				int attackLines = Math.min(attacker._size,
+						Constants.INITIAL_ATTACK_WIDTH+
+						attacker._stats.get(Block.BonusType.ATTACK_WIDTH));
+				
+				RealPoint[] lineStarts = new RealPoint[attackLines];
+				RealPoint[] lineEnds = new RealPoint[attackLines];
+				
+				double radius = (attackLines-1)/2.0, x, y, dist;
+				double step = 1.0/attacker._size;
+				log("Line characteristics: radius = "+radius+", step = "+step,1);
+				
+				for (int i = 0; i < attackLines; i++) {
+					dist = radius*step;
+					x = dist*Math.cos(perpAngle);
+					y = dist*Math.sin(perpAngle);
+					lineStarts[i] = new RealPoint(attackerX+x,attackerY+y);
+					lineEnds[i] = new RealPoint(defenderX+x,defenderY+y);
+					radius -= 1.0;
+				}
+				
+				// Get the attack lines
+				
+				List<List<Map<MapPoint,Double>>> lines = 
+					new ArrayList<List<Map<MapPoint,Double>>>(); 
+				for (int i = 0; i < attackLines; i++) {
+					lines.add(getAttackLine(defender._size,
+							lineStarts[i],lineEnds[i]));
+				}
 				
 				// Distribute the damage
 				
-				int damageLeft = attacker._stats.get(Block.BonusType.ATTACK);
+				int totalDamage = attacker._stats.get(Block.BonusType.ATTACK), damageLeft;
 				
 				// Account for the defending unit's defense.
-				damageLeft = adjustedDamage(damageLeft,
+				totalDamage = adjustedDamage(totalDamage,
 						defender._stats.get(Block.BonusType.DEFENSE));
 				
-				int damageDone;
-				for (Map<MapPoint,Double> current : line) {
-					log("Damage left to distribute: "+damageLeft,1);
-					damageDone = 0;
-					for (MapPoint point : current.keySet()) {
-						
-						Block b = defender._blocks.get(point);
-						if (b == null) {
-							continue;
+				for (int i = 0; i < attackLines; i++) {
+					
+					int damageDone;
+					for (Map<MapPoint,Double> current : lines.get(i)) {
+						damageLeft = totalDamage/attackLines;
+						log("Damage left to distribute: "+damageLeft,1);
+						damageDone = 0;
+						for (MapPoint point : current.keySet()) {
+							Block b = defender._blocks.get(point);
+							if (b == null) {
+								continue;
+							}
+							// Get damage at this point and apply it to the block
+							int damage = (int)(damageLeft*current.get(point)+0.5);
+							b._health -= damage;
+							if (b._health <= 0) {
+								damage += b._health;
+								defender._blocks.remove(point);
+							}
+							damageDone += damage;
+							log("Damage done to block at "+point+": "+damage+"\n"
+									+ "\tTotal damage done this iteration: "+damageDone,1);
 						}
-						// Get damage at this point and apply it to the block
-						int damage = (int)(damageLeft*current.get(point)+0.5);
-						b._health -= damage;
-						if (b._health <= 0) {
-							damage += b._health;
-							defender._blocks.remove(b);
+						damageLeft -= damageDone;
+						if (damageLeft == 0) {
+							break;
 						}
-						damageDone += damage;
-						log("Damage done to block at "+point+": "+damage+"\n"
-								+ "\tTotal damage done this iteration: "+damageDone,1);
-					}
-					damageLeft -= damageDone;
-					if (damageLeft == 0) {
-						break;
 					}
 				}
 				
@@ -588,6 +624,7 @@ public class GameCore implements Core
 				// We don't need to send out the unit died action unless the heart is totally gone.
 				
 				if (defender._stats.get(Block.BonusType.HEART) == 0) {
+					_unitInformation.get(unit)._position = new MapPoint(-1,-1);
 					updateMaps(new Action(Action.ActionType.UNIT_DIED, coords, coords));
 				}
 				

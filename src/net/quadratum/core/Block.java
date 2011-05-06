@@ -18,6 +18,7 @@ public class Block implements Serializable {
 	
 	public enum BonusType {
 		ATTACK("Attack", false),
+		ATTACK_WIDTH("Attack Width", false),
 		RANGE("Range", false),
 		DEFENSE("Defense", false),
 		MOVEMENT("Movement", false),
