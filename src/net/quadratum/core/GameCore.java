@@ -542,13 +542,19 @@ public class GameCore implements Core
 				
 				List<Map<MapPoint,Double>> line = getAttackLine(defender._size,
 						attackerPos,defenderPos);
-				log("Attack line: "+line,1);
+				log("Final attack line: "+line,1);
 				
 				// Distribute the damage
 				
 				int damageLeft = attacker._stats.get(Block.BonusType.ATTACK);
+				
+				// Account for the defending unit's defense.
+				damageLeft = adjustedDamage(damageLeft,
+						defender._stats.get(Block.BonusType.DEFENSE));
+				
 				int damageDone;
 				for (Map<MapPoint,Double> current : line) {
+					log("Damage left to distribute: "+damageLeft,1);
 					damageDone = 0;
 					for (MapPoint point : current.keySet()) {
 						
@@ -559,11 +565,13 @@ public class GameCore implements Core
 						// Get damage at this point and apply it to the block
 						int damage = (int)(damageLeft*current.get(point)+0.5);
 						b._health -= damage;
-						if (b._health < 0) {
+						if (b._health <= 0) {
 							damage += b._health;
 							defender._blocks.remove(b);
 						}
 						damageDone += damage;
+						log("Damage done to block at "+point+": "+damage+"\n"
+								+ "\tTotal damage done this iteration: "+damageDone,1);
 					}
 					damageLeft -= damageDone;
 					if (damageLeft == 0) {
@@ -571,9 +579,13 @@ public class GameCore implements Core
 					}
 				}
 				
-				// We don't need to send out the unit died action unless the heart is totally gone
+				// Update cached stats, then send out the attack action.
 				
 				updateCachedStats(defender);
+				
+				updateMaps(new Action(Action.ActionType.ATTACK,oldCoords,coords));
+				
+				// We don't need to send out the unit died action unless the heart is totally gone.
 				
 				if (defender._stats.get(Block.BonusType.HEART) == 0) {
 					updateMaps(new Action(Action.ActionType.UNIT_DIED, coords, coords));
@@ -733,7 +745,7 @@ public class GameCore implements Core
 			// Increment the y
 			intery += grad;
 		}
-		// Reverse the list since we built it in reverse order.
+		// Add the endpoint.
 		list.add(endmap);
 		return list;
 	}
@@ -792,6 +804,17 @@ public class GameCore implements Core
 			log("Adding point at "+y+","+x+" with value "+d,0);
 			map.put(new MapPoint(x,y),d);
 		}
+	}
+	
+	/**
+	 * Returns the amount of damage that an attack would do, adjusted for
+	 * a block's defense.
+	 * @param attack the raw damage of the attack
+	 * @param defense the amount of defense the defender has
+	 * @return the adjusted amount of damage
+	 */
+	private int adjustedDamage(int attack, int defense) {
+		return (int)(attack/(1+9*Math.tanh(defense/20)));
 	}
 	
 	/**
