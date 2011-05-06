@@ -11,13 +11,18 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import net.quadratum.ai.test.TestAI_MTC;
+import net.quadratum.core.Block;
 import net.quadratum.core.GameCore;
+import net.quadratum.core.MapPoint;
 import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
 import net.quadratum.core.WinCondition;
 import net.quadratum.gui.GUIPlayer;
+import net.quadratum.network.VirtualPlayer;
+import net.quadratum.test.CheckWinnerTest;
 
 public class MainGui extends JFrame 
 					 implements Main, ActionListener, ComponentListener {
@@ -25,6 +30,7 @@ public class MainGui extends JFrame
 	// JPanel with actual contents
 	private JPanel _mainMenuPanel, _singlePlayerPanel,
 				   _networkGamePanel, _networkLobbyPanel, _settingsPanel;
+	private GameCore _gc;
 	
 	
 	public static void main(String[] args) {
@@ -75,8 +81,8 @@ public class MainGui extends JFrame
 	
 	private void hideMe() {
 		//System.err.println("Main: Passing off control, hiding.");
-		setEnabled(false);
-		setVisible(false);
+		//setEnabled(false);
+		getContentPane().setVisible(false);
 		//wait(); //? Makes it truly dormant, but requires threads and notify()
 	}
 	
@@ -110,7 +116,7 @@ public class MainGui extends JFrame
 	
 
 	private void createQuickGame() {
-		//query _settingsPanel for map
+		
 		Settings set = (Settings)_settingsPanel;
 		
 		String map;
@@ -120,15 +126,12 @@ public class MainGui extends JFrame
 		if(set.usingPresetMap()) {
 			map = set.getPresetMap();
 		}
-		else map = set.generateMap();
+		else map = set.getMap();
 		
-		//query for wincon
-		if(set.altWinCondition()) {
-			wc = set.getAltWinCon();
-		}
-		else wc = new CheckWinner();
+		wc = new CheckWinnerTest();
 		
-		pieces = new ArrayList<Piece>();
+		//pieces = new ArrayList<Piece>();
+		pieces = getStdPieces();
 		
 		GameCore gc = new GameCore(this, map, wc, pieces);
 		//then create GuiPlayer and AIPlayer
@@ -141,6 +144,16 @@ public class MainGui extends JFrame
 		gc.addPlayer(ai, "ai", maxU, 0);
 		
 		gc.startGame();
+//		//start workaround
+//		_gc = gc;
+//		SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                handOff();
+//            }
+//        });
+//		//end workaround
+		
+		
 		hideMe();
 	}
 	
@@ -153,18 +166,40 @@ public class MainGui extends JFrame
 		ArrayList<Piece> pieces;
 		
 		if(set.usingPresetMap()) {
-			
+			map = set.getPresetMap();
 		}
+		else map = set.getMap();
+		
 		//query  for WinCon
+		if(set.altWinCondition()) {
+			wc = set.getAltWinCon();
+		}
+		else wc = new CheckWinnerTest();
 		//generate pieces
+		pieces = getStdPieces();
 		
 		//using these, create core
+		GameCore gc = new GameCore(this, map, wc, pieces);
 		
 		//create GuiPlayer and virtual players
+		Player human = new GUIPlayer();
 		
 		//add players to core
+		int maxU = set.getMaxUnits();
+		gc.addPlayer(human, "human", maxU, 0);
+		
+		for(int i = 1; i < maxU; i++) {
+			gc.addPlayer(new VirtualPlayer(), "virtual player"+i, maxU, i);
+		}
+		
 		//tell core to start
+		gc.startGame();
 		//go to sleep
+		hideMe();
+	}
+	
+	private void handOff() {
+		_gc.startGame();
 	}
 	
 	
@@ -184,20 +219,30 @@ public class MainGui extends JFrame
 		}
 		
 		if(MainConstants.NETWORK.equals(e.getActionCommand())) {
+			((SettingsPanel) _settingsPanel).useNetworkSettings(true);
 			changePanel(_networkGamePanel);
 			return;
 		}
 		
 		if(MainConstants.QUICKPLAY.equals(e.getActionCommand())) {
-			//tell settings qp view, not network?
-			createQuickGame();
-			//changePanel(_settingsPanel);
+			((SettingsPanel) _settingsPanel).useNetworkSettings(false);
+			changePanel(_settingsPanel);
 			return;
 		}
 		
 		if(MainConstants.RETURN_MAIN.equals(e.getActionCommand())) {
 			changePanel(_mainMenuPanel);
 			return;
+		}
+		
+		// new game - pass to core
+		if(MainConstants.START_GAME.equals(e.getActionCommand())) {
+			if(((SettingsPanel) _settingsPanel).usingNetworkSettings()) {
+				createNetworkGame();
+			}
+			else {
+				createQuickGame();
+			}
 		}
 		
 		// different window?
@@ -232,7 +277,23 @@ public class MainGui extends JFrame
 	}
 	
 	
-	// Other implemented listener methods
+	
+	private ArrayList<Piece> getStdPieces() {
+		// TODO do more than quick&dirty
+		ArrayList<Piece> pieces = new ArrayList<Piece>();
+		Block attackBlock = new Block(30);
+		attackBlock._bonuses.put(Block.BonusType.ATTACK, 10);
+		Piece lPiece = new Piece(10, -1, "L Block", "Provides +40 attack");
+		lPiece._blocks.put(new MapPoint(0, 0), new Block(attackBlock));
+		lPiece._blocks.put(new MapPoint(0, 1), new Block(attackBlock));
+		lPiece._blocks.put(new MapPoint(0, 2), new Block(attackBlock));
+		lPiece._blocks.put(new MapPoint(1, 2), new Block(attackBlock));
+		pieces.add(lPiece);
+		return pieces;
+	}
+	
+	
+	// Other required but not implemented listener methods
 
 	public void componentHidden(ComponentEvent arg0) {
 		// TODO Auto-generated method stub
