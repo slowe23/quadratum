@@ -34,7 +34,7 @@ public class MainTest implements Main
 			lPiece._blocks.put(new MapPoint(1, 2), new Block(attackBlock));
 			pieces.add(lPiece);
 			// Create a core.
-			GameCore core = new GameCore(new MainTest(), "src/net/quadratum/test/test.qmap", new CheckWinner(), pieces);
+			GameCore core = new GameCore(new MainTest(), "maps/test.qmap", new CheckWinner(), pieces);
 			core.addPlayer(player1, "GUI Player", 5, 100);
 			core.addPlayer(player2, "AI Player", 5, 100);
 			createNetworkPlayer(player3, "Network AI Player", 5);
