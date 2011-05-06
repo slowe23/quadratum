@@ -271,10 +271,10 @@ public class VirtualCore extends NetworkClient implements Core {
 			for(int i = 0; i < s.length; i++) {
 				objs += s[i];
 				if (i < s.length - 1) {
-					objs += System.getProperty("line.separator");
+					objs += "\n";
 				}
 			}
-			_objectives = null;
+			_objectives = objs;
 			return _objectives;
 		}
 	}
