@@ -20,12 +20,9 @@ public class CoreActions
 	 */
 	public static Map<MapPoint, Action.ActionType> getValidActions(int unit, int player, List<Unit> units, List<UnitInformation> unitInformation, int[][] terrain)
 	{
-		Set<MapPoint> totalSight = new HashSet<MapPoint>();
-		for (int i = 0; i < units.size(); i++) {
-			if (units.get(i)._owner == player) {
-				totalSight.addAll(getAreaForUnit(i,2,units,unitInformation,terrain,totalSight));
-			}
-		}
+		// Get the total sight area
+		Set<MapPoint> totalSight = getTotalSightArea(player, units, unitInformation, terrain);
+		
 		Map<MapPoint, Action.ActionType> actions = new HashMap<MapPoint, Action.ActionType>();
 		if(unitInformation.get(unit)._hasMoved && unitInformation.get(unit)._hasAttacked)
 		{
@@ -84,6 +81,7 @@ public class CoreActions
 	 * @param units a list of Units
 	 * @param unitInformation a list of UnitInformation
 	 * @param terrain the terrain
+	 * @param sight all points this player can see (does not matter if finding sight)
 	 * @return the MapPoints that the unit can act upon/see
 	 */
 	public static Set<MapPoint> getAreaForUnit(int unit, int type, List<Unit> units,
@@ -183,5 +181,23 @@ public class CoreActions
 			}
 		}
 		return area;
+	}
+	
+	/**
+	 * Gets the total sight area for a player.
+	 * @param player the player ID
+	 * @param units the list of units
+	 * @param unitInformation the list of unit information
+	 * @param terrain the terrain
+	 * @return a set containing all points this player can see
+	 */
+	public static Set<MapPoint> getTotalSightArea(int player, List<Unit> units, List<UnitInformation> unitInformation, int[][] terrain) {
+		Set<MapPoint> totalSight = new HashSet<MapPoint>();
+		for (int i = 0; i < units.size(); i++) {
+			if (units.get(i)._owner == player) {
+				totalSight.addAll(getAreaForUnit(i,2,units,unitInformation,terrain,totalSight));
+			}
+		}
+		return totalSight;
 	}
 }
