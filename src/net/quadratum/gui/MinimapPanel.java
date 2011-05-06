@@ -74,7 +74,7 @@ public class MinimapPanel extends JPanel {
 		MapPoint here = new MapPoint(0, 0);
 		for(here._x = 0; here._x<w; here._x++)
 			for(here._y = 0; here._y<h; here._y++)
-				placementImg.setRGB(here._x, here._y, _guiPlayer._drawingMethods.getPlacementMaskColor(placementArea.contains(here)).getRGB());
+				placementImg.setRGB(here._x, here._y, _guiPlayer._drawingMethods.getPlacementMaskColor(_guiPlayer.getID(), placementArea.contains(here)).getRGB());
 		
 		return placementImg;
 	}

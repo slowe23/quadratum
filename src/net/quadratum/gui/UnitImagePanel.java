@@ -76,7 +76,7 @@ public class UnitImagePanel extends JPanel {
 				g.drawImage(mask, ox+p._x*scale, oy + p._y*scale, scale, scale, this);
 			}
 			
-			if(hover!=null && show) {
+			if(selected._owner==_guiPlayer.getID() && hover!=null && show) {
 				for(Map.Entry<MapPoint, Block> entry : hover._blocks.entrySet()) {
 					MapPoint p = new MapPoint(entry.getKey());
 					p._x += hPos._x;

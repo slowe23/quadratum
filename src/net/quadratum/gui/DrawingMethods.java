@@ -9,8 +9,15 @@ import net.quadratum.core.*;
 import net.quadratum.core.Action.ActionType;
 
 public class DrawingMethods {
-	private static final Color[] PLAYER_COLORS = {Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.PINK};
 	public static final Color BACKGROUND_COLOR = Color.BLACK, NEUTRAL_COLOR = Color.GRAY, FOREGROUND_COLOR = Color.WHITE;
+	
+	public static final Color LAND_COLOR = new Color(0, 127, 63);
+	public static final Color WATER_COLOR = new Color(0, 0, 191);
+	public static final Color MOUNTAIN_COLOR = new Color(126, 72, 19);
+	public static final Color BUNKER_COLOR = new Color(63, 63, 63);
+	public static final Color RESOURCES_COLOR = new Color(191, 191, 0);
+	
+	private static final Color[] PLAYER_COLORS = {Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.PINK};
 	
 	public DrawingMethods() { }
 	
@@ -22,33 +29,39 @@ public class DrawingMethods {
 	}
 	
 	public Color getTerrainTileColor(int terrainValue) {
-		Color col;
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.WATER))
-			col = new Color(0, 0, 191);
+			return WATER_COLOR;
 		else
-			col = new Color(0, 127, 63);
-		
-		return col;
+			return LAND_COLOR;
 	}
 	
-	public void drawTerrainTile(Graphics g, int terrainValue, int size, boolean showGrid) {
-		g.setColor(getTerrainTileColor(terrainValue));
-		g.fillRect(0, 0, size, size);
-		
+	public void drawTerrainFeatures(Graphics g, int terrainValue, int size) {
+		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.WATER)) {
+			g.setColor(WATER_COLOR);
+			g.fillRoundRect(2, 2, size-4, size-4, (size-4)/2, (size-4)/2);
+		}
+		   
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.MOUNTAIN)) {
-			g.setColor(new Color(126, 72, 19));
+			g.setColor(MOUNTAIN_COLOR);
 			g.fillPolygon(new Polygon(new int[]{0, size/2, size}, new int[]{size, 0, size}, 3));
 		}
 		
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.BUNKER)) {
-			g.setColor(Color.DARK_GRAY);
+			g.setColor(BUNKER_COLOR);
 			g.fillPolygon(new Polygon(new int[]{0, size/4, (3*size)/4, size}, new int[]{(3*size)/4, size/4, size/4, (3*size)/4}, 4));
 		}
 		
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.RESOURCES)) {
-			g.setColor(new Color(191,191, 0));
+			g.setColor(RESOURCES_COLOR);
 			g.fillPolygon(new Polygon(new int[]{0, size/2, size, size/2}, new int[]{size/2, 0, size/2, size}, 4));
 		}
+	}
+	
+	public void drawTerrainTile(Graphics g, int terrainValue, int size, boolean showGrid) {
+		g.setColor(LAND_COLOR);
+		g.fillRect(0, 0, size, size);
+		
+		drawTerrainFeatures(g, terrainValue, size);
 		
 		if(showGrid) {
 			g.setColor(StaticMethods.applyAlpha(NEUTRAL_COLOR, 191));
@@ -62,16 +75,17 @@ public class DrawingMethods {
 		return img;
 	}
 	
-	public Color getPlacementMaskColor(boolean placement) {
-		if(placement)
-			return new Color(255, 255, 255, 127);
-		else
+	public Color getPlacementMaskColor(int player, boolean placement) {
+		if(placement) {
+			Color pCol = getPlayerColor(player);
+			return new Color((255+pCol.getRed())/2, (255+pCol.getGreen())/2, (255+pCol.getBlue())/2, 127);
+		} else
 			return new Color(0, 0, 0, 63);
 	}
 	
-	public void drawPlacementMask(Graphics g, Set<MapPoint> placementArea, MapPoint location, int size) {
+	public void drawPlacementMask(Graphics g, int player, Set<MapPoint> placementArea, MapPoint location, int size) {
 		if(placementArea.contains(location)) {
-			g.setColor(getPlacementMaskColor(true));
+			g.setColor(getPlacementMaskColor(player, true));
 			
 			int th = Math.min(5, size/6);
 			
@@ -98,14 +112,14 @@ public class DrawingMethods {
 			if(south || west || !(placementArea.contains(new MapPoint(location._x-1, location._y+1))))
 				g.fillRect(0, size-th, th, th);
 		} else {
-			g.setColor(getPlacementMaskColor(false));
+			g.setColor(getPlacementMaskColor(player, false));
 			g.fillRect(0,0,size,size);
 		}
 	}
 	
-	public BufferedImage getPlacementMaskImage(Set<MapPoint> placementArea, MapPoint location, int size) {
+	public BufferedImage getPlacementMaskImage(int player, Set<MapPoint> placementArea, MapPoint location, int size) {
 		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-		drawPlacementMask(img.getGraphics(), placementArea, location, size);
+		drawPlacementMask(img.getGraphics(), player, placementArea, location, size);
 		return img;
 	}
 	

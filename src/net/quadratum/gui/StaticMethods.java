@@ -20,10 +20,11 @@ public class StaticMethods {
 	}
 	
 	public static int floor(double d) {
-		if(d<0)
-			return -1*floor(-d);
+		int iD = (int)d;
+		if(d>=iD)
+			return iD;
 		else
-			return (int)d;
+			return iD-1;
 	}
 	
 	/**

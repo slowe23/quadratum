@@ -92,7 +92,7 @@ public class MapPanel extends JPanel {
 					_guiPlayer._drawingMethods.drawTerrainTile(tileGraph, terrain[here._x][here._y], scale, true);
 					
 					if(placement != null)
-						_guiPlayer._drawingMethods.drawPlacementMask(tileGraph, placement, here, scale);
+						_guiPlayer._drawingMethods.drawPlacementMask(tileGraph, _guiPlayer.getID(), placement, here, scale);
 					
 					Unit unit = units.get(here);
 					if(unit!=null) {
