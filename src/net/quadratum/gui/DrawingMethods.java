@@ -138,15 +138,24 @@ public class DrawingMethods {
 			green += c.getGreen();
 			blue += c.getBlue();
 		}
-		red /= b._bonuses.size();
-		green /= b._bonuses.size();
-		blue /= b._bonuses.size();
+		int nBonuses = b._bonuses.size();
+		if(nBonuses>0) {
+			red /= nBonuses;
+			green /= nBonuses;
+			blue /= nBonuses;
+		}
 		return new Color(red, green, blue);
 	}
 	
 	public Color getBlockColor(Block b) {
 		Color c = getBlockBaseColor(b);
+		
 		double healthAmount = b._health/((double)(b._totalHealth));
+		if(healthAmount<0)
+			healthAmount = 0;
+		if(healthAmount>1)
+			healthAmount = 1;
+		
 		return new Color((int)(c.getRed()*healthAmount), (int)(c.getGreen()*healthAmount), (int)(c.getBlue()*healthAmount));
 	}
 	
