@@ -127,6 +127,8 @@ public class DrawingMethods {
 		switch(bonus) {
 			case ATTACK:
 				return Color.RED;
+			case ATTACK_WIDTH:
+				return new Color(127, 0, 255);
 			case RANGE:
 				return Color.ORANGE;
 			case DEFENSE:
