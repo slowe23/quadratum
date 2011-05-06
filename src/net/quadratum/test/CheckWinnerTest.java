@@ -25,6 +25,11 @@ public class CheckWinnerTest implements WinCondition
 			return false;
 		}
 	}
+    
+    public String toString()
+    {
+    	return "Default - eliminate opponents";
+    }
 
 	public String getObjectives()
 	{

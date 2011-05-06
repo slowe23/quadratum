@@ -27,10 +27,12 @@ public class MainConstants {
 	public static final String CAMPAIGN = "campaign";
 	public static final String HOST = "host";
 	public static final String JOIN = "join";
+	public static final String START_GAME = "startGame";
 	
 	
 	public static final Dimension BUTTON_DIM = 
 					new Dimension(DEFAULT_BUTTON_W, DEFAULT_BUTTON_H);
+	
 	
 	
 	public static class Defaults {
@@ -55,6 +57,7 @@ public class MainConstants {
 		
 		public static final int MIN_RESOURCES = 1000;
 		public static final int MAX_RESOURCES = 9999;
+		public static final int RESOURCES_INCREMENT = 500;
 		public static final int MIN_UNITS = 1;
 		public static final int MAX_UNITS = 18;
 		public static final int MIN_PLAYERS = 2;
@@ -63,7 +66,7 @@ public class MainConstants {
 		// Network-only setting defaults
 		public static final int TURN_LIMIT_SECS =   120;
 		//public static final int TOTAL_LIMIT_SECS =  54000; //1.5h
-		public static final int PLAYER_TURNS_LIMIT = 35;
+		public static final int PLAYER_TURNS_LIMIT = 25;
 		public static final boolean LIMIT_DURATION = false;
 		//public static final boolean USE_ALT_WINCON = false;
 		public static final int PREFERRED_PORT = 9292;
@@ -71,6 +74,8 @@ public class MainConstants {
 		public static final int MIN_TURN_LIMIT_SECS =  45;
 		public static final int MAX_TURN_LIMIT_SECS = 300;
 		    // ^note that games can have untimed turns as well
+		public static final int MIN_TURNS_LIMIT = 8;
+		public static final int MAX_TURNS_LIMIT = 36;
 		public static final int MIN_PORT = 1025;
 		
 		
