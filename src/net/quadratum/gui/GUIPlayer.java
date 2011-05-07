@@ -252,6 +252,7 @@ public class GUIPlayer implements Player {
 		blockUntilReady();
 		
 		_core.quit(this);
+		_gameWindow.setVisible(false);
 	}
 	
 	public void selectUnit(Unit u) {
