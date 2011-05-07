@@ -22,7 +22,7 @@ public class MESelectionPanel extends JPanel {
 	
 	private int _selection;
 	private static final int ERASE = -1;
-	private static final int[] TCONST = {TerrainConstants.WATER, TerrainConstants.BUNKER, TerrainConstants.MOUNTAIN, TerrainConstants.RESOURCES, TerrainConstants.IMPASSIBLE};
+	private static final int[] TCONST = {TerrainConstants.WATER, TerrainConstants.BUNKER, TerrainConstants.MOUNTAIN, TerrainConstants.RESOURCES, TerrainConstants.IMPASSABLE};
 	private static final int NPLAY = net.quadratum.core.Constants.MAX_PLAYERS;
 	
 	public MESelectionPanel(boolean isHorizontal) {

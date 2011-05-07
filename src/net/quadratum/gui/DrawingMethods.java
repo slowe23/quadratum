@@ -30,7 +30,7 @@ public class DrawingMethods {
 	}
 	
 	public Color getTerrainTileColor(int terrainValue) {
-		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.IMPASSIBLE))
+		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.IMPASSABLE))
 			return IMPASSIBLE_COLOR;
 		else if(TerrainConstants.isOfType(terrainValue, TerrainConstants.WATER))
 			return WATER_COLOR;
@@ -66,7 +66,7 @@ public class DrawingMethods {
 			g.fillPolygon(new Polygon(new int[]{sta, sta+s/2, end, sta+s/2}, new int[]{sta+s/2, sta, sta+s/2, end}, 4));
 		}
 		
-		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.IMPASSIBLE)) {
+		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.IMPASSABLE)) {
 			g.setColor(IMPASSIBLE_COLOR);
 			g.fillRoundRect(sta, sta, s, s, s/2, s/2);
 		}
