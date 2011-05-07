@@ -6,4 +6,6 @@ public class MEConstants {
 	
 	public static final int MIN_SIZE = 1;
 	public static final int MAX_SIZE = 100;	
+	
+	public static final String MAPS_DIR = "maps";
 }
