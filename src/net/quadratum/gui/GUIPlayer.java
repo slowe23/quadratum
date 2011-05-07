@@ -74,12 +74,12 @@ public class GUIPlayer implements Player {
 		
 		_objectives.setText(_core.getObjectives(this));
 		
+		_gameWindow.setVisible(true);
+		
 		synchronized(_readyLock) {
 			_ready = true;
 			_readyLock.notifyAll();
 		}
-		
-		_gameWindow.setVisible(true);
 		
 		resourcesUpdated();
 		mapUpdated();
