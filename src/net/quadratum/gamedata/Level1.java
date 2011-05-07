@@ -46,11 +46,14 @@ public class Level1 implements Level
 		return new Level1WinCondition();
 	}
 
-	public ArrayList<Piece> getPieces()
+	public ArrayList<ArrayList<Piece>> getPieces()
 	{
-		return DefaultPieces.getPieces();
+		ArrayList<ArrayList<Piece>> pieces = new ArrayList<ArrayList<Piece>>();
+		pieces.add(DefaultPieces.getPieces());
+		pieces.add(DefaultPieces.getPieces());
+		return pieces;
 	}
-
+	
 	class Level1AI implements Player
 	{
 		Core _core;
