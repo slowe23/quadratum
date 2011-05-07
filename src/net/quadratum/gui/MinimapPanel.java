@@ -196,16 +196,18 @@ public class MinimapPanel extends JPanel {
 			g.drawRect(offx-1, offy-1, SCALE*terrainImg.getWidth()+2-1, SCALE*terrainImg.getHeight()+2-1);
 			
 			///Draw in the units
-			for(Map.Entry<MapPoint, Unit> entry : units.entrySet()) {
-				MapPoint p = entry.getKey();
-				
-				int xx = offx + SCALE*p._x;
-				int yy = offy + SCALE*p._y;
-				
-				g.setColor(DrawingMethods.FOREGROUND_COLOR);
-				g.fillRect(xx, yy, SCALE, SCALE);
-				g.setColor(_guiPlayer._drawingMethods.getPlayerColor(entry.getValue()._owner));
-				g.drawRect(xx, yy, SCALE-1, SCALE-1);
+			if(units!=null) {
+				for(Map.Entry<MapPoint, Unit> entry : units.entrySet()) {
+					MapPoint p = entry.getKey();
+					
+					int xx = offx + SCALE*p._x;
+					int yy = offy + SCALE*p._y;
+					
+					g.setColor(DrawingMethods.FOREGROUND_COLOR);
+					g.fillRect(xx, yy, SCALE, SCALE);
+					g.setColor(_guiPlayer._drawingMethods.getPlayerColor(entry.getValue()._owner));
+					g.drawRect(xx, yy, SCALE-1, SCALE-1);
+				}
 			}
 			
 			//Emphasize the selected unit

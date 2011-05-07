@@ -154,6 +154,7 @@ public class GUIPlayer implements Player {
 		blockUntilReady();
 		
 		_chat.incomingMessage(-1, "You have lost.");
+		_buttonsPanel.lost();
 	}
 	
 	/** Notifies the player that the game has ended. */
@@ -242,6 +243,12 @@ public class GUIPlayer implements Player {
 	}
 	
 	public void closing() {
+		blockUntilReady();
+		
+		_core.quit(this);
+	}
+	
+	public void forfeit() {
 		blockUntilReady();
 		
 		_core.quit(this);
