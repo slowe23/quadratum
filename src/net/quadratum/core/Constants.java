@@ -24,6 +24,12 @@ public class Constants
 	public static final double DEFENSE_MODIFIER_DIV = 5000.0;
 	/** Health of heart blocks. */
 	public static final int HEART_HEALTH = 100;
+	/** Movement modifier. */
+	public static final int MOVEMENT_MODIFIER = 120;
+	/** Attack range modifier. */
+	public static final int ATTACK_RANGE_MODIFIER = 120;
+	/** Sight modifier. */
+	public static final int SIGHT_MODIFIER = 120;
 	
 	/** Debug flag. When set to true, core logs to log.txt, otherwise it logs to System.out. */
 	public static final boolean DEBUG_TO_FILE = true;
