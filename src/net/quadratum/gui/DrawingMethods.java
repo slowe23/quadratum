@@ -138,6 +138,24 @@ public class DrawingMethods {
 		return img;
 	}
 	
+	public Color getSightMaskColor(boolean sight) {
+		if(sight)
+			return new Color(0, 0, 0, 0);
+		else
+			return new Color(0, 0, 0, 127);
+	}
+	
+	public void drawSightMask(Graphics g, boolean sight, int size) {
+		g.setColor(getSightMaskColor(sight));
+		g.fillRect(0, 0, size, size);
+	}
+	
+	public BufferedImage getSightMaskImage(boolean sight, int size) {
+		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		drawSightMask(img.getGraphics(), sight, size);
+		return img;
+	}
+	
 	public Color getBonusTypeColor(Block.BonusType bonus) {
 		switch(bonus) {
 			case ATTACK:

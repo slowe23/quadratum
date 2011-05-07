@@ -85,6 +85,7 @@ public class GUIPlayer implements Player {
 		mapUpdated();
 		unitsUpdated();
 		_map.centerAtPlacementArea();
+		_map.repaintBoth();
 	}
 	
 	public int getID() {
@@ -111,11 +112,12 @@ public class GUIPlayer implements Player {
 	}
 	
 	/** Updates the position of units on the map. */
-	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
+	public void updateMap(Map<MapPoint, Integer> units, Set<MapPoint> sight, Action lastAction) {
 		blockUntilReady();
 		
 		synchronized(_unitsData) {
 			_unitsData.setUnits(units);
+			_unitsData.setSight(sight);
 		}
 		
 		unitsUpdated();
@@ -173,8 +175,8 @@ public class GUIPlayer implements Player {
 		
 		if(_core.updateUnit(this, unit._id, ind, pos)) {
 			_unitsData.refreshUnit(unit._id);
-			resourcesUpdated();
 			unitsUpdated();
+			resourcesUpdated();
 		}
 	}
 	
@@ -186,8 +188,6 @@ public class GUIPlayer implements Player {
 				Map<MapPoint, Action.ActionType> selActions = _unitsData.getSelectedActions();
 				if(selActions!=null && selActions.containsKey(point)) {
 					_core.unitAction(this, _unitsData.getSelectedID(), point);
-					if(_unitsData.getUnit(point)!=null)
-						unitsUpdated();
 				} else {
 					Unit clicked = _unitsData.getUnit(point);
 					if(clicked!=null) {

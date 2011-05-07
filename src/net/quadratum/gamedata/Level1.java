@@ -123,7 +123,7 @@ public class Level1 implements Level
 		// Places a defender
 		private void placeDefender(MapPoint location)
 		{
-			int unit = _core.placeUnit(this, new location, new String("Defender"));
+			int unit = _core.placeUnit(this, location, new String("Defender"));
 			_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
 			_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
 			_core.updateUnit(this, unit, 0, new MapPoint(1, 0));
