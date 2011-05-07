@@ -104,43 +104,43 @@ public class CoreActions
 				canMoveOnWater = false;
 			}
 			HashSet<MapPoint> alreadyChecked = new HashSet<MapPoint>();
-			Queue<MapPoint> queue = new LinkedList<MapPoint>();
-			MapPoint temp;
-			queue.add(new MapPoint(info._position._x + 1, info._position._y));
-			queue.add(new MapPoint(info._position._x - 1, info._position._y));
-			queue.add(new MapPoint(info._position._x, info._position._y + 1));
-			queue.add(new MapPoint(info._position._x, info._position._y - 1));
+			Queue<PointAndNum> queue = new LinkedList<PointAndNum>();
+			PointAndNum temp;
+			queue.add(new PointAndNum(new MapPoint(info._position._x + 1, info._position._y), radius));
+			queue.add(new PointAndNum(new MapPoint(info._position._x - 1, info._position._y), radius));
+			queue.add(new PointAndNum(new MapPoint(info._position._x, info._position._y + 1), radius));
+			queue.add(new PointAndNum(new MapPoint(info._position._x, info._position._y - 1), radius));
 			while(queue.size() > 0)
 			{
-				temp = new MapPoint(queue.remove());
-				if(!alreadyChecked.contains(temp))
+				temp = queue.remove();
+				if(!alreadyChecked.contains(temp._point))
 				{
-					alreadyChecked.add(temp);
+					alreadyChecked.add(temp._point);
 					// Make sure the point is in the movement radius, in the map, and contains no unit
-					if((Math.abs(info._position._x - temp._x) + Math.abs(info._position._y - temp._y)) <= radius
-							&& temp._x >= 0 && temp._y >= 0 && temp._x < terrain.length && temp._y < terrain[0].length
-							&& getUnitAtPoint(temp, unitInformation) == -1 && sight.contains(temp)
-							&& !TerrainConstants.isOfType(terrain[temp._x][temp._y], TerrainConstants.IMPASSABLE))
+					if(temp._num > 0
+							&& temp._point._x >= 0 && temp._point._y >= 0 && temp._point._x < terrain.length && temp._point._y < terrain[0].length
+							&& getUnitAtPoint(temp._point, unitInformation) == -1 && sight.contains(temp._point)
+							&& !TerrainConstants.isOfType(terrain[temp._point._x][temp._point._y], TerrainConstants.IMPASSABLE))
 					{
 						// Make sure the unit can only move over water if it has a water movement block
-						if(TerrainConstants.isOfType(terrain[temp._x][temp._y], TerrainConstants.WATER))
+						if(TerrainConstants.isOfType(terrain[temp._point._x][temp._point._y], TerrainConstants.WATER))
 						{
 							if(canMoveOnWater)
 							{
-								area.add(temp);
-								queue.add(new MapPoint(temp._x + 1, temp._y));
-								queue.add(new MapPoint(temp._x - 1, temp._y));
-								queue.add(new MapPoint(temp._x, temp._y + 1));
-								queue.add(new MapPoint(temp._x, temp._y - 1));
+								area.add(new MapPoint(temp._point));
+								queue.add(new PointAndNum(new MapPoint(temp._point._x + 1, temp._point._y), temp._num - 1));
+								queue.add(new PointAndNum(new MapPoint(temp._point._x - 1, temp._point._y), temp._num - 1));
+								queue.add(new PointAndNum(new MapPoint(temp._point._x, temp._point._y + 1), temp._num - 1));
+								queue.add(new PointAndNum(new MapPoint(temp._point._x, temp._point._y - 1), temp._num - 1));
 							}
 						}
 						else
 						{
-							area.add(temp);
-							queue.add(new MapPoint(temp._x + 1, temp._y));
-							queue.add(new MapPoint(temp._x - 1, temp._y));
-							queue.add(new MapPoint(temp._x, temp._y + 1));
-							queue.add(new MapPoint(temp._x, temp._y - 1));
+							area.add(new MapPoint(temp._point));
+							queue.add(new PointAndNum(new MapPoint(temp._point._x + 1, temp._point._y), temp._num - 1));
+							queue.add(new PointAndNum(new MapPoint(temp._point._x - 1, temp._point._y), temp._num - 1));
+							queue.add(new PointAndNum(new MapPoint(temp._point._x, temp._point._y + 1), temp._num - 1));
+							queue.add(new PointAndNum(new MapPoint(temp._point._x, temp._point._y - 1), temp._num - 1));
 						}
 					}
 				}
@@ -196,5 +196,16 @@ public class CoreActions
 			}
 		}
 		return totalSight;
+	}
+	
+	private static class PointAndNum
+	{
+		MapPoint _point;
+		int _num;
+		public PointAndNum(MapPoint point, int num)
+		{
+			_point = point;
+			_num = num;
+		}
 	}
 }

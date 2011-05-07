@@ -1,0 +1,2 @@
+Main-Class: net.quadratum.test.Level1Test
+Class-Path: bin/
