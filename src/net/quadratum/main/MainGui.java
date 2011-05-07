@@ -107,7 +107,7 @@ public class MainGui extends JFrame
 	}
 	
 	public void returnControl() {
-		setContentPane(_mainMenuPanel);
+		changePanel(_mainMenuPanel);
 		
 		setEnabled(true);
 		setVisible(true);
