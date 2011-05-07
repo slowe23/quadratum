@@ -80,7 +80,7 @@ public class ButtonsPanel extends Container {
 	}
 	
 	public void lost() {
-		remove(_right2);
+		removeAll();
 		validate();
 		repaint();
 	}

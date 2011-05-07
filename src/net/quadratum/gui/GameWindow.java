@@ -104,8 +104,10 @@ public class GameWindow extends JFrame {
 	}
 	
 	public void end(GameStats stats) {
-		JOptionPane.showMessageDialog(this, stats.toString(), "Game over.", JOptionPane.INFORMATION_MESSAGE);
-		quit();
+		if(isVisible()) {
+			JOptionPane.showMessageDialog(this, stats.toString(), "Game over.", JOptionPane.INFORMATION_MESSAGE);
+			quit();
+		}
 	}
 	
 	public void quit() {
