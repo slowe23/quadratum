@@ -27,6 +27,8 @@ public class MapPanel extends JPanel {
 	private MapPoint _selectedLocation;
 	private Map<MapPoint, net.quadratum.core.Action.ActionType> _selectedActions;
 	
+	private Set<MapPoint> _sight;
+	
 	private double _viewX, _viewY;  //Location in map squares currently displayed by the view
 	private int _scaleLevel;  //Scale level
 	
@@ -55,6 +57,7 @@ public class MapPanel extends JPanel {
 		Map<MapPoint, Unit> units;
 		MapPoint selectedLocation;
 		Map<MapPoint, net.quadratum.core.Action.ActionType> selectedActions;
+		Set<MapPoint> sight;
 		
 		int scaleLevel = 0, scale = 0;
 		double vX = 0, vY = 0, vW = 0, vH = 0;
@@ -65,6 +68,7 @@ public class MapPanel extends JPanel {
 			units = _units;
 			selectedLocation = _selectedLocation;
 			selectedActions = _selectedActions;
+			sight = _sight;
 			
 			scaleLevel = _scaleLevel;
 			scale = getScale();
@@ -93,6 +97,8 @@ public class MapPanel extends JPanel {
 					
 					if(placement != null)
 						_guiPlayer._drawingMethods.drawPlacementMask(tileGraph, _guiPlayer.getID(), placement, here, scale);
+					if(sight!=null)
+						_guiPlayer._drawingMethods.drawSightMask(tileGraph, sight.contains(here), scale);
 					
 					Unit unit = units.get(here);
 					if(unit!=null) {
@@ -223,6 +229,7 @@ public class MapPanel extends JPanel {
 		synchronized(_guiPlayer._unitsData) {
 			synchronized(this) {
 				_units = _guiPlayer._unitsData.getAllUnits();
+				_sight = _guiPlayer._unitsData.getSight();
 
 				_selectedLocation = _guiPlayer._unitsData.getSelectedLocation();
 				_selectedActions = _guiPlayer._unitsData.getSelectedActions();

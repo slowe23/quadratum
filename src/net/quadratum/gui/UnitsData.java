@@ -11,6 +11,8 @@ public class UnitsData {
 	private final Map<MapPoint, Unit> _pointMap;
 	private final Map<Integer, MapPoint> _idMap;
 	
+	private Set<MapPoint> _sight;
+	
 	private Integer _selectedID;
 	
 	public UnitsData(GUIPlayer player) {
@@ -32,6 +34,14 @@ public class UnitsData {
 		
 		if(_selectedID!=null && !(_idMap.containsKey(_selectedID)))  //If the selected unit no longer exists, deselect
 			_selectedID = null;
+	}
+	
+	public synchronized void setSight(Set<MapPoint> sight) {
+		_sight = sight;
+	}
+	
+	public synchronized Set<MapPoint> getSight() {
+		return _sight;
 	}
 	
 	private synchronized void clearUnits() {
