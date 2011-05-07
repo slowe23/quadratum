@@ -883,7 +883,10 @@ public class GameCore implements Core
 	 * @return the adjusted amount of damage
 	 */
 	private int adjustedDamage(int attack, int defense) {
-		return (int)(attack/(1+9*Math.tanh(defense/Constants.DEFENSE_MODIFIER)));
+		// % power = 1 / (1+9*tanh(def^1.2/5000))
+		return (int)(attack/(1+9*Math.tanh(
+				Math.pow(defense,Constants.DEFENSE_MODIFIER_POW)
+					/Constants.DEFENSE_MODIFIER_DIV)));
 	}
 	
 	/**
