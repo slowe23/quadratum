@@ -2,6 +2,7 @@ package net.quadratum.core;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface Player {
 
@@ -27,8 +28,8 @@ public interface Player {
 	 */
 	public void updateMapData(MapData mapData);
 	
-	/** Updates the position of units on the map. */
-	public void updateMap(Map<MapPoint, Integer> units, Action lastAction);
+	/** Updates the position of units and sight on the map. */
+	public void updateMap(Map<MapPoint, Integer> units, Set<MapPoint> sight, Action lastAction);
 	
 	/** Notifies the player of a chat message (can be from self). */
 	public void chatMessage(int from, String message);
