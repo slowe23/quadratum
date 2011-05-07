@@ -110,7 +110,6 @@ public class GameWindow extends JFrame {
 	
 	public void quit() {
 		setVisible(false);
-		System.exit(0);
 	}
 	
 	private class GameWindowWindowListener extends WindowAdapter {

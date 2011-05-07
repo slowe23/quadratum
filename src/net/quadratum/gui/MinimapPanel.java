@@ -24,6 +24,8 @@ public class MinimapPanel extends JPanel {
 	private Map<MapPoint, Unit> _units;
 	private MapPoint _selectedLocation;
 	
+	private BufferedImage _sightImg;  //An image mask of the sight area
+	
 	private int _offx, _offy;  //Pixel offset of the map image
 	
 	public MinimapPanel(GUIPlayer player, MapPanel mapPanel) {
@@ -91,9 +93,24 @@ public class MinimapPanel extends JPanel {
 		synchronized(_guiPlayer._unitsData) {
 			synchronized(this) {
 				_units = _guiPlayer._unitsData.getAllUnits();
+				_sightImg = generateSightImage(_terrainImg.getWidth(), _terrainImg.getHeight(), _guiPlayer._unitsData.getSight());
 				_selectedLocation = _guiPlayer._unitsData.getSelectedLocation();
 			}
 		}
+	}
+	
+	private BufferedImage generateSightImage(int w, int h, Set<MapPoint> sight) {
+		if(sight==null)
+			return null;
+		
+		BufferedImage sightImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		
+		MapPoint here = new MapPoint(0, 0);
+		for(here._x = 0; here._x<w; here._x++)
+			for(here._y = 0; here._y<h; here._y++)
+				sightImg.setRGB(here._x, here._y, _guiPlayer._drawingMethods.getSightMaskColor(sight.contains(here)).getRGB());
+		
+		return sightImg;
 	}
 	
 	private int[] calcOffsets(double vx, double vy, double vw, double vh) {
@@ -149,6 +166,7 @@ public class MinimapPanel extends JPanel {
 		BufferedImage terrainImg = null, placementImg = null;
 		int offx = 0, offy = 0;
 		Map<MapPoint, Unit> units = null;
+		BufferedImage sightImg = null;
 		MapPoint selectedLocation = null;
 		synchronized(this) {
 			if(_terrainImg!=null) {
@@ -161,6 +179,7 @@ public class MinimapPanel extends JPanel {
 				
 				units = _units;
 				selectedLocation = _selectedLocation;
+				sightImg = _sightImg;
 			}
 		}
 		
@@ -194,6 +213,9 @@ public class MinimapPanel extends JPanel {
 				g.setColor(DrawingMethods.FOREGROUND_COLOR);
 				g.drawRect(offx+SCALE*selectedLocation._x-1, offy+SCALE*selectedLocation._y-1, SCALE+2-1, SCALE+2-1);
 			}
+			
+			if(sightImg!=null)
+				g.drawImage(sightImg, offx, offy, SCALE*sightImg.getWidth(), SCALE*sightImg.getHeight(), null);
 			
 			//Draw the panel border
 			g.setColor(StaticMethods.applyAlpha(DrawingMethods.BACKGROUND_COLOR, 127));
