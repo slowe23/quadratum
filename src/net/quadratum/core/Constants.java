@@ -17,9 +17,11 @@ public class Constants
 	/** Range bonus if the unit is on a mountain. */
 	public static final int MOUNTAIN_RANGE_BONUS = 3;
 	/** Defense bonus on a bunker. */
-	public static final int BUNKER_DEFENSE_BONUS = 4;
+	public static final int BUNKER_DEFENSE_BONUS = 75;
+	/** Defense modifier. As this goes up, actual defensive power goes up. */
+	public static final double DEFENSE_MODIFIER_POW = 1.2;
 	/** Defense modifier. As this goes up, actual defensive power goes down. */
-	public static final double DEFENSE_MODIFIER = 100.0;
+	public static final double DEFENSE_MODIFIER_DIV = 5000.0;
 	/** Health of heart blocks. */
 	public static final int HEART_HEALTH = 100;
 	
