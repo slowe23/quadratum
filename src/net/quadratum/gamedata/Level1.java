@@ -60,7 +60,6 @@ public class Level1 implements Level
 		public Level1AI()
 		{
 			_lockObject = new Object();
-			_units = new HashMap<MapPoint, Integer>();
 		}
 
 		public void start(Core core, MapData mapData, int id, int totalPlayers)
@@ -203,7 +202,7 @@ public class Level1 implements Level
 
 		public void turnStart()
 		{
-			synchronized(_units)
+			synchronized(_lockObject)
 			{
 				Map<MapPoint, Action.ActionType> valid;
 				Set<MapPoint> keys = _units.keySet();
@@ -231,14 +230,14 @@ public class Level1 implements Level
 
 		public void updateMap(Map<MapPoint, Integer> units, Action lastAction)
 		{
-			synchronized(_units)
+			synchronized(_lockObject)
 			{
-				_units.clear();
+				_units = new HashMap<MapPoint, Integer>();
 				for(MapPoint key : units.keySet())
 				{
 					if(_core.getUnit(this, units.get(key).intValue())._owner == 1)
 					{
-						_units.put(key, units.get(key));
+						_units.put(new MapPoint(key), new Integer(units.get(key)));
 					}
 				}
 			}
