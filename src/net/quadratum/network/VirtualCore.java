@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -353,7 +354,8 @@ public class VirtualCore extends NetworkClient implements Core {
 			// The host is sending new information about units and actions.
 			// protocol: updatemap \t mapobject \t actobject
 			HashMap<MapPoint,Integer> map = Serializer.getObject(parts[1]);
-			Action act = Serializer.getObject(parts[2]);
+			HashSet<MapPoint> set = Serializer.getObject(parts[2]);
+			Action act = Serializer.getObject(parts[3]);
 			// Cache the unit info and units
 			_unitRequests = map.keySet().size();
 			_unitInfo.clear();
@@ -365,7 +367,7 @@ public class VirtualCore extends NetworkClient implements Core {
 				_units.put(i,getUnit(_localPlayer,i));
 			}
 			// Update the local player's map.
-			_localPlayer.updateMap(map,act);
+			_localPlayer.updateMap(map,set,act);
 		} else if (parts[0].equals("chat")) {
 			// A chat message was sent.
 			// protocol: chat \t id \t message

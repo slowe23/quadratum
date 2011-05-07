@@ -2,6 +2,7 @@ package net.quadratum.network;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.quadratum.core.Action;
 import net.quadratum.core.Core;
@@ -32,7 +33,7 @@ public class VirtualPlayer implements Player {
 	public void updateMapData(MapData mapData) {}
 
 	@Override
-	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {}
+	public void updateMap(Map<MapPoint, Integer> units, Set<MapPoint> sight, Action lastAction) {}
 
 	@Override
 	public void chatMessage(int from, String message) {}
