@@ -22,6 +22,7 @@ public class Action implements Serializable {
 		ATTACK,
 		UNIT_DIED,
 		GAME_START,
+		UNIT_UPDATED,
 		GATHER_RESOURCES;
 	}
 	

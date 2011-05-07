@@ -26,7 +26,7 @@ public class GameCore implements Core
 	private ArrayList<UnitInformation> _unitInformation;
 	private ArrayList<Player> _players;
 	private ArrayList<PlayerInformation> _playerInformation;
-	private ArrayList<Piece> _pieces;
+	private ArrayList<ArrayList<Piece>> _pieces;
 	private WinCondition _winCondition;
 	private int _turn; // -1 = not started, -2 = game over
 	private boolean _started;
@@ -35,12 +35,41 @@ public class GameCore implements Core
 	private HashSet<ObserverContainer> _observers;
 	private int _maxPlayers;
 	
+	
 	/**
 	 * Constructor for GameCore.
+	 * @param m the main to return control to after the game is over
 	 * @param map the map file name
 	 * @param winCondition the win condition
+	 * @param pieces the pieces for every player
 	 */
 	public GameCore(Main m, String map, WinCondition winCondition, ArrayList<Piece> pieces)
+	{
+		this(m, map, winCondition, copyPieces(pieces));
+	}
+	
+	/**
+	 * Creates a list of list of pieces.
+	 * @param pieces the list of pieces to copy
+	 */
+	private static ArrayList<ArrayList<Piece>> copyPieces(ArrayList<Piece> pieces)
+	{
+		ArrayList<ArrayList<Piece>> newPieces = new ArrayList<ArrayList<Piece>>();
+		for(int i = 0; i < Constants.MAX_PLAYERS; i++)
+		{
+			newPieces.add(pieces);
+		}
+		return newPieces;
+	}
+	
+	/**
+	 * Constructor for GameCore.
+	 * @param m the main to return control to after the game is over
+	 * @param map the map file name
+	 * @param winCondition the win condition
+	 * @param pieces the pieces for each player
+	 */
+	public GameCore(Main m, String map, WinCondition winCondition, ArrayList<ArrayList<Piece>> pieces)
 	{
 		_main = m;
 		_startingLocations = new ArrayList<HashSet<MapPoint>>();
@@ -356,9 +385,9 @@ public class GameCore implements Core
 		{
 			tempMap = new MapData(_terrain, _startingLocations.get(i));
 			tempPieces = new ArrayList<Piece>();
-			for(int j = 0; j < _pieces.size(); j++)
+			for(int j = 0; j < _pieces.get(i).size(); j++)
 			{
-				tempPieces.add(new Piece(_pieces.get(j)));
+				tempPieces.add(new Piece(_pieces.get(i).get(j)));
 			}
 			playerStartThread = new PlayerStartThread(_players.get(i), this, tempMap, i, _players.size());
 			playerStartThread.start();
@@ -370,7 +399,7 @@ public class GameCore implements Core
 			tempPieces = new ArrayList<Piece>();
 			for(int j = 0; j < _pieces.size(); j++)
 			{
-				tempPieces.add(new Piece(_pieces.get(j)));
+				tempPieces.add(new Piece(_pieces.get(0).get(j)));
 			}
 			playerStartThread = new PlayerStartThread(obv._p, this, tempMap, -2, _players.size());
 			playerStartThread.start();
@@ -1365,7 +1394,7 @@ public class GameCore implements Core
 					+ "\tAnswer: false", 2);
 				return false;
 			}
-			Piece piece = _pieces.get(pieceId);
+			Piece piece = _pieces.get(player).get(pieceId);
 			Unit unit = _units.get(unitId);
 			if(unit._owner != player)
 			{
@@ -1418,6 +1447,10 @@ public class GameCore implements Core
 			_playerInformation.get(player)._resources -= piece._cost;
 			log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ")\n"
 				+ "\tAnswer: true", 1);
+			if(_turn != -1)
+			{
+				updateMaps(new Action(Action.ActionType.UNIT_UPDATED, new MapPoint(_unitInformation.get(unitId)._position), new MapPoint(_unitInformation.get(unitId)._position)));
+			}
 			return true;
 		}
 	}

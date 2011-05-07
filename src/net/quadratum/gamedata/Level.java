@@ -12,5 +12,5 @@ public interface Level
 	int getMaxUnits();
 	Player getAI();
 	WinCondition getWinCondition();
-	ArrayList<Piece> getPieces();
+	ArrayList<ArrayList<Piece>> getPieces();
 }
