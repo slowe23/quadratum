@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,7 +25,7 @@ public class GameCore implements Core
 	private ArrayList<UnitInformation> _unitInformation;
 	private ArrayList<Player> _players;
 	private ArrayList<PlayerInformation> _playerInformation;
-	private ArrayList<ArrayList<Piece>> _pieces;
+	private ArrayList<Piece>[] _pieces;
 	private WinCondition _winCondition;
 	private int _turn; // -1 = not started, -2 = game over
 	private boolean _started;
@@ -52,12 +51,12 @@ public class GameCore implements Core
 	 * Creates a list of list of pieces.
 	 * @param pieces the list of pieces to copy
 	 */
-	private static ArrayList<ArrayList<Piece>> copyPieces(ArrayList<Piece> pieces)
+	private static ArrayList<Piece>[] copyPieces(ArrayList<Piece> pieces)
 	{
-		ArrayList<ArrayList<Piece>> newPieces = new ArrayList<ArrayList<Piece>>();
+		ArrayList<Piece>[] newPieces = (ArrayList<Piece>[])new ArrayList[Constants.MAX_PLAYERS];
 		for(int i = 0; i < Constants.MAX_PLAYERS; i++)
 		{
-			newPieces.add(pieces);
+			newPieces[i] = pieces;
 		}
 		return newPieces;
 	}
@@ -69,7 +68,7 @@ public class GameCore implements Core
 	 * @param winCondition the win condition
 	 * @param pieces the pieces for each player
 	 */
-	public GameCore(Main m, String map, WinCondition winCondition, ArrayList<ArrayList<Piece>> pieces)
+	public GameCore(Main m, String map, WinCondition winCondition, ArrayList<Piece>[] pieces)
 	{
 		_main = m;
 		_startingLocations = new ArrayList<HashSet<MapPoint>>();
@@ -385,9 +384,9 @@ public class GameCore implements Core
 		{
 			tempMap = new MapData(_terrain, _startingLocations.get(i));
 			tempPieces = new ArrayList<Piece>();
-			for(int j = 0; j < _pieces.get(i).size(); j++)
+			for(int j = 0; j < _pieces[i].size(); j++)
 			{
-				tempPieces.add(new Piece(_pieces.get(i).get(j)));
+				tempPieces.add(new Piece(_pieces[i].get(j)));
 			}
 			playerStartThread = new PlayerStartThread(_players.get(i), this, tempMap, i, _players.size());
 			playerStartThread.start();
@@ -397,9 +396,9 @@ public class GameCore implements Core
 		{
 			tempMap = new MapData(_terrain, new HashSet<MapPoint>());
 			tempPieces = new ArrayList<Piece>();
-			for(int j = 0; j < _pieces.size(); j++)
+			for(int j = 0; j < _pieces[0].size(); j++)
 			{
-				tempPieces.add(new Piece(_pieces.get(0).get(j)));
+				tempPieces.add(new Piece(_pieces[0].get(j)));
 			}
 			playerStartThread = new PlayerStartThread(obv._p, this, tempMap, -2, _players.size());
 			playerStartThread.start();
@@ -1388,13 +1387,13 @@ public class GameCore implements Core
 					+ "\tAnswer: false", 2);
 				return false;
 			}
-			if(pieceId < 0 || pieceId >= _pieces.size() || unitId < 0 || unitId >= _units.size())
+			if(pieceId < 0 || pieceId >= _pieces.length || unitId < 0 || unitId >= _units.size())
 			{
 				log("Player " + player + " called updateUnit(unitId: " + unitId + ", pieceId: " + pieceId + ", coords: " + coords + ") but there was an invalid piece or unit id\n"
 					+ "\tAnswer: false", 2);
 				return false;
 			}
-			Piece piece = _pieces.get(player).get(pieceId);
+			Piece piece = _pieces[player].get(pieceId);
 			Unit unit = _units.get(unitId);
 			if(unit._owner != player)
 			{

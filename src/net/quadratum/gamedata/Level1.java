@@ -46,11 +46,11 @@ public class Level1 implements Level
 		return new Level1WinCondition();
 	}
 
-	public ArrayList<ArrayList<Piece>> getPieces()
+	public ArrayList<Piece>[] getPieces()
 	{
-		ArrayList<ArrayList<Piece>> pieces = new ArrayList<ArrayList<Piece>>();
-		pieces.add(DefaultPieces.getPieces());
-		pieces.add(DefaultPieces.getPieces());
+		ArrayList<Piece>[] pieces = (ArrayList<Piece>[])new ArrayList[2];
+		pieces[0] = DefaultPieces.getPieces();
+		pieces[1] = DefaultPieces.getPieces();
 		return pieces;
 	}
 	
