@@ -46,11 +46,11 @@ public class Level5 implements Level
 		return new Level5WinCondition();
 	}
 
-	public ArrayList<ArrayList<Piece>> getPieces()
+	public ArrayList<Piece>[] getPieces()
 	{
-		ArrayList<ArrayList<Piece>> pieces = new ArrayList<ArrayList<Piece>>();
-		pieces.add(DefaultPieces.getPieces());
-		pieces.add(DefaultPieces.getPieces());
+		ArrayList<Piece>[] pieces = (ArrayList<Piece>[])new ArrayList[2];
+		pieces[0] = DefaultPieces.getPieces();
+		pieces[1] = DefaultPieces.getPieces();
 		return pieces;
 	}
 	
@@ -60,7 +60,7 @@ public class Level5 implements Level
 		Map<MapPoint, Integer> _units;
 		Object _lockObject;
 
-		public Level1AI()
+		public Level5AI()
 		{
 			_lockObject = new Object();
 		}
