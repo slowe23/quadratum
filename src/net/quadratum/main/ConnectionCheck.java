@@ -34,7 +34,7 @@ public class ConnectionCheck extends JPanel {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		
 		_test = new JButton("Test connection");
-		_test.setActionCommand("connectioncheck_testbutton");
+		_test.setActionCommand(MainConstants.CHECK_CONN);
 		add(_test);
 		
 		_status = new JLabel("             ", SwingConstants.CENTER);

@@ -42,7 +42,8 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 	private JLabel _titleLbl;
 	private JCheckBox _presetCB, _water, _bunkers, _mtns,
 					  _timeLimitCB, _turnLimitCB, _winconCB;
-	private Component _mapSelector, _connectionCheck;
+	private Component _mapSelector;
+	private ConnectionCheck _connectionCheck;
 	private JComboBox _winconSelector;
 	private JSpinner _widthSpinner, _heightSpinner,
 					 _unitsSpinner, _resSpinner;
@@ -388,7 +389,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		_serverAddr = new JTextField(20);
 		
 		_connectionCheck = new ConnectionCheck();
-		((ConnectionCheck) _connectionCheck).addActionListener(this);
+		_connectionCheck.addActionListener(this);
 		
 		
 		
@@ -437,13 +438,13 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		// Outer buttons
 		_startGameBtn = new JButton("Start game");
 		_returnMainBtn = new JButton("Return to main menu");
-		_useDefaultsBtn = new JButton("Apply defaults");
+		_useDefaultsBtn = new JButton("Restore defaults");
 		//init btns
 		_startGameBtn.setActionCommand(MainConstants.START_GAME);
 		_startGameBtn.addActionListener(al);
 		_returnMainBtn.setActionCommand(MainConstants.RETURN_MAIN);
 		_returnMainBtn.addActionListener(al);
-		_useDefaultsBtn.setActionCommand("DEFAULTS");
+		_useDefaultsBtn.setActionCommand(MainConstants.DEFAULTS);
 		_useDefaultsBtn.addActionListener(this);
 		
 		//align right
@@ -488,7 +489,8 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		//enable and disable components accordingly
 		//_netGameStgs.setEnabled( network );
 		_netComponents.setEnabled( network );
-		_qpSettings.setEnabled( !network );
+		  _numPlayers.setEnabled ( network );
+		_qpSettings.setEnabled   ( !network );
 	}
 
 	public boolean usingNetworkSettings() {
@@ -498,6 +500,38 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 	
 	public void applyDefaults() {
 		// TODO - apply defaults of all components
+		// Currently needs to update: all checkboxes, all spinners, all sliders, as well as
+		// the list selection. Set default port, too? yar
+		
+		// CBs and friends * Note -- AbstractButton.setSelected() does not fire
+		// an event, so associated components must be shut off manually
+		
+		_presetCB.setSelected(Defaults.USE_PRESET_MAP);
+			_mapSelector.setEnabled(Defaults.USE_PRESET_MAP);
+		_water.setSelected(Defaults.ALLOW_WATER);
+		_bunkers.setSelected(Defaults.ALLOW_BUNKERS);
+		_mtns.setSelected(Defaults.ALLOW_MOUNTAINS);
+		_timeLimitCB.setSelected(false);
+			_timeLimit.setEnabled(_timeLimitCB.isSelected());
+		_turnLimitCB.setSelected(Defaults.LIMIT_DURATION);
+			_turnLimit.setEnabled(Defaults.LIMIT_DURATION);
+		_winconCB.setSelected(false);
+			_winconSelector.setEnabled(_winconCB.isSelected());
+		
+		// spinners
+		_widthSpinner.setValue(Defaults.MAP_TILE_WIDTH);
+		_heightSpinner.setValue(Defaults.MAP_TILE_HEIGHT);
+		_unitsSpinner.setValue(Defaults.INIT_NUM_UNITS);
+		_resSpinner.setValue(Defaults.INIT_NUM_RESOURCES);
+		
+		// sliders
+		_aiLevel.setValue(Defaults.AI_DIFFICULTY);
+		_timeLimit.setValue(Defaults.TURN_LIMIT_SECS);
+		_turnLimit.setValue(Defaults.PLAYER_TURNS_LIMIT);
+		
+		// other
+		_numPlayers.setSelectedIndex(Defaults.NUM_PLAYERS - Defaults.MIN_PLAYERS);
+//		_connectionCheck.setDefault();
 	}
 	
 	
@@ -641,8 +675,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 
 
 	public int getPort() {
-		int port = ((ConnectionCheck) _connectionCheck)
-								.validPortNumber(_portNumber.getText());
+		int port = _connectionCheck.validPortNumber(_portNumber.getText());
 		
 		if(port > 0)	return port;
 		
@@ -713,13 +746,13 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getActionCommand().equals("connectioncheck_testbutton")) {
+		if(e.getActionCommand().equals(MainConstants.CHECK_CONN)) {
 			// test it with the appropriate input
 			
 			return;
 		}
 		
-		if(e.getActionCommand().equals("DEFAULT")) {
+		if(e.getActionCommand().equals(MainConstants.DEFAULTS)) {
 			applyDefaults();
 		}
 	}

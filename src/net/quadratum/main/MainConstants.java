@@ -18,16 +18,22 @@ public class MainConstants {
 	public static final int DEFAULT_BUTTON_W = 80;
 	public static final int DEFAULT_BUTTON_H = 30;
 
+	// Used in main menu
 	public static final String SINGLE = "spMenu";
 	public static final String NETWORK = "ntwkMenu";
 	public static final String LOAD = "load";
 	public static final String QUIT = "quit";
+	// Used in 1P menu
 	public static final String QUICKPLAY = "quickplay";
 	public static final String RETURN_MAIN = "returnMain";
 	public static final String CAMPAIGN = "campaign";
+	// Used in network menu
 	public static final String HOST = "host";
 	public static final String JOIN = "join";
+	// Used in settings menu
 	public static final String START_GAME = "startGame";
+	public static final String DEFAULTS = "useDefaults";
+	public static final String CHECK_CONN = "connectioncheck_testbutton";
 	
 	
 	public static final Dimension BUTTON_DIM = 

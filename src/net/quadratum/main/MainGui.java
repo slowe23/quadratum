@@ -34,7 +34,15 @@ public class MainGui extends JFrame
 	
 	
 	public static void main(String[] args) {
+		
+//		SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                MainGui gm = new MainGui();
+//            }
+//        });
+		
 		MainGui gm = new MainGui();
+
 	}
 	
 	
@@ -81,11 +89,21 @@ public class MainGui extends JFrame
 	
 	private void hideMe() {
 		//System.err.println("Main: Passing off control, hiding.");
-		//setEnabled(false);
 		getContentPane().setVisible(false);
 		getContentPane().setEnabled(false);
 		setVisible(false);
+		//setEnabled(false);
 		//wait(); //? Makes it truly dormant, but requires threads and notify()
+		
+//		synchronized (this) {
+//			try {
+//				wait();
+//			} catch (InterruptedException e) {
+//				System.out.println("Oh noes! interrupted");
+//			} catch (IllegalMonitorStateException imse) {
+//				System.out.println("Oh noes! illegal monitor state");
+//			}
+//		}
 	}
 	
 	public void returnControl() {
@@ -145,19 +163,24 @@ public class MainGui extends JFrame
 		gc.addPlayer(human, "human", maxU, 0);
 		gc.addPlayer(ai, "ai", maxU, 0);
 		
+		
 		hideMe();
-		gc.startGame();
-//		//start workaround
-//		_gc = gc;
-//		SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-//                handOff();
-//            }
-//        });
-//		//end workaround
 		
+		_gc = gc;
+		try {
+			if (SwingUtilities.isEventDispatchThread()) {
+				_gc.startGame();
+			} else SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					//handOff();
+					_gc.startGame();
+				}
+			});
+		} catch (Exception e) {
+			System.out.println("Crap.");
+		}		
 		
-		//hideMe();
+//		hideMe();
 	}
 	
 	private void createNetworkGame() {
@@ -195,14 +218,20 @@ public class MainGui extends JFrame
 			gc.addPlayer(new VirtualPlayer(), "virtual player"+i, maxU, i);
 		}
 		hideMe();
-		//tell core to start
-		gc.startGame();
-		//go to sleep
-		//hideMe();
-	}
-	
-	private void handOff() {
-		_gc.startGame();
+
+		_gc = gc;
+		try {
+			if (SwingUtilities.isEventDispatchThread()) {
+				_gc.startGame();
+			} else SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					//handOff();
+					_gc.startGame();
+				}
+			});
+		} catch (Exception e) {
+			System.out.println("Crap.");
+		}		
 	}
 	
 	

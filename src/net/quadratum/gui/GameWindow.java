@@ -110,7 +110,7 @@ public class GameWindow extends JFrame {
 	
 	public void quit() {
 		setVisible(false);
-		System.exit(0);
+		System.exit(0);// uhh, doesn't this kill everything?
 	}
 	
 	private class GameWindowWindowListener extends WindowAdapter {

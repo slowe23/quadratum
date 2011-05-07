@@ -2,6 +2,7 @@ package net.quadratum.main;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 
@@ -34,10 +35,16 @@ public class MainMenuPanel extends JPanel{
 		holder.add(title);
 		
 		// Create buttons
+		JButton[] buttons = new JButton[3];
+		
 		_singlePlayerBtn = new JButton("New game - single player");
+		buttons[0] = _singlePlayerBtn;
 		_multiPlayerBtn = new JButton("New network game - multiplayer");
+		buttons[1] = _multiPlayerBtn;
 		_loadBtn = new JButton("Load saved game");
+		buttons[2] = _loadBtn;
 		_quitBtn = new JButton("Quit");
+		//buttons[3] = _quitBtn;
 		//_helpBtn = new JButton("Help");
 		
 		// Initialize buttons
@@ -71,13 +78,22 @@ public class MainMenuPanel extends JPanel{
 		holder.add(_loadBtn);
 		holder.add(Box.createRigidArea(new Dimension(0,10)));
 		//add(_helpBtn);
-		//holder.add(Box.createRigidArea(new Dimension(0,5)));
+		//holder.add(Box.createRigidArea(new Dimension(0,10)));
 		holder.add(_quitBtn);
 		holder.add(Box.createVerticalGlue());
 		holder.add(Box.createRigidArea(new Dimension(0,50)));
 	
 		add(holder, BorderLayout.CENTER);
 		//holder.setAlignmentY(CENTER_ALIGNMENT);
+		
+//		holder.validate();
+//		int maxW = 0;
+//		for(JButton b : buttons)
+//			maxW = (b.getSize().width > maxW ? b.getSize().width : maxW);
+//		System.out.println(maxW);
+//		for(JButton b : buttons)
+//			//b.setPreferredSize(new Dimension(maxW, MainConstants.BUTTON_DIM.height));
+//			b.setMinimumSize(new Dimension(maxW, MainConstants.BUTTON_DIM.height));
 		
 //		// By default, do not go visible from within
 //		setEnabled(false);
