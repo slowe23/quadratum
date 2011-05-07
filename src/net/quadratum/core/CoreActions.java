@@ -124,7 +124,8 @@ public class CoreActions
 					// Make sure the point is in the movement radius, in the map, and contains no unit
 					if((Math.abs(info._position._x - temp._x) + Math.abs(info._position._y - temp._y)) <= radius
 							&& temp._x >= 0 && temp._y >= 0 && temp._x < terrain.length && temp._y < terrain[0].length
-							&& getUnitAtPoint(temp, unitInformation) == -1 && sight.contains(temp))
+							&& getUnitAtPoint(temp, unitInformation) == -1 && sight.contains(temp)
+							&& !TerrainConstants.isOfType(terrain[temp._x][temp._y], TerrainConstants.IMPASSABLE))
 					{
 						// Make sure the unit can only move over water if it has a water movement block
 						if(TerrainConstants.isOfType(terrain[temp._x][temp._y], TerrainConstants.WATER))
