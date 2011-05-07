@@ -3,8 +3,10 @@ package net.quadratum.network;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.quadratum.core.Action;
 import net.quadratum.core.Core;
@@ -72,11 +74,14 @@ public class NetworkPlayer extends NetworkClient implements Player {
 	}
 
 	@Override
-	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
-		// Copy this to a HashMap because the Map interface does not
+	public void updateMap(Map<MapPoint, Integer> units, Set<MapPoint> sight, Action lastAction) {
+		// Copy these to HashCollections because the Map/Set interface does not
 		// implement Serializable directly.
 		HashMap<MapPoint,Integer> map = new HashMap<MapPoint,Integer>(units);
+		HashSet<MapPoint> set = new HashSet<MapPoint>(sight);
+		// Send the updated map, sight, and action.
 		write("updatemap\t"+Serializer.getEncodedString(map)+"\t"
+				+Serializer.getEncodedString(set)+"\t"
 				+Serializer.getEncodedString(lastAction)+"\n");
 	}
 	

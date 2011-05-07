@@ -969,7 +969,13 @@ public class GameCore implements Core
 			{
 				allUnits.put(new MapPoint(_unitInformation.get(i)._position), new Integer(i));
 			}
-			obv._p.updateMap(allUnits, new Action(action));
+			visible = new HashSet<MapPoint>();
+			for (int i = 0; i < _terrain.length; i++) {
+				for (int j = 0; j < _terrain[0].length; j++) {
+					visible.add(new MapPoint(i,j));
+				}
+			}
+			obv._p.updateMap(allUnits, visible, new Action(action));
 		}
 		for(int i = 0; i < _players.size(); i++)
 		{
@@ -978,7 +984,7 @@ public class GameCore implements Core
 				visible = CoreActions.getTotalSightArea(i, _units, _unitInformation, _terrain);
 				if(visible.contains(action._dest) || action._action == Action.ActionType.GAME_START)
 				{
-					_players.get(i).updateMap(generateMapForPlayer(i, visible), new Action(action));
+					_players.get(i).updateMap(generateMapForPlayer(i, visible), visible, new Action(action));
 				}
 				else if(visible.contains(action._source))
 				{
@@ -992,11 +998,11 @@ public class GameCore implements Core
 							newDestination = new MapPoint(point);
 						}
 					}
-					_players.get(i).updateMap(playerMap, new Action(action._action, action._source, newDestination));
+					_players.get(i).updateMap(playerMap, visible, new Action(action._action, action._source, newDestination));
 				}
 				else
 				{
-					_players.get(i).updateMap(generateMapForPlayer(i, visible), null);
+					_players.get(i).updateMap(generateMapForPlayer(i, visible), visible, null);
 				}
 			}
 		}

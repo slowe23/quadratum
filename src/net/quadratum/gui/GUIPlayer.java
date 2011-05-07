@@ -1,5 +1,3 @@
-//TODO: placing units during placement phase
-
 package net.quadratum.gui;
 
 import java.util.*;

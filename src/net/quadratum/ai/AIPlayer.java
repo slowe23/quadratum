@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.quadratum.core.Action;
 import net.quadratum.core.Core;
@@ -57,7 +58,7 @@ public abstract class AIPlayer implements Player {
 	public void updateMapData(MapData mapData) { }
 
 	@Override
-	public void updateMap(Map<MapPoint, Integer> units, Action lastAction) {
+	public void updateMap(Map<MapPoint, Integer> units, Set<MapPoint> sight, Action lastAction) {
 		if (lastAction == null || lastAction._dest == null || lastAction._source == null) {
 			return;
 		} else if (lastAction._action == Action.ActionType.UNIT_DIED) {

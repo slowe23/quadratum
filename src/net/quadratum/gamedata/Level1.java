@@ -228,7 +228,7 @@ public class Level1 implements Level
 
 		public void updateMapData(MapData mapData) {}
 
-		public void updateMap(Map<MapPoint, Integer> units, Action lastAction)
+		public void updateMap(Map<MapPoint,Integer> units, Set<MapPoint> sight, Action lastAction)
 		{
 			synchronized(_lockObject)
 			{
