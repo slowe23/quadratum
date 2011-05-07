@@ -90,15 +90,10 @@ public class CoreActions
 		int radius;
 		UnitInformation info = unitInformation.get(unit);
 		HashSet<MapPoint> area = new HashSet<MapPoint>();
-		int sightRadius = Constants.INITIAL_SIGHT + units.get(unit)._stats.get(Block.BonusType.SIGHT) / 120;
 		if(type == 0) // Movement area
 		{
 			Unit actionUnit = units.get(unit);
-			radius = Constants.INITIAL_MOVE + actionUnit._stats.get(Block.BonusType.MOVEMENT) / 120;
-			if(radius > sightRadius)
-			{
-				radius = sightRadius;
-			}
+			radius = Constants.INITIAL_MOVE + actionUnit._stats.get(Block.BonusType.MOVEMENT) / Constants.MOVEMENT_MODIFIER;
 			boolean canMoveOnWater;
 			if(actionUnit._stats.get(Block.BonusType.WATER_MOVEMENT).intValue() > 0)
 			{
@@ -155,7 +150,7 @@ public class CoreActions
 		{
 			if(type == 1) // Attack area
 			{
-				radius = units.get(unit)._stats.get(Block.BonusType.RANGE) / 120;
+				radius = units.get(unit)._stats.get(Block.BonusType.RANGE) / Constants.ATTACK_RANGE_MODIFIER;
 				if(TerrainConstants.isOfType(terrain[info._position._x][info._position._y], TerrainConstants.MOUNTAIN))
 				{
 					radius += Constants.MOUNTAIN_RANGE_BONUS;
@@ -163,7 +158,8 @@ public class CoreActions
 			}
 			else // Visible area
 			{
-				radius = sightRadius;
+				radius = Constants.INITIAL_SIGHT + units.get(unit)._stats.get(Block.BonusType.SIGHT) / Constants.SIGHT_MODIFIER;
+				;
 			}
 			for(int x = info._position._x - radius; x < (info._position._x + radius + 1); x++)
 			{
