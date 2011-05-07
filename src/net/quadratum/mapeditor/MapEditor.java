@@ -1,17 +1,36 @@
 package net.quadratum.mapeditor;
 
-import net.quadratum.core.Constants;
-import net.quadratum.core.MapPoint;
-
-import java.util.*;
-
-import java.io.*;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+
+import net.quadratum.core.Constants;
+import net.quadratum.core.MapPoint;
 
 public class MapEditor extends JFrame {
 	
@@ -88,18 +107,10 @@ public class MapEditor extends JFrame {
 		final JMenuItem newMenuItem = new JMenuItem("New");
 		newMenuItem.setMnemonic('N');
 		newMenuItem.addActionListener(new ActionListener() {
-			@SuppressWarnings("unchecked")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO add modal dialog to allow changing of size
-				int[][] terrain = new int[MEConstants.DEFAULT_SIZE_X][MEConstants.DEFAULT_SIZE_Y];
-				// make empty placement areas
-				Set<MapPoint>[] places = (Set<MapPoint>[])(new Set[Constants.MAX_PLAYERS]);
-				for(int i = 0; i<places.length; i++) {
-					places[i] = new HashSet<MapPoint>();
-				}
-				_display.setNewMapData(terrain, places);
-				validate();
+				getUserDimensions();
 			}
 		});
 		fileMenu.add(newMenuItem);
@@ -112,7 +123,7 @@ public class MapEditor extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// Create file chooser
 				final JFileChooser chooser = new JFileChooser();
-				// chooser.setFileFilter(new QMapFileFilter());
+				chooser.setFileFilter(new QMapFileFilter());
 				
 				// Get a location
 				int success = chooser.showOpenDialog(MapEditor.this);
@@ -138,6 +149,7 @@ public class MapEditor extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// Create file chooser
 				final JFileChooser chooser = new JFileChooser();
+				chooser.setFileFilter(new QMapFileFilter());
 				
 				// Get a location
 				int success = chooser.showSaveDialog(MapEditor.this);
@@ -328,6 +340,107 @@ public class MapEditor extends JFrame {
 		}
 	}
 	
+	private void getUserDimensions() {
+		// Set up the dialog
+		final JDialog dialog = new JDialog(this,Dialog.ModalityType.APPLICATION_MODAL);
+		GroupLayout layout = new GroupLayout(dialog.getContentPane());
+		dialog.setLayout(layout);
+		
+		// Set up the dialog vitals
+		dialog.setTitle("New map...");
+		
+		// Set up the components
+		final JLabel lblWidth = new JLabel("Width");
+		final JSpinner spinnerWidth = new JSpinner(new SpinnerNumberModel(
+			MEConstants.DEFAULT_SIZE_X,MEConstants.MIN_SIZE,MEConstants.MAX_SIZE,1));
+		
+		final JLabel lblHeight = new JLabel("Height");
+		final JSpinner spinnerHeight = new JSpinner(new SpinnerNumberModel(
+			MEConstants.DEFAULT_SIZE_Y,MEConstants.MIN_SIZE,MEConstants.MAX_SIZE,1));
+		
+		final JLabel lblTerrain = new JLabel("Terrain");
+		final JComboBox comboboxTerrain = new JComboBox(
+				new String[] {"Land","Water"});
+		
+		final JButton buttonOK = new JButton("OK");
+		buttonOK.setMnemonic('O');
+		buttonOK.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				createMap((Integer) spinnerWidth.getValue(), 
+						(Integer) spinnerHeight.getValue(),
+						comboboxTerrain.getSelectedIndex());
+				dialog.dispose();
+			}
+			
+		});
+		dialog.getRootPane().setDefaultButton(buttonOK);
+		
+		final JButton buttonCancel = new JButton("Cancel");
+		buttonCancel.setMnemonic('C');
+		buttonOK.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialog.dispose();
+			}
+		});
+		
+		// Set up layout
+		layout.setAutoCreateGaps(true);
+		layout.setAutoCreateContainerGaps(true);
+		
+		layout.setHorizontalGroup(
+			layout.createSequentialGroup()
+			    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+			    		.addComponent(lblWidth)
+			    		.addComponent(lblHeight)
+			    		.addComponent(lblTerrain)
+			    		.addComponent(buttonOK))
+			    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+			    		.addComponent(spinnerWidth)
+			    		.addComponent(spinnerHeight)
+			    		.addComponent(comboboxTerrain)
+			    		.addComponent(buttonCancel))
+		);
+		
+		layout.setVerticalGroup(
+				layout.createSequentialGroup()
+				    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				    		.addComponent(lblWidth)
+				    		.addComponent(spinnerWidth))
+				    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				    		.addComponent(lblHeight)
+				    		.addComponent(spinnerHeight))
+				    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				    		.addComponent(lblTerrain)
+				    		.addComponent(comboboxTerrain))
+				    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				    		.addComponent(buttonOK)
+				    		.addComponent(buttonCancel))
+			);
+		
+		// Pack and show
+		dialog.pack();
+		dialog.setVisible(true);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void createMap(int width, int height, int defaultTerrain) {
+		int[][] terrain = new int[width][height];
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				terrain[i][j] = defaultTerrain;
+			}
+		}
+		// make empty placement areas
+		Set<MapPoint>[] places = (Set<MapPoint>[])(new Set[Constants.MAX_PLAYERS]);
+		for(int i = 0; i<places.length; i++) {
+			places[i] = new HashSet<MapPoint>();
+		}
+		_display.setNewMapData(terrain, places);
+		validate();
+	}
+	
 	private static class TP {
 		public int[][] _terrain;
 		public Set<MapPoint>[] _places;
@@ -340,11 +453,17 @@ public class MapEditor extends JFrame {
 		}
 	}
 	
-	private class QMapFileFilter implements FileFilter {
+	private class QMapFileFilter extends FileFilter {
+		
 		@Override
 		public boolean accept(File pathname) {
 			String name = pathname.getName();
 			return pathname.isDirectory() || name.endsWith(".qmap");
+		}
+
+		@Override
+		public String getDescription() {
+			return "Quadratum Map (.qmap)";
 		}
 		
 	}
