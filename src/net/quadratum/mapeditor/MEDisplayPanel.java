@@ -162,7 +162,7 @@ public class MEDisplayPanel extends JPanel implements Scrollable {
 						mountains.add(m);
 					if(TerrainConstants.isOfType(i, TerrainConstants.RESOURCES))
 						resources.add(m);
-					if(TerrainConstants.isOfType(i, TerrainConstants.IMPASSIBLE))
+					if(TerrainConstants.isOfType(i, TerrainConstants.IMPASSABLE))
 						impassibles.add(m);
 				}
 			}

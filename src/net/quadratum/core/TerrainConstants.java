@@ -12,8 +12,8 @@ public class TerrainConstants
 	public static final int MOUNTAIN = 1 << 2;
 	/** Constant representing a resource-gathering location. */
 	public static final int RESOURCES = 1 << 3;
-	/** Constant representing an impassible square*/
-	public static final int IMPASSIBLE = 1 << 4;
+	/** Constant representing an impassable square*/
+	public static final int IMPASSABLE = 1 << 4;
 	
 	/**
 	 * Checks if the given terrain is of the given type.
