@@ -7,3 +7,4 @@ syntax: glob
 .project
 log.txt
 bin
+*.jar

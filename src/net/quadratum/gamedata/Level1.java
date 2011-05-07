@@ -28,12 +28,12 @@ public class Level1 implements Level
 	
 	public int getStartingResources()
 	{
-		return 1500;
+		return 2000;
 	}
 	
 	public int getMaxUnits()
 	{
-		return 7;
+		return 8;
 	}
 	
 	public Player getAI()
@@ -91,8 +91,8 @@ public class Level1 implements Level
 			}
 			
 			// Add royal guard
-			placeRoyalGuard(new MapPoint(16, 3));
-			placeRoyalGuard(new MapPoint(16, 6));
+			placeRoyalGuard(new MapPoint(18, 3));
+			placeRoyalGuard(new MapPoint(18, 6));
 			
 			// Place defenders
 			placeDefender(new MapPoint(10, 1));
@@ -126,8 +126,6 @@ public class Level1 implements Level
 			int unit = _core.placeUnit(this, location, new String("Defender"));
 			_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
 			_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
-			_core.updateUnit(this, unit, 0, new MapPoint(1, 0));
-			_core.updateUnit(this, unit, 0, new MapPoint(0, 1));
 			_core.updateUnit(this, unit, 0, new MapPoint(0, 3));
 			_core.updateUnit(this, unit, 0, new MapPoint(0, 5));
 			_core.updateUnit(this, unit, 2, new MapPoint(3, 0));
