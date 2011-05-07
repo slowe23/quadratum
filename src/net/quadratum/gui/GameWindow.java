@@ -115,6 +115,7 @@ public class GameWindow extends JFrame {
 	private class GameWindowWindowListener extends WindowAdapter {
 		public void windowClosing(WindowEvent e) {
 			_guiPlayer.closing();
+			quit();
 		}
 	}
 }

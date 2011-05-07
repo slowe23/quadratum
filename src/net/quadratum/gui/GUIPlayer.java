@@ -158,8 +158,6 @@ public class GUIPlayer implements Player {
 	
 	/** Notifies the player that the game has ended. */
 	public void end(GameStats stats) {
-		blockUntilReady();
-		
 		_gameWindow.end(stats);
 	}
 	
