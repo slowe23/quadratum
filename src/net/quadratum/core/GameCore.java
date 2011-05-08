@@ -604,6 +604,7 @@ public class GameCore implements Core
 					lines.add(getAttackLine(defender._size,
 							lineStarts[i],lineEnds[i]));
 				}
+				log("Got attack lines: "+lines,1);
 				
 				// Distribute the damage
 				
@@ -620,8 +621,8 @@ public class GameCore implements Core
 				for (int i = 0; i < attackLines; i++) {
 					
 					int damageDone;
+					damageLeft = totalDamage/attackLines;
 					for (Map<MapPoint,Double> current : lines.get(i)) {
-						damageLeft = totalDamage/attackLines;
 						log("Damage left to distribute: "+damageLeft,1);
 						damageDone = 0;
 						for (MapPoint point : current.keySet()) {
@@ -637,6 +638,7 @@ public class GameCore implements Core
 								defender._blocks.remove(point);
 							}
 							damageDone += damage;
+							
 							log("Damage done to block at "+point+": "+damage+"\n"
 									+ "\tTotal damage done this iteration: "+damageDone,1);
 						}
@@ -724,70 +726,39 @@ public class GameCore implements Core
 				+ "\tgrad = "+grad,1);
 		
 		// Find the lower bound, accounting for all the swapping we just did
-		int xbound, ybound1, ybound2;
-		if (swap) {
-			if (steep) {
-				xbound = getFloorCellPosition((int)start._y,size);
-				ybound1 = getFloorCellPosition((int)start._x,size);
-				ybound2 = getFloorCellPosition(((int)start._x)+1,size)-1;
-			} else {
-				xbound = getFloorCellPosition((int)start._x,size);
-				ybound1 = getFloorCellPosition((int)start._y,size);
-				ybound2 = getFloorCellPosition(((int)start._y)+1,size)-1;
-			}
+		int xbound1, xbound2, ybound1, ybound2, sxbound;
+		if (steep) {
+			xbound1 = getFloorCellPosition((int)end._y,size);
+			xbound2 = getFloorCellPosition(((int)end._y)+1,size)-1;
+			ybound1 = getFloorCellPosition((int)end._x,size);
+			ybound2 = getFloorCellPosition(((int)end._x)+1,size)-1;
 		} else {
-			if (steep) {
-				xbound = getFloorCellPosition((int)end._y,size);
-				ybound1 = getFloorCellPosition((int)end._x,size);
-				ybound2 = getFloorCellPosition(((int)end._x)+1,size)-1;
-			} else {
-				xbound = getFloorCellPosition((int)end._x,size);
-				ybound1 = getFloorCellPosition((int)end._y,size);
-				ybound2 = getFloorCellPosition(((int)end._y)+1,size)-1;
-			}
+			xbound1 = getFloorCellPosition((int)end._x,size);
+			xbound2 = getFloorCellPosition(((int)end._x)+1,size)-1;
+			ybound1 = getFloorCellPosition((int)end._y,size);
+			ybound2 = getFloorCellPosition(((int)end._y)+1,size)-1;
 		}
+		sxbound = getFloorCellPosition((int)sx,size);
+		
 		log("Attack line boundaries:\n"
-				+ "\txbound = "+xbound+"\n"
+				+ "\txbound1 = "+xbound1+"\n"
+				+ "\txbound2 = "+xbound2+"\n"
 				+ "\tybound1 = "+ybound1+"\n"
-				+ "\tybound2 = "+ybound2,1);
+				+ "\tybound2 = "+ybound2+"\n"
+				+ "\tsxbound = "+sxbound,1);
 		
 		// Set up the data structures
-		Map<MapPoint,Double> endmap = new HashMap<MapPoint,Double>(), map;
+		Map<MapPoint,Double> map;
 		LinkedList<Map<MapPoint,Double>> list = new LinkedList<Map<MapPoint,Double>>();
 		
-		// first endpoint, if inside defender
-		double xend = getRoundedCellPosition(sx, size);
-		double yend = sy*size + grad * (xend - sx*size);
-		double xgap = 1 - getFractionalCellPosition(sx + 0.5, size);
-		int xpt1 = (int)xend;
-		int ypt1 = (int)yend;
-		if (swap) {
-			putPoint(endmap,xpt1%size,ypt1%size,
-					1-(yend-ypt1)*xgap,steep,swap,size);
-			putPoint(endmap,xpt1%size,(ypt1+1)%size,
-					(yend-ypt1)*xgap,steep,swap,size);
-		}
-		double intery = yend + grad;
-		
-		// second endpoint, if inside defender
-		xend = getRoundedCellPosition(ex, size);
-		yend = ey*size + grad * (xend - ex*size);
-		xgap = 1 - getFractionalCellPosition(ex + 0.5, size);
-		int xpt2 = (int)xend;
-		int ypt2 = (int)yend;
-		if (!swap) {
-			putPoint(endmap,xpt2%size,ypt2%size,
-					1-(yend-ypt2)*xgap,steep,swap,size);
-			putPoint(endmap,xpt2%size,(ypt2+1)%size,
-					(yend-ypt2)*xgap,steep,swap,size);
-		}
+		// first endpoint
+		double intery = sy*size + grad * (sxbound - sx*size);
 		
 		// main loop
-		for (int x = xpt1+1; x < xpt2; x++) {
+		for (int x = sxbound; x <= xbound2; x++) {
 			log("Current iterative value: "+x+"\n"
-					+ "\tCurrent coordinate: "+intery+"\n"
-					+ "\tAttack line: "+list,1);
-			boolean good = swap ^ steep ? x >= xbound : x <= xbound;
+					+ "\tCurrent coordinate: "+intery,1);
+			boolean good = x >= xbound1;
 			// If we are inside the defender, plot some points
 			if (good) {
 				map = new HashMap<MapPoint,Double>();
@@ -805,17 +776,19 @@ public class GameCore implements Core
 							fracy,steep,swap,size);
 				}
 				// Add the map.
-				if (swap) {
-					list.addLast(map);
-				} else {
-					list.addFirst(map);
+				log("Attempting to add map "+map,1);
+				if (map.size() > 0) {
+					if (swap) {
+						list.addFirst(map);
+					} else {
+						list.addLast(map);
+					}
 				}
 			}
+			log("Attack line: "+list,1);
 			// Increment the y
 			intery += grad;
 		}
-		// Add the endpoint.
-		list.add(endmap);
 		return list;
 	}
 	
@@ -862,15 +835,17 @@ public class GameCore implements Core
 	 */
 	private void putPoint(Map<MapPoint,Double> map, int x, int y, 
 			double d, boolean steep, boolean swap, int size) {
+		/*
 		if (swap) {
 			x = size - 1 - x;
 			y = size - 1 - y;
 		}
+		*/
 		if (steep) {
-			log("Adding point at "+y+","+x+" with value "+d,0);
+			log("Adding point at "+y+","+x+" with value "+d,1);
 			map.put(new MapPoint(y,x),d);
 		} else {
-			log("Adding point at "+y+","+x+" with value "+d,0);
+			log("Adding point at "+x+","+y+" with value "+d,1);
 			map.put(new MapPoint(x,y),d);
 		}
 	}
