@@ -737,11 +737,11 @@ public class GameCore implements Core
 			}
 		} else {
 			if (steep) {
-				xbound = getFloorCellPosition(((int)end._y)+1,size)-1;
+				xbound = getFloorCellPosition((int)end._y,size);
 				ybound1 = getFloorCellPosition((int)end._x,size);
 				ybound2 = getFloorCellPosition(((int)end._x)+1,size)-1;
 			} else {
-				xbound = getFloorCellPosition(((int)end._x)+1,size)-1;
+				xbound = getFloorCellPosition((int)end._x,size);
 				ybound1 = getFloorCellPosition((int)end._y,size);
 				ybound2 = getFloorCellPosition(((int)end._y)+1,size)-1;
 			}
@@ -787,7 +787,7 @@ public class GameCore implements Core
 			log("Current iterative value: "+x+"\n"
 					+ "\tCurrent coordinate: "+intery+"\n"
 					+ "\tAttack line: "+list,1);
-			boolean good = swap ? x >= xbound : x <= xbound;
+			boolean good = swap ^ steep ? x >= xbound : x <= xbound;
 			// If we are inside the defender, plot some points
 			if (good) {
 				map = new HashMap<MapPoint,Double>();
