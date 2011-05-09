@@ -11,6 +11,7 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -320,7 +321,17 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 				JSlider.HORIZONTAL, Defaults.MIN_TURN_LIMIT_SECS,
 				Defaults.MAX_TURN_LIMIT_SECS, Defaults.TURN_LIMIT_SECS );
 		//more slider options
-		//currently too long
+		Hashtable timeLabelTable = new Hashtable();
+		for(int i = 120; i <= _timeLimit.getMaximum(); i+=60) {
+			timeLabelTable.put(new Integer(i), new JLabel((i/60)+"m"));
+		}
+		timeLabelTable.put(new Integer(_timeLimit.getMinimum()), new JLabel("45s"));
+		_timeLimit.setLabelTable(timeLabelTable);
+		_timeLimit.setPaintLabels(true);
+		_timeLimit.setMajorTickSpacing(60);
+		_timeLimit.setMinorTickSpacing(15);
+		_timeLimit.setPaintTicks(true);
+		
 		_timeLimit.setEnabled(false);
 		ngLine2.add(_timeLimit);
 		
@@ -338,7 +349,10 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 				JSlider.HORIZONTAL, Defaults.MIN_TURNS_LIMIT,
 				Defaults.MAX_TURNS_LIMIT, Defaults.PLAYER_TURNS_LIMIT );
 		//more slider options; possibly too long
-		// specifically, list times in min:sec form, and only list a given few
+		_turnLimit.setPaintLabels(true);
+		_turnLimit.setMajorTickSpacing(4);
+		_turnLimit.setMinorTickSpacing(2);
+		_turnLimit.setPaintTicks(true);
 		_turnLimit.setEnabled(false);
 		
 		ngLine3.add(_turnLimitCB);

@@ -57,7 +57,7 @@ public class MapMaker {
 			int numLava = (lava ? Math.round(dArea * frequencies[4]) : 0);
 			
 			// make simple starting areas
-			MapPoint[][] startSq = new MapPoint[players][units + 5];
+			MapPoint[][] startSq = new MapPoint[players][units * 2];
 			int perimeter = 2 * (width + height);
 			for (int i = 0; i<players; i++) {
 				int seed = perimeter * i / players;
@@ -100,7 +100,7 @@ public class MapMaker {
 				for(int i = 1; i < numWater; i++) {
 					// stay clumped?
 					if(rng.nextFloat() < WATER_CLUMP) {
-						ArrayList<MapPoint> adjacent = getClumped(last, map, TerrainConstants.WATER);
+						ArrayList<MapPoint> adjacent = getClumpedWater(last, map, TerrainConstants.WATER);
 						if(adjacent == null || adjacent.size() ==0) {
 							//go to second half of loop	
 						} else {
@@ -110,7 +110,7 @@ public class MapMaker {
 						}
 					}
 					// don't stay clumped
-					ArrayList<MapPoint> available = getAvailable(map, TerrainConstants.WATER);
+					ArrayList<MapPoint> available = getAvailableWater(map, TerrainConstants.WATER);
 					if(available == null || available.size() == 0)
 						break;
 					waterSq[i] = available.get(rng.nextInt(available.size()));
@@ -387,6 +387,67 @@ public class MapMaker {
 		return ret;
 	}
 	
+	private static ArrayList<MapPoint> getClumpedWater(MapPoint p, int[][] map, int type) {
+		int width = map.length;
+		int height = map[0].length;
+		boolean[][] checked = new boolean[width][height];
+		checked[p._x][p._y] = true;
+		
+		ArrayList<MapPoint> ret = new ArrayList<MapPoint>();
+		
+		for(int i = -1; i < 2; i++) {
+			for(int j = -1; j < 2; j++) {
+				int x = p._x+i;
+				int y = p._y+j;
+				if(inBounds(x, y, width, height) && !checked[x][y]) {
+					if(TerrainConstants.isOfType(map[x][y], type)) {
+						getClumpedWater(x, y, map, type, checked, ret);
+					}
+					else ret.add(new MapPoint(x, y));
+					checked[x][y] = true;
+				}
+			}
+		}
+		
+		return ret;
+	}
+	
+	private static void getClumpedWater(int x, int y, int[][] map, int type,
+								boolean[][] checked, ArrayList<MapPoint> ret) {
+		checked[x][y] = true;
+		int width = map.length;
+		int height = map[0].length;
+		
+		for(int i = -1; i < 2; i++) {
+			for(int j = -1; j < 2; j++) {
+				int xn = x+i;
+				int yn = y+j;
+				if(inWaterBounds(xn, yn, width, height) && !checked[xn][yn]) {
+					if( TerrainConstants.isOfType(map[xn][yn], type) ) {
+						getClumpedWater(xn, yn, map, type, checked, ret);
+					}
+					else {
+						checked[xn][yn] = true;
+						ret.add(new MapPoint(xn, yn));
+					}
+				}
+			}
+		}
+		
+	}
+	
+	private static ArrayList<MapPoint> getAvailableWater(int[][]map, int type) {
+		ArrayList<MapPoint> ret = new ArrayList<MapPoint>();
+		for(int i = 3; i < map.length-3; i++) {
+			for(int j = 3; j < map[i].length-3; j++) {
+				if( ! TerrainConstants.isOfType(map[i][j], type) )
+					ret.add(new MapPoint(i, j));
+			}
+		}
+		return ret;
+	}
+	
+	
 	private static void getStartingArea(MapPoint[] out, int width, int height) {
 		int tot = out.length;
 		int found = 1;
@@ -436,8 +497,16 @@ public class MapMaker {
 		return inBounds(p._x, p._y, width, height);
 	}
 	
+	private static boolean inWaterBounds(MapPoint p, int width, int height) {
+		return inBounds(p._x, p._y, width, height);
+	}
+	
 	private static boolean inBounds(int x, int y, int width, int height) {
 		return (x > -1 && x < width && y > -1 && y < height);
+	}
+	
+	private static boolean inWaterBounds(int x, int y, int width, int height) {
+		return (x > 2 && x < width-3 && y > 2 && y < height-3);
 	}
 
 }

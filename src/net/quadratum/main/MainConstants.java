@@ -60,11 +60,11 @@ public class MainConstants {
 		public static final int GRID_SIZE_INCREMENT = 5;
 		
 		// Player-related defaults
-		public static final int INIT_NUM_RESOURCES = 500;
+		public static final int INIT_NUM_RESOURCES = 1000;
 		public static final int INIT_NUM_UNITS = 5;
 		public static final int NUM_PLAYERS = 2;
 		
-		public static final int MIN_RESOURCES = 50;
+		public static final int MIN_RESOURCES = 500;
 		public static final int MAX_RESOURCES = 9999;
 		public static final int RESOURCES_INCREMENT = 50;
 		public static final int MIN_UNITS = 1;

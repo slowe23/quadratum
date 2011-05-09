@@ -21,6 +21,7 @@ import net.quadratum.core.MapPoint;
 import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
 import net.quadratum.core.WinCondition;
+import net.quadratum.gamedata.DefaultPieces;
 import net.quadratum.gamedata.Level;
 import net.quadratum.gui.GUIPlayer;
 import net.quadratum.network.VirtualPlayer;
@@ -379,17 +380,7 @@ public class MainGui extends JFrame
 	
 	
 	private ArrayList<Piece> getStdPieces() {
-		// TODO do more than quick&dirty
-		ArrayList<Piece> pieces = new ArrayList<Piece>();
-		Block attackBlock = new Block(30);
-		attackBlock._bonuses.put(Block.BonusType.ATTACK, 10);
-		Piece lPiece = new Piece(10, -1, "L Block", "Provides +40 attack");
-		lPiece._blocks.put(new MapPoint(0, 0), new Block(attackBlock));
-		lPiece._blocks.put(new MapPoint(0, 1), new Block(attackBlock));
-		lPiece._blocks.put(new MapPoint(0, 2), new Block(attackBlock));
-		lPiece._blocks.put(new MapPoint(1, 2), new Block(attackBlock));
-		pieces.add(lPiece);
-		return pieces;
+		return DefaultPieces.getPieces();
 	}
 	
 	
