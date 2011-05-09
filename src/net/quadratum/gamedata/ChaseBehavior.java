@@ -44,36 +44,20 @@ public class ChaseBehavior extends AbstractBehavior {
 		}
 		
 		if(closestEnemy==null) {
-			if(_wander && availableActions.size()>0) {
-				int r = new Random().nextInt(availableActions.size());
-				for(MapPoint m : availableActions.keySet())
-					if(r--==0)
-						return m;
-			}
-			
-			return null;
+			if(_wander)
+				return randomAction(availableActions.keySet());
+			else
+				return null;
 		}
 		
-		MapPoint bestMove = null;
-		MapPoint attack = (availableActions.containsKey(closestEnemy) ? closestEnemy : null);
-		for(Entry<MapPoint, ActionType> entry : availableActions.entrySet()) {
-			ActionType a = entry.getValue();
-			MapPoint p = entry.getKey();
-			if(a==ActionType.MOVE) {
-				int dist = taxicabDistance(p, closestEnemy);
-				if(dist<closestDist) {
-					bestMove = p;
-					closestDist = dist;
-				}
-			} else if(a==ActionType.ATTACK) {
-				if(attack==null)
-					attack = p;
-			}
-		}
+		Set<MapPoint> moves = new HashSet<MapPoint>(), attacks = new HashSet<MapPoint>();
+		filter(availableActions, moves, attacks);
 		
-		if(bestMove==null)
-			return attack;
+		MapPoint advance = moveTowards(location, closestEnemy, moves);
+		
+		if(advance==null)
+			return (attacks.contains(closestEnemy) ? closestEnemy : randomAction(attacks));
 		else
-			return bestMove;
+			return advance;
 	}
 }
