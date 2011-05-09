@@ -1,1 +1,1 @@
-find bin -name '*.class' | xargs jar cfm Quadratum.jar Manifest.txt maps/*.qmap
+jar cfm Quadratum-level-1.jar Manifest.txt
