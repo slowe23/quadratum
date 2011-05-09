@@ -10,6 +10,7 @@ import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -20,6 +21,7 @@ import net.quadratum.core.MapPoint;
 import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
 import net.quadratum.core.WinCondition;
+import net.quadratum.gamedata.Level;
 import net.quadratum.gui.GUIPlayer;
 import net.quadratum.network.VirtualPlayer;
 import net.quadratum.test.CheckWinnerTest;
@@ -28,9 +30,11 @@ public class MainGui extends JFrame
 					 implements Main, ActionListener, ComponentListener {
 
 	// JPanel with actual contents
-	private JPanel _mainMenuPanel, _singlePlayerPanel,
+	private JPanel _mainMenuPanel, _singlePlayerPanel, _campaignPanel,
 				   _networkGamePanel, _networkLobbyPanel, _settingsPanel;
 	private GameCore _gc;
+	private boolean _lastGameCampaign; //maybe use Panel _returnDest instead
+	private boolean _resize = false;
 	
 	
 	public static void main(String[] args) {
@@ -42,6 +46,7 @@ public class MainGui extends JFrame
 //        });
 		
 		MainGui gm = new MainGui();
+		gm.setVisible(true);
 
 	}
 	
@@ -50,11 +55,14 @@ public class MainGui extends JFrame
 		
 		super("Quadratum");
 		
+		_lastGameCampaign = false;
+		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setSize(MainConstants.DEFAULT_WINDOW_W, MainConstants.DEFAULT_WINDOW_H);
 		setPreferredSize(getSize());
 		setMinimumSize( new Dimension(MainConstants.MIN_WINDOW_W,
 				        MainConstants.MIN_WINDOW_H) );
+		setResizable(false);
 		
 		//center in middle of screen
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -65,22 +73,24 @@ public class MainGui extends JFrame
 		
 		addComponentListener(this);
 		
+		_resize = true;
 		
 		
 		
-		
-		//todo: add prettiness (e.g. background, icons)
+		// TODO: add prettiness (e.g. background, icons)
 		
 		initPanels();
 		setContentPane(_mainMenuPanel);
+		changePanel(_mainMenuPanel);
 		
-		setVisible(true);
+		//setVisible(true);
 	}
 	
 	private void initPanels() {
 		
 		_mainMenuPanel = new MainMenuPanel(this);
 		_singlePlayerPanel = new SinglePlayerPanel(this);
+		_campaignPanel = new CampaignPanel(this);
 		_networkGamePanel = new NetworkGamePanel(this);
 		_networkLobbyPanel = new NetworkLobbyPanel(this);
 		_settingsPanel = new SettingsPanel(this);
@@ -93,7 +103,6 @@ public class MainGui extends JFrame
 		getContentPane().setEnabled(false);
 		setVisible(false);
 		//setEnabled(false);
-		//wait(); //? Makes it truly dormant, but requires threads and notify()
 		
 //		synchronized (this) {
 //			try {
@@ -107,7 +116,11 @@ public class MainGui extends JFrame
 	}
 	
 	public void returnControl() {
-		changePanel(_mainMenuPanel);
+		if(!_lastGameCampaign)
+			changePanel(_mainMenuPanel);
+		else changePanel(_campaignPanel);
+		
+		_gc = null;
 		
 		setEnabled(true);
 		setVisible(true);
@@ -130,6 +143,16 @@ public class MainGui extends JFrame
 		Container pane = getContentPane();
 		pane.setEnabled(true);
 		pane.setVisible(true);
+		
+		if(_resize)
+		{
+			Dimension d = panel.getPreferredSize();
+			Dimension m = panel.getMinimumSize();
+			d.width += 20;	d.height += 20;
+			d.width = (m.width > d.width ? m.width : d.width);
+			d.height = (m.height > d.height ? m.height : d.height);
+			setSize(d.width, d.height);
+		}
 		
 		update(this.getGraphics());
 	}
@@ -172,13 +195,12 @@ public class MainGui extends JFrame
 				_gc.startGame();
 			} else SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					//handOff();
 					_gc.startGame();
 				}
 			});
 		} catch (Exception e) {
-			System.out.println("Crap.");
-		}		
+			System.err.println("Threading error.");
+		}
 		
 //		hideMe();
 	}
@@ -225,7 +247,6 @@ public class MainGui extends JFrame
 				_gc.startGame();
 			} else SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					//handOff();
 					_gc.startGame();
 				}
 			});
@@ -235,9 +256,44 @@ public class MainGui extends JFrame
 	}
 	
 	
-	private void startCampaignGame(int level) {
+	public void startCampaignGame(Level level) {
 		//level can be some other unique campaign level identifier
 		// TODO STUBBED
+		
+		_lastGameCampaign = true;
+		
+		if(level == null) {
+			//make dialog saying level isn't implemented yet
+			JOptionPane.showMessageDialog(this, "That campaign level hasn't been made yet.", 
+				    "Sorry", JOptionPane.WARNING_MESSAGE);
+			returnControl();
+			return;
+		}
+		
+		GameCore gc = new GameCore(this, level.getMap(), level.getWinCondition(), level.getPieces());
+		
+		Player human = new GUIPlayer();
+		Player ai = level.getAI();
+		
+		int maxU = level.getMaxUnits();
+		gc.addPlayer(human, "human", maxU, level.getStartingResources());
+		gc.addPlayer(ai, "ai", Integer.MAX_VALUE, Integer.MAX_VALUE);
+		
+		
+		hideMe();
+		
+		_gc = gc;
+		try {
+			if (SwingUtilities.isEventDispatchThread()) {
+				_gc.startGame();
+			} else SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					_gc.startGame();
+				}
+			});
+		} catch (Exception e) {
+			System.err.println("Threading error.");
+		}
 	}
 	
 	
@@ -259,6 +315,11 @@ public class MainGui extends JFrame
 		if(MainConstants.QUICKPLAY.equals(e.getActionCommand())) {
 			((SettingsPanel) _settingsPanel).useNetworkSettings(false);
 			changePanel(_settingsPanel);
+			return;
+		}
+		
+		if(MainConstants.CAMPAIGN.equals(e.getActionCommand())) {
+			changePanel(_campaignPanel);
 			return;
 		}
 		
@@ -291,6 +352,7 @@ public class MainGui extends JFrame
 		// Misc. actions
 		if(MainConstants.LOAD.equals(e.getActionCommand())) {
 			// perform necessary actions to load game
+			// Currently not part of functionality
 		}
 		
 		if(MainConstants.QUIT.equals(e.getActionCommand())) {
@@ -306,7 +368,7 @@ public class MainGui extends JFrame
 //			if (!verifyPopUp()) return;
 //		}
 		
-		System.err.println("Exiting Quadratum.");
+		//System.err.println("Exiting Quadratum.");
 		//clean up a bit?
 		setEnabled(false);
 		setVisible(false);
@@ -333,18 +395,17 @@ public class MainGui extends JFrame
 	// Other required but not implemented listener methods
 
 	public void componentHidden(ComponentEvent arg0) {
-		// TODO Auto-generated method stub
+		// No effect
 		
 	}
 
 	public void componentMoved(ComponentEvent arg0) {
-		// TODO Auto-generated method stub
+		// No effect
 		
 	}
 
 	public void componentResized(ComponentEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		// Keep above minimum size
 		Dimension currentD = getSize();
 		Dimension minD = getMinimumSize();
 		if(currentD.width < minD.width)
@@ -354,7 +415,7 @@ public class MainGui extends JFrame
 	}
 
 	public void componentShown(ComponentEvent arg0) {
-		// TODO Auto-generated method stub
+		// No effect
 		
 	}
 
