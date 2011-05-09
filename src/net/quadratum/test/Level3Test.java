@@ -5,14 +5,14 @@ import net.quadratum.core.Player;
 import net.quadratum.gui.GUIPlayer;
 import net.quadratum.main.Main;
 import net.quadratum.gamedata.Level;
-import net.quadratum.gamedata.Level1;
+import net.quadratum.gamedata.Level3;
 
-public class Level1Test implements Main {
+public class Level3Test implements Main {
 	public static void main(String[] args)
 	{
 		Player player = new GUIPlayer();
-		Level level = new Level1();
-		GameCore core = new GameCore(new Level1Test(), level.getMap(), level.getWinCondition(), level.getPieces());
+		Level level = new Level3();
+		GameCore core = new GameCore(new Level3Test(), level.getMap(), level.getWinCondition(), level.getPieces());
 		core.addPlayer(player, "Local Player", level.getMaxUnits(), level.getStartingResources());
 		core.addPlayer(level.getAI(), "AI Player", Integer.MAX_VALUE, Integer.MAX_VALUE);
 		core.startGame();

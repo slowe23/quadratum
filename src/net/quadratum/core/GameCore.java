@@ -793,17 +793,6 @@ public class GameCore implements Core
 	}
 	
 	/**
-	 * Helper function that is used to get the closest cell position inside a 
-	 * unit given the unit's internal size.
-	 * @param d the real-valued location
-	 * @param size the internal size of the unit
-	 * @return which cell in the unit this point would be closest to.
-	 */
-	private int getRoundedCellPosition(double d, int size) {
-		return (int)(d*size+0.5);
-	}
-	
-	/**
 	 * Helper function that is used to get the floor cell position inside a unit
 	 * given the unit's internal size. 
 	 * @param d the real-valued location
@@ -812,17 +801,6 @@ public class GameCore implements Core
 	 */
 	private int getFloorCellPosition(double d, int size) {
 		return (int)Math.floor(d*size);
-	}
-	
-	/**
-	 * Helper function that is used to get the fractional part of the cell
-	 * position inside a unit given the unit's internal size.
-	 * @param d the real-valued location
-	 * @param size the internal size of the unit
-	 * @return the fractional position inside the cell this point is in.
-	 */
-	private double getFractionalCellPosition(double d, int size) {
-		return d*size-getFloorCellPosition(d,size);
 	}
 	
 	/**
@@ -835,12 +813,6 @@ public class GameCore implements Core
 	 */
 	private void putPoint(Map<MapPoint,Double> map, int x, int y, 
 			double d, boolean steep, boolean swap, int size) {
-		/*
-		if (swap) {
-			x = size - 1 - x;
-			y = size - 1 - y;
-		}
-		*/
 		if (steep) {
 			log("Adding point at "+y+","+x+" with value "+d,1);
 			map.put(new MapPoint(y,x),d);

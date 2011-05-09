@@ -35,6 +35,11 @@ public class DefaultPieces
 		// Water movement block
 		Block waterBlock = new Block(30);
 		waterBlock._bonuses.put(Block.BonusType.WATER_MOVEMENT, 1); // 1 for +1
+		
+		// Sight/range block
+		Block sightrangeBlock = new Block(40);
+		sightrangeBlock._bonuses.put(Block.BonusType.SIGHT, 20); // 6 for +1
+		sightrangeBlock._bonuses.put(Block.BonusType.RANGE, 20);
 
 		// Attack piece
 		Piece attackPiece = new Piece(10, -1, "Attack", "Provides +120 damage (50 hp per block)");
@@ -44,7 +49,7 @@ public class DefaultPieces
 		attackPiece._blocks.put(new MapPoint(1, 2), new Block(attackBlock));
 		pieces.add(attackPiece);
 
-		// Movment piece
+		// Movement piece
 		Piece movementPiece = new Piece(40, -1, "Movement", "Provides +120 movement - +1 movement radius (50 hp per block)");
 		movementPiece._blocks.put(new MapPoint(0, 0), new Block(movementBlock));
 		movementPiece._blocks.put(new MapPoint(0, 1), new Block(movementBlock));
@@ -70,7 +75,7 @@ public class DefaultPieces
 		pieces.add(sightPiece);
 
 		// Defense piece
-		Piece defensePiece = new Piece(30, -1, "Defense", "Provides +20 defense - +1 damage reduction (100 hp per block)");
+		Piece defensePiece = new Piece(30, -1, "Defense", "Provides +20 defense (100 hp per block)");
 		defensePiece._blocks.put(new MapPoint(0, 0), new Block(defenseBlock));
 		defensePiece._blocks.put(new MapPoint(0, 1), new Block(defenseBlock));
 		defensePiece._blocks.put(new MapPoint(1, 0), new Block(defenseBlock));
@@ -84,7 +89,17 @@ public class DefaultPieces
 		waterPiece._blocks.put(new MapPoint(0, 2), new Block(waterBlock));
 		waterPiece._blocks.put(new MapPoint(0, 3), new Block(waterBlock));
 		pieces.add(waterPiece);
-
+		
+		// Sight/range piece
+		Piece sightrangePiece = new Piece(100, 4, "Sight/Range", "Provides +120 sight and range - +1 sight and range radius (40 hp per block)");
+		sightrangePiece._blocks.put(new MapPoint(0,0), new Block(sightrangeBlock));
+		sightrangePiece._blocks.put(new MapPoint(1,0), new Block(sightrangeBlock));
+		sightrangePiece._blocks.put(new MapPoint(0,1), new Block(sightrangeBlock));
+		sightrangePiece._blocks.put(new MapPoint(1,1), new Block(sightrangeBlock));
+		sightrangePiece._blocks.put(new MapPoint(2,0), new Block(sightrangeBlock));
+		sightrangePiece._blocks.put(new MapPoint(3,0), new Block(sightrangeBlock));
+		pieces.add(sightrangePiece);
+		
 		return pieces;
 	}
 }
