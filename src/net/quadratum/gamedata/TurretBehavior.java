@@ -13,10 +13,12 @@ import net.quadratum.core.Action.ActionType;
  */
 public class TurretBehavior extends AbstractBehavior {
 	public MapPoint behave(MapPoint location, Map<MapPoint, ActionType> availableActions, Map<MapPoint, Unit> units) {
-		for(Entry<MapPoint, ActionType> entry : availableActions.entrySet())
-			if(entry.getValue()==ActionType.ATTACK)
-				return entry.getKey();
-
-		return null;
+		if(isBad(location, availableActions, units))
+			return null;
+		
+		Set<MapPoint> moves = new HashSet<MapPoint>(), attacks = new HashSet<MapPoint>();
+		filter(availableActions, moves, attacks);
+		
+		return randomAction(attacks);
 	}
 }

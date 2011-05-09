@@ -24,37 +24,26 @@ public class PathBehavior extends AbstractBehavior {
 	}
 	
 	public MapPoint behave(MapPoint location, Map<MapPoint, ActionType> availableActions, Map<MapPoint, Unit> units) {
+		if(isBad(location, availableActions, units))
+			return null;
+		
 		if(location.equals(_path.peek())) {  //Will be false if the queue is empty
 			MapPoint rem = _path.remove();
 			if(_loop)
 				_path.add(rem);
 		}
 		
+		
+		Set<MapPoint> moves = new HashSet<MapPoint>(), attacks = new HashSet<MapPoint>();
+		filter(availableActions, moves, attacks);
+		
 		MapPoint advance = null;
 		
 		MapPoint destination = _path.peek();
-		if(destination!=null) {
-			int advDist = taxicabDistance(location, destination);
+		if(destination!=null)
+			advance = moveTowards(location, destination, moves);
 		
-			if(!_path.isEmpty()) {
-				for(Entry<MapPoint, ActionType> entry : availableActions.entrySet()) {
-					if(entry.getValue()==ActionType.MOVE) {
-						MapPoint p = entry.getKey();
-						int dist = taxicabDistance(p, destination);
-						if(dist<=advDist) {
-							advance = p;
-							advDist = dist;
-						}
-					}
-				}
-			}
-		}
-		
-		MapPoint attack = null;
-		
-		for(Entry<MapPoint, ActionType> entry : availableActions.entrySet())
-			if(entry.getValue()==ActionType.ATTACK && attack==null)
-				attack = entry.getKey();
+		MapPoint attack = randomAction(attacks);
 		
 		if(_aggressive) {
 			if(attack!=null)
