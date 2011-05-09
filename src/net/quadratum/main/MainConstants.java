@@ -22,6 +22,7 @@ public class MainConstants {
 	public static final String SINGLE = "spMenu";
 	public static final String NETWORK = "ntwkMenu";
 	public static final String LOAD = "load";
+	public static final String HELP = "help";
 	public static final String QUIT = "quit";
 	// Used in 1P menu
 	public static final String QUICKPLAY = "quickplay";
@@ -38,6 +39,8 @@ public class MainConstants {
 	
 	public static final Dimension BUTTON_DIM = 
 					new Dimension(DEFAULT_BUTTON_W, DEFAULT_BUTTON_H);
+	
+	public static final String MAP_DIRECTORY = "maps/";
 	
 	
 	

@@ -16,8 +16,7 @@ import javax.swing.JPanel;
 public class MainMenuPanel extends JPanel{
 
 	private final String _title = "Main Menu";
-	private JButton _singlePlayerBtn, _multiPlayerBtn, _loadBtn, _quitBtn;
-	//private JButton _helpBtn;
+	private JButton _singlePlayerBtn, _multiPlayerBtn, _helpBtn, _quitBtn;
 	
 	
 	public MainMenuPanel(ActionListener al) {
@@ -41,8 +40,8 @@ public class MainMenuPanel extends JPanel{
 		buttons[0] = _singlePlayerBtn;
 		_multiPlayerBtn = new JButton("New network game - multiplayer");
 		buttons[1] = _multiPlayerBtn;
-		_loadBtn = new JButton("Load saved game");
-		buttons[2] = _loadBtn;
+		_helpBtn = new JButton("Help");
+		buttons[2] = _helpBtn;
 		_quitBtn = new JButton("Quit");
 		//buttons[3] = _quitBtn;
 		//_helpBtn = new JButton("Help");
@@ -54,9 +53,9 @@ public class MainMenuPanel extends JPanel{
 		_multiPlayerBtn.setActionCommand(MainConstants.NETWORK);
 		_multiPlayerBtn.addActionListener(al);
 		_multiPlayerBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-//		_loadBtn.setActionCommand(MainConstants.LOAD);
-//		_loadBtn.addActionListener(al);
-//		_loadBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+//		_helpBtn.setActionCommand(MainConstants.HELP);
+//		_helpBtn.addActionListener(al);
+//		_helpBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 		_quitBtn.setActionCommand(MainConstants.QUIT);
 		_quitBtn.addActionListener(al);
 		_quitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -66,7 +65,7 @@ public class MainMenuPanel extends JPanel{
 		// sizing prefs
 		_singlePlayerBtn.setPreferredSize(MainConstants.BUTTON_DIM);
 		_multiPlayerBtn.setPreferredSize(MainConstants.BUTTON_DIM);
-//		_loadBtn.setPreferredSize(MainConstants.BUTTON_DIM);
+//		_helpBtn.setPreferredSize(MainConstants.BUTTON_DIM);
 		_quitBtn.setPreferredSize(MainConstants.BUTTON_DIM);
 		
 		// Add buttons
@@ -75,7 +74,7 @@ public class MainMenuPanel extends JPanel{
 		holder.add(Box.createRigidArea(new Dimension(0,10)));
 		holder.add(_multiPlayerBtn);
 //		holder.add(Box.createRigidArea(new Dimension(0,10)));
-//		holder.add(_loadBtn);
+//		holder.add(_helpBtn);
 		holder.add(Box.createRigidArea(new Dimension(0,10)));
 		//add(_helpBtn);
 		//holder.add(Box.createRigidArea(new Dimension(0,10)));
