@@ -1,41 +1,26 @@
 package net.quadratum.gamedata;
 
 import java.util.ArrayList;
-<<<<<<< local
-=======
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
->>>>>>> other
 
-<<<<<<< local
-=======
 import net.quadratum.core.Action;
 import net.quadratum.core.Core;
 import net.quadratum.core.GameStats;
 import net.quadratum.core.MapData;
 import net.quadratum.core.MapPoint;
->>>>>>> other
 import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
-<<<<<<< local
-=======
 import net.quadratum.core.PlayerInformation;
 import net.quadratum.core.Unit;
->>>>>>> other
 import net.quadratum.core.WinCondition;
 
 public class Level3 implements Level {
-<<<<<<< local
-=======
 	
 	public Level3() {}
->>>>>>> other
 
-<<<<<<< local
-	@Override
-=======
 	public String getMap() {
 		return new String("maps/level3.qmap");
 	}
@@ -48,12 +33,7 @@ public class Level3 implements Level {
 		return 4;
 	}
 	
->>>>>>> other
 	public Player getAI() {
-<<<<<<< local
-		// TODO Auto-generated method stub
-		return null;
-=======
 		return new Level3AI();
 	}
 	
@@ -208,15 +188,8 @@ public class Level3 implements Level {
 		public void chatMessage(int from, String message) {}
 
 		public void updateTurn(int id) {}
->>>>>>> other
 	}
 
-<<<<<<< local
-	@Override
-	public String getMap() {
-		// TODO Auto-generated method stub
-		return null;
-=======
 	class Level3WinCondition implements WinCondition {
 		public boolean hasPlayerWon(Map<MapPoint, Unit> units, PlayerInformation playerInformation, int playerNumber)
 		{
@@ -232,34 +205,5 @@ public class Level3 implements Level {
 		{
 			return new String("Kill the enemy units!");
 		}
->>>>>>> other
 	}
-<<<<<<< local
-
-	@Override
-	public int getMaxUnits() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public ArrayList<Piece>[] getPieces() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getStartingResources() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public WinCondition getWinCondition() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
-=======
-}>>>>>>> other
