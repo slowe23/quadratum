@@ -54,7 +54,7 @@ public class Level1 implements Level
 		return pieces;
 	}
 	
-	class Level1AI implements Player
+	private class Level1AI implements Player
 	{
 		Core _core;
 		Map<MapPoint, Integer> _units;
@@ -188,7 +188,7 @@ public class Level1 implements Level
 		public void updateTurn(int id) {}
 	}
 
-	class Level1WinCondition implements WinCondition
+	private class Level1WinCondition implements WinCondition
 	{
 		public boolean hasPlayerWon(Map<MapPoint, Unit> units, PlayerInformation playerInformation, int playerNumber)
 		{

@@ -6,10 +6,9 @@ import net.quadratum.core.Block;
 import net.quadratum.core.MapPoint;
 import net.quadratum.core.Piece;
 
-public class DefaultPieces
-{
-	public static ArrayList<Piece> getPieces()
-	{
+public class DefaultPieces {
+	
+	public static ArrayList<Piece> getPieces() {
 		ArrayList<Piece> pieces = new ArrayList<Piece>();
 
 		// Attack block
