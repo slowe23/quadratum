@@ -1,4 +1,4 @@
-package net.quadratum.gamedata;
+package net.quadratum.ai;
 
 import java.util.*;
 import java.util.Map.Entry;
