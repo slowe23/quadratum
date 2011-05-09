@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -40,11 +42,10 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 
 	private JButton _returnMainBtn, _useDefaultsBtn;
 	private JLabel _titleLbl;
-	private JCheckBox _presetCB, _water, _bunkers, _mtns,
+	private JCheckBox _presetCB, _water, _bunkers, _mtns, _res,
 					  _timeLimitCB, _turnLimitCB, _winconCB;
-	private Component _mapSelector;
 	private ConnectionCheck _connectionCheck;
-	private JComboBox _winconSelector;
+	private JComboBox _mapSelector, _winconSelector;
 	private JSpinner _widthSpinner, _heightSpinner,
 					 _unitsSpinner, _resSpinner;
 	private JSlider _aiLevel,    _timeLimit,    _turnLimit;
@@ -72,15 +73,15 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 //		add(jb1);
 //	}
 	
-	public static void main(String[] args) {
-		JFrame window = new JFrame();
-		window.setSize(640, 640);
-		
-		SettingsPanel sp = new SettingsPanel(null);
-		sp.setVisible(true);
-		window.add(sp, BorderLayout.CENTER);
-		window.setVisible(true);
-	}
+//	public static void main(String[] args) {
+//		JFrame window = new JFrame();
+//		window.setSize(640, 640);
+//		
+//		SettingsPanel sp = new SettingsPanel(null);
+//		sp.setVisible(true);
+//		window.add(sp, BorderLayout.CENTER);
+//		window.setVisible(true);
+//	}
 	
 	
 	public SettingsPanel (ActionListener al) {
@@ -127,7 +128,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		_presetCB.setHorizontalTextPosition(SwingConstants.LEFT);
 		//presetCB.setMnemonic(KeyEvent.VK_P);
 		_presetCB.addItemListener(this);
-		_mapSelector = generateMapSelector();
+		_mapSelector = ((JComboBox) generateMapSelector());
 		_mapSelector.setEnabled(false);
 		
 		JPanel mapLine1 = new JPanel();
@@ -190,6 +191,10 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		_mtns.setHorizontalTextPosition(SwingConstants.LEFT);
 		//mtns.setMnemonic(KeyEvent.VK_M);
 		
+		_res = new JCheckBox("Resources", true);
+		_res.setHorizontalTextPosition(SwingConstants.LEFT);
+		//mtns.setMnemonic(KeyEvent.VK_R);
+		
 		JPanel terrain = new JPanel();
 		terrain.setLayout(new BoxLayout(terrain, BoxLayout.X_AXIS));
 		terrain.add(_water);
@@ -197,6 +202,8 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		terrain.add(_bunkers);
 		terrain.add(Box.createRigidArea(new Dimension(8,0)));
 		terrain.add(_mtns);
+		terrain.add(Box.createRigidArea(new Dimension(8,0)));
+		terrain.add(_res);
 		terrain.setBorder(BorderFactory.createTitledBorder("Include terrain elements?"));
 		
 		
@@ -383,8 +390,8 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		portInfo.setLayout(new BoxLayout(portInfo,BoxLayout.X_AXIS));
 		
 		portInfo.add(new JLabel("Use port # "));
-		_portNumber = new JTextField(5); //fucking huge
-		_portNumber.setMaximumSize(new Dimension(80, 25));//^no longer
+		_portNumber = new JTextField(5);
+		_portNumber.setMaximumSize(new Dimension(80, 25));
 		_portNumber.setText( ""+Defaults.PREFERRED_PORT );
 		portInfo.add(_portNumber);
 		
@@ -490,9 +497,24 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		
 		//enable and disable components accordingly
 		//_netGameStgs.setEnabled( network );
-		_netComponents.setEnabled( network );
-		  _numPlayers.setEnabled ( network );
-		_qpSettings.setEnabled   ( !network );
+//		for(Component p : _netComps){//_netComponents.getComponents()) {
+//			if(p instanceof JPanel)
+//				for(Component c : ((JPanel) p).getComponents())
+//					c.setEnabled( network );
+//		}
+		//_netComponents.setEnabled( network );
+		setRecursiveEnabled(_netComponents, network);
+		//  _numPlayers.setEnabled ( network );
+		_aiLevel.setEnabled   ( !network );
+	}
+	
+	private void setRecursiveEnabled(Component c, boolean b) {
+		c.setEnabled(b);
+		if(c instanceof JPanel) {
+			for(Component subC : ((JPanel) c).getComponents()) {
+				setRecursiveEnabled(subC, b);
+			}
+		}
 	}
 
 	public boolean usingNetworkSettings() {
@@ -500,11 +522,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 	}
 	
 	
-	public void applyDefaults() {
-		// TODO - apply defaults of all components
-		// Currently needs to update: all checkboxes, all spinners, all sliders, as well as
-		// the list selection. Set default port, too? yar
-		
+	public void applyDefaults() {		
 		// CBs and friends * Note -- AbstractButton.setSelected() does not fire
 		// an event, so associated components must be shut off manually
 		
@@ -533,13 +551,39 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		
 		// other
 		_numPlayers.setSelectedIndex(Defaults.NUM_PLAYERS - Defaults.MIN_PLAYERS);
-//		_connectionCheck.setDefault();
+		_portNumber.setText("" + Defaults.PREFERRED_PORT);
 	}
 	
 	
 	private Component generateMapSelector() {
-		//STUBBED
-		return new JLabel("Coming soon!   ");
+		File mapDir = new File(MainConstants.MAP_DIRECTORY);
+		
+		FilenameFilter filter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				if( !( name.endsWith(".qmap") || name.endsWith(".qmp") ) )
+					return false;
+				return !(name.startsWith("level") || name.startsWith("tutorial"));
+			}
+		};
+		String[] mapFiles = mapDir.list(filter);
+		if(mapFiles.length == 0) {
+			mapFiles = new String[1];
+			mapFiles[0] = "No saved maps";
+
+			_presetCB.setSelected(false);
+			_presetCB.setEnabled(false);
+		} else {
+			for(int i = 0; i < mapFiles.length; i++) {
+				String s = mapFiles[i];
+				int ext = s.indexOf('.');
+				mapFiles[i] = s.substring(0, ext);
+			}
+		}
+		
+		JComboBox selector = new JComboBox(mapFiles);
+		selector.setSelectedIndex(0);
+		
+		return selector;
 	}
 	
 	private Component generateWinconSelector() {
@@ -557,15 +601,40 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 	public String getMap() {
 		// TODO
 		// settings: +w/h, +terrain options
-		return "maps/test.qmap";
+		String filename = "random";
+		int width = getMapWidth();
+		int height = getMapHeight();
+		int players = numPlayers();
+		int units = getMaxUnits();
+		boolean water = isWaterAllowed();
+		boolean bunkers = areBunkersAllowed();
+		boolean mtns = areMountainsAllowed();
+		boolean resources = areResourcesAllowed();
+		boolean lava = false;
+		String path = MapMaker.generateMap(filename, width, height, players, units, water, bunkers, mtns, resources, lava);
+		
+		if(path == null)
+			path = "maps/test.qmap";
+		
+		return path;
 	}
+
+
 
 
 	public void itemStateChanged(ItemEvent e) {
 		Object source = e.getSource();
 		
 		if(source == _presetCB) {
-			_mapSelector.setEnabled(((JCheckBox)source).isSelected());
+			boolean b = ((JCheckBox) source).isSelected();
+			_mapSelector.setEnabled(b);
+			
+			_widthSpinner.setEnabled(!b);
+			_heightSpinner.setEnabled(!b);
+			_water.setEnabled(!b);
+			_bunkers.setEnabled(!b);
+			_mtns.setEnabled(!b);
+			
 			return;
 		}
 		
@@ -608,6 +677,10 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 	}
 
 
+
+	private boolean areResourcesAllowed() {
+		return _res.isSelected();
+	}
 
 
 	public boolean areTurnsTimed() {
@@ -688,16 +761,13 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 
 
 	public String getPresetMap() {
-		// TODO Auto-generated method stub
-		if(_presetCB.isSelected()) {
-			//User has chosen to use a preset map
-			if(_mapSelector instanceof ItemSelectable) {
-				return (String)(((ItemSelectable)_mapSelector).getSelectedObjects()[0]);
-			}
+		if(usingPresetMap()) {
+			String filename = (String)(_mapSelector.getSelectedObjects()[0]);
+			return MainConstants.MAP_DIRECTORY + "/" + filename;
+		}
 			else {
 				System.err.println("Preset maps not yet selectable.");
 			}
-		}
 		return null;
 	}
 

@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -64,8 +65,14 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 		// Panel at right displays information about selected level,
 		//  Map with levels in center. Navigational buttons at southeast.
 		
+		try {
 		_mapImg = Toolkit.getDefaultToolkit().createImage("imgs/campaignMap.gif");
 		_battleImg = Toolkit.getDefaultToolkit().createImage("imgs/campaignBattle.gif");
+		} catch (Exception e) {
+			System.err.println("Could not load campaign icons.");
+			_mapImg = new BufferedImage(600, 600, BufferedImage.TYPE_INT_RGB);
+			_battleImg = new BufferedImage(40, 40, BufferedImage.TYPE_INT_RGB);
+		}
 		_xOffIcon = 20;//_battleImg.getWidth(null)/2;
 		_yOffIcon = 20;//_battleImg.getHeight(null)/2;
 		JPanel mapPane = new JPanel() {

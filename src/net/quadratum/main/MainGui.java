@@ -64,11 +64,6 @@ public class MainGui extends JFrame
 				        MainConstants.MIN_WINDOW_H) );
 		setResizable(false);
 		
-		//center in middle of screen
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		setLocation( (dim.width - this.getWidth())/2,
-				     (dim.height - this.getHeight())/2 );
-		
 		
 		
 		addComponentListener(this);
@@ -82,6 +77,11 @@ public class MainGui extends JFrame
 		initPanels();
 		setContentPane(_mainMenuPanel);
 		changePanel(_mainMenuPanel);
+		
+		//center in middle of screen
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation( (dim.width - this.getWidth())/2,
+				     (dim.height - this.getHeight())/2 );
 		
 		//setVisible(true);
 	}
@@ -183,8 +183,9 @@ public class MainGui extends JFrame
 		Player ai = new TestAI_MTC();
 		
 		int maxU = set.getMaxUnits();
-		gc.addPlayer(human, "human", maxU, 0);
-		gc.addPlayer(ai, "ai", maxU, 0);
+		int res = set.getStartingResources();
+		gc.addPlayer(human, "human", maxU, res);
+		gc.addPlayer(ai, "ai", maxU, res);
 		
 		
 		hideMe();
