@@ -8,3 +8,5 @@ syntax: glob
 log.txt
 bin
 *.jar
+*.zip
+*.orig
