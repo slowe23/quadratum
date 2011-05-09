@@ -40,5 +40,5 @@ public class Constants
 	 * 1 = warnings and errors
 	 * 2 = errors
 	 */
-	public static final int DEBUG_LEVEL = 0; 
+	public static final int DEBUG_LEVEL = -1; 
 }

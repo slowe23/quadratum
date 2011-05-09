@@ -86,6 +86,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 	public SettingsPanel (ActionListener al) {
 		super();
 		setSize(MainConstants.DEFAULT_WINDOW_W, MainConstants.DEFAULT_WINDOW_H);
+		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		_netComps = new ArrayList<Component>();
 		
@@ -348,6 +349,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		//winconCB.setMnemonic(KeyEvent.VK_C);
 		_winconCB.addItemListener(this);
 		_winconSelector = (JComboBox)generateWinconSelector();
+		_winconSelector.setMaximumSize(new Dimension(150, 30));
 		_winconSelector.setEnabled(false);
 
 		ngLine4.add(_winconCB);
@@ -380,9 +382,9 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		JPanel portInfo = new JPanel();
 		portInfo.setLayout(new BoxLayout(portInfo,BoxLayout.X_AXIS));
 		
-		portInfo.add(new JLabel("Use port # :"));
+		portInfo.add(new JLabel("Use port # "));
 		_portNumber = new JTextField(5); //fucking huge
-		//_portNumber.setMaximumSize(new Dimension(80, 20));
+		_portNumber.setMaximumSize(new Dimension(80, 25));//^no longer
 		_portNumber.setText( ""+Defaults.PREFERRED_PORT );
 		portInfo.add(_portNumber);
 		
@@ -748,6 +750,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		
 		if(e.getActionCommand().equals(MainConstants.CHECK_CONN)) {
 			// test it with the appropriate input
+			_connectionCheck.testConnection(_portNumber.getText());
 			
 			return;
 		}
