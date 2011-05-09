@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import net.quadratum.core.*;
-import net.quadratum.core.Action.ActionType;
+import net.quadratum.ai.*;
 
 public class Level2 implements Level {
 	public Level2() {}
@@ -42,22 +42,13 @@ public class Level2 implements Level {
 		return pieces;
 	}
 	
-	private class Level2AI implements Player {
-		private Core _core;
-		private Map<Integer, UnitBehavior> _behaviors;
-		private Map<MapPoint, Unit> _units;
-		private boolean _unitsChanged;
-		private final Object _unitsLock;
+	private class Level2AI extends LevelAI {
 		
 		public Level2AI() {
-			_unitsLock = new Object();
+			super();
 		}
 		
-		public void start(Core core, MapData mapData, int id, int totalPlayers) {
-			_core = core;
-			
-			_behaviors = new HashMap<Integer, UnitBehavior>();
-			
+		public void createUnits(int id) {
 			placeTurret(new MapPoint(4, 3));
 			placeTurret(new MapPoint(5, 2));
 			placeTurret(new MapPoint(10, 7));
@@ -74,120 +65,74 @@ public class Level2 implements Level {
 			path.add(new MapPoint(0, 11));
 			placeMover(new MapPoint(0, 0), path);
 			
-			_core.ready(this);
+			path = new LinkedList<MapPoint>(path);
+			placeMover(new MapPoint(3, 0), path);
 		}
 		
 		private void placeTurret(MapPoint location) {
-			int unit = _core.placeUnit(this, location, "Turret");
+			Core core = getCore();
+			int unit = core.placeUnit(this, location, "Turret");
 			if(unit!=-1) {
-				_behaviors.put(unit, new TurretBehavior());
+				registerUnit(unit, new TurretBehavior());
 				
-				_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
-				_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
-				_core.updateUnit(this, unit, 0, new MapPoint(0, 3));
-				_core.updateUnit(this, unit, 0, new MapPoint(0, 5));
-				_core.updateUnit(this, unit, 2, new MapPoint(3, 0));
-				_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
-				_core.updateUnit(this, unit, 3, new MapPoint(5, 4));
-				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+				core.updateUnit(this, unit, 4, new MapPoint(6, 0));
+				core.updateUnit(this, unit, 4, new MapPoint(6, 6));
+				core.updateUnit(this, unit, 0, new MapPoint(0, 3));
+				core.updateUnit(this, unit, 0, new MapPoint(0, 5));
+				core.updateUnit(this, unit, 2, new MapPoint(3, 0));
+				core.updateUnit(this, unit, 2, new MapPoint(2, 5));
+				core.updateUnit(this, unit, 3, new MapPoint(5, 4));
+				core.updateUnit(this, unit, 3, new MapPoint(6, 2));
 			}
 		}
 		
 		private void placeChaser(MapPoint location) {
-			int unit = _core.placeUnit(this, location, "Chaser");
+			Core core = getCore();
+			int unit = core.placeUnit(this, location, "Chaser");
 			if(unit!=-1) {
-				_behaviors.put(unit, new ChaseBehavior(true));
+				registerUnit(unit, new ChaseBehavior(true));
 				
-				_core.updateUnit(this, unit, 0, new MapPoint(5, 4));
-				_core.updateUnit(this, unit, 1, new MapPoint(1, 5));
-				_core.updateUnit(this, unit, 1, new MapPoint(2, 4));
-				_core.updateUnit(this, unit, 3, new MapPoint(5, 0));
-				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
-				_core.updateUnit(this, unit, 4, new MapPoint(4, 6));
-				_core.updateUnit(this, unit, 6, new MapPoint(1, 2));
+				core.updateUnit(this, unit, 0, new MapPoint(5, 4));
+				core.updateUnit(this, unit, 1, new MapPoint(1, 5));
+				core.updateUnit(this, unit, 1, new MapPoint(2, 4));
+				core.updateUnit(this, unit, 3, new MapPoint(5, 0));
+				core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+				core.updateUnit(this, unit, 4, new MapPoint(4, 6));
+				core.updateUnit(this, unit, 6, new MapPoint(1, 2));
 			}
 		}
 		
 		private void placePatroller(MapPoint location, Queue<MapPoint> patrol) {
-			int unit = _core.placeUnit(this, location, "Patroller");
+			Core core = getCore();
+			int unit = core.placeUnit(this, location, "Patroller");
 			if(unit!=-1) {
-				_behaviors.put(unit, new PathBehavior(patrol, true, true));
+				registerUnit(unit, new PathBehavior(patrol, true, true));
 				
-				_core.updateUnit(this, unit, 0, new MapPoint(5, 4));
-				_core.updateUnit(this, unit, 1, new MapPoint(1, 5));
-				_core.updateUnit(this, unit, 1, new MapPoint(2, 4));
-				_core.updateUnit(this, unit, 3, new MapPoint(5, 0));
-				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
-				_core.updateUnit(this, unit, 4, new MapPoint(4, 6));
-				_core.updateUnit(this, unit, 6, new MapPoint(1, 2));
+				core.updateUnit(this, unit, 0, new MapPoint(5, 4));
+				core.updateUnit(this, unit, 1, new MapPoint(1, 5));
+				core.updateUnit(this, unit, 1, new MapPoint(2, 4));
+				core.updateUnit(this, unit, 3, new MapPoint(5, 0));
+				core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+				core.updateUnit(this, unit, 4, new MapPoint(4, 6));
+				core.updateUnit(this, unit, 6, new MapPoint(1, 2));
 			}
 		}
 		
 		private void placeMover(MapPoint location, Queue<MapPoint> path) {
-			int unit = _core.placeUnit(this, location, "Pursuer");
+			Core core = getCore();
+			int unit = core.placeUnit(this, location, "Pursuer");
 			if(unit!=-1) {
-				_behaviors.put(unit, new PathBehavior(path, false, false));
+				registerUnit(unit, new PathBehavior(path, false, false));
 				
-				_core.updateUnit(this, unit, 0, new MapPoint(5, 4));
-				_core.updateUnit(this, unit, 1, new MapPoint(1, 5));
-				_core.updateUnit(this, unit, 1, new MapPoint(2, 4));
-				_core.updateUnit(this, unit, 3, new MapPoint(5, 0));
-				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
-				_core.updateUnit(this, unit, 4, new MapPoint(4, 6));
-				_core.updateUnit(this, unit, 6, new MapPoint(1, 2));
+				core.updateUnit(this, unit, 0, new MapPoint(5, 4));
+				core.updateUnit(this, unit, 1, new MapPoint(1, 5));
+				core.updateUnit(this, unit, 1, new MapPoint(2, 4));
+				core.updateUnit(this, unit, 3, new MapPoint(5, 0));
+				core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+				core.updateUnit(this, unit, 4, new MapPoint(4, 6));
+				core.updateUnit(this, unit, 6, new MapPoint(1, 2));
 			}
 		}
-		
-		public void updatePieces(List<Piece> pieces) {}
-		
-		public void end(GameStats stats) {}
-		
-		public void lost() {}
-		
-		public void turnStart() {
-			boolean refresh;
-			
-			Map<MapPoint, Unit> units;
-			do {
-				synchronized(_unitsLock) {
-					units = _units;
-					refresh = _unitsChanged = false;;
-				}
-				for(Iterator<Entry<MapPoint, Unit>> iterator = units.entrySet().iterator(); !refresh && iterator.hasNext(); ) {
-					Entry<MapPoint, Unit> entry = iterator.next();
-					int unit = entry.getValue()._id;
-					UnitBehavior unitBehavior = _behaviors.get(unit);
-					if(unitBehavior!=null) {
-						MapPoint act = unitBehavior.behave(entry.getKey(), _core.getValidActions(this, unit), units);
-						if(act!=null)
-							_core.unitAction(this, unit, act);
-					}
-					synchronized(_unitsLock) {
-						refresh = _unitsChanged;
-					}
-				}
-			} while(refresh);
-			
-			_core.endTurn(this);
-		}
-		
-		public void updateMapData(MapData mapData) { }
-		
-		public void updateMap(Map<MapPoint,Integer> units, Set<MapPoint> sight, Action lastAction) {
-			synchronized(_unitsLock) {
-				_units = new HashMap<MapPoint, Unit>();
-				for(Entry<MapPoint, Integer> entry : units.entrySet()) {
-					Unit u = _core.getUnit(this, entry.getValue());
-					if(u!=null)
-						_units.put(entry.getKey(), u);
-				}
-				_unitsChanged = true;
-			}
-		}
-		
-		public void chatMessage(int from, String message) { }
-		
-		public void updateTurn(int id) { }
 	}
 	
 	private class Level2WinCondition implements WinCondition {
