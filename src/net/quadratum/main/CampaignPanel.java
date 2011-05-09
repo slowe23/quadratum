@@ -204,7 +204,7 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 	private Level getLevel(int num) {
 		
 		// temporary safeguard:
-		if(num!=1 && num!=3)
+		if(num>3 || num <1)
 			return null;
 		
 		
