@@ -1,12 +1,14 @@
 package net.quadratum.main;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -37,17 +39,61 @@ public class ConnectionCheck extends JPanel {
 		_test.setActionCommand(MainConstants.CHECK_CONN);
 		add(_test);
 		
-		_status = new JLabel("             ", SwingConstants.CENTER);
+		add(Box.createRigidArea(new Dimension(10, 0)));
+		
+		_status = new JLabel("Connection not checked.", SwingConstants.CENTER);
 		add(_status);
 	}
 	
 	
-	public boolean testConnection(String host, int port) {
-		// TODO -stubbed
+	public boolean testConnection(String port) {
+		return testConnection(validPortNumber(port));
+	}
+	
+	public boolean testConnection(int port) {
+		if( ! validPortNumber(port) ) {
+			_status.setText("Invalid port number");
+			return false;
+		}
+		
+		ServerSocket host = null;
 		Socket echo = null;
 		
 		try {
-			echo = new Socket(host, 1025);
+			host = new ServerSocket(port);
+			echo = new Socket("localhost", port);
+			echo.close();
+			host.close();
+		} catch(Exception e) {
+			_status.setText("Connection problem");
+			return false;
+		}
+		
+		finally {
+			try {echo.close(); host.close();}
+			catch (Exception e) {}
+		}
+		
+		_status.setText("Test successful!");
+		return true;
+	}
+	
+	public boolean testConnection(String addr, String port) {
+		return testConnection(addr, validPortNumber(port));
+	}
+	
+	public boolean testConnection(String addr, int port) {
+		// TODO -stubbed
+		
+		if( ! validPortNumber(port) ) {
+			_status.setText("Invalid port number");
+			return false;
+		}
+		
+		Socket echo = null;
+		
+		try {
+			echo = new Socket(addr, port);
 			echo.close();
 		} catch (Exception e) {
 			// TODO set status message accordingly
@@ -60,7 +106,7 @@ public class ConnectionCheck extends JPanel {
 			catch (Exception e) {}
 		}
 		
-		_status.setText("Success!");
+		_status.setText("Test successful!");
 		return true;
 	}
 	
