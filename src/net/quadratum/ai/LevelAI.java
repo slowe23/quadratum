@@ -11,7 +11,7 @@ import net.quadratum.core.*;
  * Units are controlled with "behaviors" which are set in the createUnits method
  */
 public abstract class LevelAI implements Player {
-	private Core _core;
+	protected Core _core;
 	
 	private Map<Integer, UnitBehavior> _behaviors;
 
@@ -31,10 +31,6 @@ public abstract class LevelAI implements Player {
 		createUnits(id);
 		
 		_core.ready(this);
-	}
-	
-	protected final Core getCore() {
-		return _core;
 	}
 	
 	protected final void registerUnit(int unitID, UnitBehavior behavior) {
