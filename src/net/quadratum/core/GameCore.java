@@ -768,12 +768,12 @@ public class GameCore implements Core
 				// One of these should always be in the bounds.
 				if (ybound1 <= y && y <= ybound2) {
 					putPoint(map,x % size,y % size,
-							1-fracy,steep,swap,size);
+							1-fracy,steep);
 				}
 				y++;
 				if (ybound1 <= y && y <= ybound2) {
 					putPoint(map,x % size,y % size,
-							fracy,steep,swap,size);
+							fracy,steep);
 				}
 				// Add the map.
 				log("Attempting to add map "+map,1);
@@ -812,7 +812,7 @@ public class GameCore implements Core
 	 * @param steep whether or not the coordinates should be transposed.
 	 */
 	private void putPoint(Map<MapPoint,Double> map, int x, int y, 
-			double d, boolean steep, boolean swap, int size) {
+			double d, boolean steep) {
 		if (steep) {
 			log("Adding point at "+y+","+x+" with value "+d,1);
 			map.put(new MapPoint(y,x),d);

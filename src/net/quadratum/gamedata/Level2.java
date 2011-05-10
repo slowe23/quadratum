@@ -1,7 +1,6 @@
 package net.quadratum.gamedata;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import net.quadratum.core.*;
 import net.quadratum.ai.*;
@@ -70,67 +69,63 @@ public class Level2 implements Level {
 		}
 		
 		private void placeTurret(MapPoint location) {
-			Core core = getCore();
-			int unit = core.placeUnit(this, location, "Turret");
+			int unit = _core.placeUnit(this, location, "Turret");
 			if(unit!=-1) {
 				registerUnit(unit, new TurretBehavior());
 				
-				core.updateUnit(this, unit, 4, new MapPoint(6, 0));
-				core.updateUnit(this, unit, 4, new MapPoint(6, 6));
-				core.updateUnit(this, unit, 0, new MapPoint(0, 3));
-				core.updateUnit(this, unit, 0, new MapPoint(0, 5));
-				core.updateUnit(this, unit, 2, new MapPoint(3, 0));
-				core.updateUnit(this, unit, 2, new MapPoint(2, 5));
-				core.updateUnit(this, unit, 3, new MapPoint(5, 4));
-				core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+				_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
+				_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
+				_core.updateUnit(this, unit, 0, new MapPoint(0, 3));
+				_core.updateUnit(this, unit, 0, new MapPoint(0, 5));
+				_core.updateUnit(this, unit, 2, new MapPoint(3, 0));
+				_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
+				_core.updateUnit(this, unit, 3, new MapPoint(5, 4));
+				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
 			}
 		}
 		
 		private void placeChaser(MapPoint location) {
-			Core core = getCore();
-			int unit = core.placeUnit(this, location, "Chaser");
+			int unit = _core.placeUnit(this, location, "Chaser");
 			if(unit!=-1) {
 				registerUnit(unit, new ChaseBehavior(true));
 				
-				core.updateUnit(this, unit, 0, new MapPoint(5, 4));
-				core.updateUnit(this, unit, 1, new MapPoint(1, 5));
-				core.updateUnit(this, unit, 1, new MapPoint(2, 4));
-				core.updateUnit(this, unit, 3, new MapPoint(5, 0));
-				core.updateUnit(this, unit, 3, new MapPoint(6, 2));
-				core.updateUnit(this, unit, 4, new MapPoint(4, 6));
-				core.updateUnit(this, unit, 6, new MapPoint(1, 2));
+				_core.updateUnit(this, unit, 0, new MapPoint(5, 4));
+				_core.updateUnit(this, unit, 1, new MapPoint(1, 5));
+				_core.updateUnit(this, unit, 1, new MapPoint(2, 4));
+				_core.updateUnit(this, unit, 3, new MapPoint(5, 0));
+				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+				_core.updateUnit(this, unit, 4, new MapPoint(4, 6));
+				_core.updateUnit(this, unit, 6, new MapPoint(1, 2));
 			}
 		}
 		
 		private void placePatroller(MapPoint location, Queue<MapPoint> patrol) {
-			Core core = getCore();
-			int unit = core.placeUnit(this, location, "Patroller");
+			int unit = _core.placeUnit(this, location, "Patroller");
 			if(unit!=-1) {
 				registerUnit(unit, new PathBehavior(patrol, true, true));
 				
-				core.updateUnit(this, unit, 0, new MapPoint(5, 4));
-				core.updateUnit(this, unit, 1, new MapPoint(1, 5));
-				core.updateUnit(this, unit, 1, new MapPoint(2, 4));
-				core.updateUnit(this, unit, 3, new MapPoint(5, 0));
-				core.updateUnit(this, unit, 3, new MapPoint(6, 2));
-				core.updateUnit(this, unit, 4, new MapPoint(4, 6));
-				core.updateUnit(this, unit, 6, new MapPoint(1, 2));
+				_core.updateUnit(this, unit, 0, new MapPoint(5, 4));
+				_core.updateUnit(this, unit, 1, new MapPoint(1, 5));
+				_core.updateUnit(this, unit, 1, new MapPoint(2, 4));
+				_core.updateUnit(this, unit, 3, new MapPoint(5, 0));
+				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+				_core.updateUnit(this, unit, 4, new MapPoint(4, 6));
+				_core.updateUnit(this, unit, 6, new MapPoint(1, 2));
 			}
 		}
 		
 		private void placeMover(MapPoint location, Queue<MapPoint> path) {
-			Core core = getCore();
-			int unit = core.placeUnit(this, location, "Pursuer");
+			int unit = _core.placeUnit(this, location, "Pursuer");
 			if(unit!=-1) {
 				registerUnit(unit, new PathBehavior(path, false, false));
 				
-				core.updateUnit(this, unit, 0, new MapPoint(5, 4));
-				core.updateUnit(this, unit, 1, new MapPoint(1, 5));
-				core.updateUnit(this, unit, 1, new MapPoint(2, 4));
-				core.updateUnit(this, unit, 3, new MapPoint(5, 0));
-				core.updateUnit(this, unit, 3, new MapPoint(6, 2));
-				core.updateUnit(this, unit, 4, new MapPoint(4, 6));
-				core.updateUnit(this, unit, 6, new MapPoint(1, 2));
+				_core.updateUnit(this, unit, 0, new MapPoint(5, 4));
+				_core.updateUnit(this, unit, 1, new MapPoint(1, 5));
+				_core.updateUnit(this, unit, 1, new MapPoint(2, 4));
+				_core.updateUnit(this, unit, 3, new MapPoint(5, 0));
+				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+				_core.updateUnit(this, unit, 4, new MapPoint(4, 6));
+				_core.updateUnit(this, unit, 6, new MapPoint(1, 2));
 			}
 		}
 	}
