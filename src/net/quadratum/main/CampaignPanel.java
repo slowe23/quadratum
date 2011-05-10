@@ -66,8 +66,8 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 		//  Map with levels in center. Navigational buttons at southeast.
 		
 		try {
-		_mapImg = Toolkit.getDefaultToolkit().createImage("imgs/campaignMap.gif");
-		_battleImg = Toolkit.getDefaultToolkit().createImage("imgs/campaignBattle.gif");
+			_mapImg = Toolkit.getDefaultToolkit().createImage("imgs/campaignMap.gif");
+			_battleImg = Toolkit.getDefaultToolkit().createImage("imgs/campaignBattle.gif");
 		} catch (Exception e) {
 			System.err.println("Could not load campaign icons.");
 			_mapImg = new BufferedImage(600, 600, BufferedImage.TYPE_INT_RGB);
