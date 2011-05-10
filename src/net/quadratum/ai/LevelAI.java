@@ -13,6 +13,8 @@ import net.quadratum.core.*;
 public abstract class LevelAI implements Player {
 	protected Core _core;
 	
+	protected int[][] _terrain;
+	
 	private Map<Integer, UnitBehavior> _behaviors;
 
 	private Map<MapPoint, Unit> _units;
@@ -25,6 +27,7 @@ public abstract class LevelAI implements Player {
 	
 	public final void start(Core core, MapData mapData, int id, int otherPlayers) {
 		_core = core;
+		_terrain = mapData._terrain;
 		
 		_behaviors = new HashMap<Integer, UnitBehavior>();
 		
