@@ -95,6 +95,17 @@ public class MEDisplayPanel extends JPanel implements Scrollable {
 		public void mouseClicked(MouseEvent e) {
 		}
 		
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			int x = (e.getX()-_offx)/SCALE;
+			int y = (e.getY()-_offy)/SCALE;
+			if(e.getX() >= _offx && x < _terrain.length && 
+					e.getY() >= _offy && y < _terrain[x].length) {
+				setToolTipText("("+x+","+y+")");
+			}
+			
+		}
+		
 		private void fwee(MouseEvent e) {
 			int xx = (e.getX()-_offx)/SCALE;
 			int yy = (e.getY()-_offy)/SCALE;
