@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -208,7 +209,6 @@ public class MainGui extends JFrame
 	}
 	
 	private void createNetworkGame() {
-		//query _settingsPanel for map
 		Settings set = (Settings)_settingsPanel;
 		
 		String map;
@@ -220,26 +220,28 @@ public class MainGui extends JFrame
 		}
 		else map = set.getMap();
 		
-		//query  for WinCon
 		if(set.altWinCondition()) {
 			wc = set.getAltWinCon();
 		}
 		else wc = new CheckWinnerTest();
-		//generate pieces
 		pieces = getStdPieces();
 		
-		//using these, create core
 		GameCore gc = new GameCore(this, map, wc, pieces);
 		
-		//create GuiPlayer and virtual players
+		ServerThread server = new ServerThread(set.getPort());
+		server.run();
+		try {wait(2000);} catch (Exception e) {}
+		List<Player> others = server.stopListening();
+		
 		Player human = new GUIPlayer();
 		
 		//add players to core
 		int maxU = set.getMaxUnits();
-		gc.addPlayer(human, "human", maxU, 0);
+		int res = set.getStartingResources();
+		gc.addPlayer(human, "human", maxU, res);
 		
 		for(int i = 1; i < maxU; i++) {
-			gc.addPlayer(new VirtualPlayer(), "virtual player"+i, maxU, i);
+			gc.addPlayer(new VirtualPlayer(), "virtual player"+i, maxU, res);
 		}
 		hideMe();
 
