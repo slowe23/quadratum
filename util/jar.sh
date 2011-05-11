@@ -1,1 +1,1 @@
-jar cfm Quadratum-level-1.jar Manifest.txt
+jar cfm Quadratum.jar Manifest.txt

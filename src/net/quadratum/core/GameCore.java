@@ -1317,10 +1317,11 @@ public class GameCore implements Core
 	 * @param unitId the id of the unit
 	 * @param pieceId the id of the piece to add
 	 * @param coords the coordinates in the unit to place the piece
+	 * @param rotation the rotation of the piece
 	 * @return true if the piece is added sucessfuly, false otherwise
 	 */
 	@Override
-	public boolean updateUnit(Player p, int unitId, int pieceId, MapPoint coords)
+	public boolean updateUnit(Player p, int unitId, int pieceId, MapPoint coords, int rotation)
 	{
 		synchronized(_turnLockObject)
 		{
@@ -1365,7 +1366,8 @@ public class GameCore implements Core
 					+ "\tAnswer: false", 2);
 				return false;
 			}
-			for(MapPoint key : piece._blocks.keySet())
+			HashMap<MapPoint, Block> blocks = piece.getRotatedBlocks(rotation);
+			for(MapPoint key : blocks.keySet())
 			{
 				if(unit._blocks.containsKey(new MapPoint(coords._x + key._x, coords._y + key._y)))
 				{
@@ -1383,9 +1385,9 @@ public class GameCore implements Core
 				}
 			}
 			Block toAdd;
-			for(MapPoint key : piece._blocks.keySet())
+			for(MapPoint key : blocks.keySet())
 			{
-				toAdd = new Block(piece._blocks.get(key));
+				toAdd = new Block(blocks.get(key));
 				for(Block.BonusType bonus : toAdd._bonuses.keySet())
 				{
 					unit._stats.put(bonus, toAdd._bonuses.get(bonus) + unit._stats.get(bonus));
