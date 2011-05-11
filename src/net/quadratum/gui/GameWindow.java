@@ -7,9 +7,9 @@ import javax.swing.*;
 
 import net.quadratum.core.*;
 
+/** A class for the window that contains the various GUI components */
 public class GameWindow extends JFrame {
 	private GUIPlayer _guiPlayer;
-	private Core _core;
 	
 	public GameWindow(GUIPlayer player, ChatHandler chatHandler) {
 		setTitle("Quadratum");
@@ -99,10 +99,8 @@ public class GameWindow extends JFrame {
 		_guiPlayer.setStuff(map, uInfo, uImg, units, pieces, buttons, objectives);
 	}
 	
-	public void start(Core core) {
-		_core = core;
-	}
 	
+	/** Responds to the end of the game by displaying stats and then closing */
 	public void end(GameStats stats) {
 		if(isVisible()) {
 			JOptionPane.showMessageDialog(this, stats.toString(), "Game over.", JOptionPane.INFORMATION_MESSAGE);
@@ -110,10 +108,12 @@ public class GameWindow extends JFrame {
 		}
 	}
 	
+	/** Closes the window */
 	public void quit() {
 		setVisible(false);
 	}
 	
+	/** A window listener that reports when the window is closed */
 	private class GameWindowWindowListener extends WindowAdapter {
 		public void windowClosing(WindowEvent e) {
 			_guiPlayer.closing();

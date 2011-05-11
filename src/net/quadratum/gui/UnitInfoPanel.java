@@ -10,9 +10,8 @@ import net.quadratum.core.Block.BonusType;
 import net.quadratum.core.Core;
 import net.quadratum.core.Unit;
 
+/** A panel that displays info about the currently selected unit */
 public class UnitInfoPanel extends JPanel {
-	
-	/** Core that provides information to this UnitInfoPanel. */
 	private Core _core;
 	
 	private GUIPlayer _guiPlayer;
@@ -30,10 +29,12 @@ public class UnitInfoPanel extends JPanel {
 		add(std._jsp);
 	}
 	
+	/** Provides this component with a reference to the core */
 	public void start(Core core) {
 		_core = core;
 	}
 	
+	/** Notifies the component that the selected unit has changed */
 	public void selectionUpdated() {
 		synchronized(_guiPlayer._unitsData) {
 			_text.setText(getDescription(_guiPlayer._unitsData.getSelectedUnit()));
@@ -42,6 +43,7 @@ public class UnitInfoPanel extends JPanel {
 		repaint();
 	}
 	
+	/** Gets a String representation to display for the given unit */
 	private String getDescription(Unit unit) {
 		if(unit==null)
 			return "No unit selected.";

@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+/** A panel for displaying some text and buttons at the top of the window */
 public class ButtonsPanel extends Container {
 	private GUIPlayer _guiPlayer;
 	private JButton _start, _endTurn, _forfeit;
@@ -50,23 +51,27 @@ public class ButtonsPanel extends Container {
 		add(_resources, BorderLayout.WEST);
 	}
 	
+	/** Updates the number of resources displayed */
 	public void updateResources(int r) {
 		_resources.setText("Resources: "+r);
 		validate();
 		repaint();
 	}
 	
+	/** Updates the number of units left to place displayed */
 	public void updateToPlace(int p) {
 		_units.setText("Units to place: "+p);
 		validate();
 		repaint();
 	}
 	
+	/** Starts the game, setting an initial number of units to place */
 	public void start(int p) {
 		_start.setEnabled(true);
 		updateToPlace(p);
 	}
 	
+	/** Ends the placement phase and begins the main phase of gameplay */
 	public void gameStart() {
 		remove(_right1);
 		add(_right2, BorderLayout.EAST);
@@ -75,16 +80,19 @@ public class ButtonsPanel extends Container {
 		repaint();
 	}
 	
+	/** Enables or disables buttons according to whether it is the player's turn */
 	public void turn(boolean yours) {
 		_endTurn.setEnabled(yours);
 	}
 	
+	/** Removes all components in response to the player's loss. */
 	public void lost() {
 		removeAll();
 		validate();
 		repaint();
 	}
 	
+	/** Responds to button actions by sending messages to the GUIPlayer */
 	private class ButtonsPanelActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource()==_start)

@@ -3,10 +3,13 @@ package net.quadratum.gui;
 import java.awt.Dimension;
 import javax.swing.*;
 
+/**
+ * A class for displaying the player's units
+ */
 public class UnitsPanel extends JPanel {
 	private ScrollableUnitsPanel _sUP;
 	private JScrollPane _scroll;
-	
+
 	public UnitsPanel(GUIPlayer player) {
 		setLayout(new FillLayout());
 		
@@ -15,6 +18,7 @@ public class UnitsPanel extends JPanel {
 		add(_scroll);
 	}
 	
+	/** Notifies this component that the units have been updated */
 	public void unitsUpdated() {
 		_sUP.unitsUpdated();
 		Dimension preferred = _sUP.getPreferredSize(), act = _scroll.getSize();
@@ -23,6 +27,7 @@ public class UnitsPanel extends JPanel {
 		repaint();
 	}
 	
+	/** Notifies this unit that the selected unit has been updated */
 	public void selectionUpdated() {
 		_sUP.selectionUpdated();
 		_sUP.repaint();
