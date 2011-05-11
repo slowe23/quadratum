@@ -1,14 +1,13 @@
 package net.quadratum.main;
 
-import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,9 +23,6 @@ public class ServerThread extends Thread implements Pingable {
 	/** List of conected players. */
 	private List<NetworkPlayer> _connectedPlayers;
 	
-	/** List of output writers. */
-	private List<Writer> _outs;
-	
 	/** Flag telling this ServerThread to keep listening for connections. */
 	boolean _keepListening;
 	/** Port this ServerThread listens on. */
@@ -35,8 +31,6 @@ public class ServerThread extends Thread implements Pingable {
 	public ServerThread() {
 		_connectedSockets = new LinkedList<Socket>();
 		_connectedPlayers = new LinkedList<NetworkPlayer>();
-		
-		_outs = new LinkedList<Writer>();
 	}
 	
 	public ServerThread(int port) {
@@ -89,12 +83,6 @@ public class ServerThread extends Thread implements Pingable {
 	private synchronized void addPlayer(Socket sock) {
 		// Add the socket.
 		_connectedSockets.add(sock);
-		// Add the output stream.
-		try {
-			_outs.add(new BufferedWriter(new OutputStreamWriter(sock.getOutputStream())));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		// Set the socket timeout.
 		try {
 			sock.setSoTimeout(MainConstants.SOCKET_TIMEOUT);
@@ -106,6 +94,24 @@ public class ServerThread extends Thread implements Pingable {
 			}
 		}
 		_connectedPlayers.add(new NetworkPlayer(sock));
+	}
+	
+	/**
+	 * Gets a copy of the currently connected players list.
+	 * @return a list of connected players
+	 */
+	public synchronized List<NetworkPlayer> getCurrentPlayers() {
+		return new LinkedList<NetworkPlayer>(_connectedPlayers);
+	}
+	
+	/**
+	 * Kicks a player.
+	 * @param p the player to kick
+	 */
+	public synchronized void kick(Player p) {
+		int i = _connectedPlayers.indexOf(p);
+		_connectedPlayers.remove(i);
+		_connectedSockets.remove(i);
 	}
 	
 	/**
@@ -138,7 +144,43 @@ public class ServerThread extends Thread implements Pingable {
 	}
 
 	@Override
-	public boolean keepListening() {
+	public synchronized boolean keepListening() {
 		return _keepListening;
+	}
+	
+	private synchronized void socketClosed(Socket sock) {
+		int i = _connectedSockets.indexOf(sock);
+		_connectedSockets.remove(i);
+		_connectedPlayers.remove(i);
+	}
+	
+	class ListenThread extends Thread {
+		
+		/** Socket to listen for pings on. */
+		Socket _sock;
+		
+		ListenThread(Socket sock) {
+			_sock = sock;
+		}
+		
+		@Override
+		public void run() {
+			BufferedReader in = null;
+			// Set up the reader
+			try {
+				in = new BufferedReader(
+						new InputStreamReader(_sock.getInputStream()));
+			} catch (IOException e) {
+				socketClosed(_sock);
+			}
+			// Read loop
+			while (_keepListening) {
+				try {
+					in.readLine();
+				} catch (IOException e) {
+					socketClosed(_sock);
+				}
+			}
+		}
 	}
 }
