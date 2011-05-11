@@ -27,7 +27,7 @@ public class Level3 implements Level {
 	}
 	
 	public int getStartingResources() {
-		return 1200;
+		return 1500;
 	}
 	
 	public int getMaxUnits() {
