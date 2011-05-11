@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import net.quadratum.core.*;
 import net.quadratum.core.Action.ActionType;
@@ -273,16 +274,18 @@ public class DrawingMethods {
 		return img;
 	}
 	
-	public void drawPiece(Graphics g, Piece piece, int blockSize) {
-		int[] bounds = piece.getBounds();
+	public void drawPiece(Graphics g, Piece piece, int rotation, int blockSize) {
+		int[] bounds = piece.getBounds(rotation);
 		int xsize = bounds[2]-bounds[0]+1, ysize = bounds[3]-bounds[1]+1;
 		int offx = -1*bounds[0], offy = -1*bounds[1];
 		
 		BufferedImage mask = new BufferedImage(blockSize, blockSize, BufferedImage.TYPE_INT_ARGB);
 		drawBlockMask(mask.getGraphics(), blockSize);
 		
-		for(MapPoint mP : piece._blocks.keySet()) {
-			Block b = piece._blocks.get(mP);
+		for(Entry<MapPoint, Block> entry : piece.getRotatedBlocks(rotation).entrySet()) {
+			MapPoint mP = entry.getKey();
+			Block b = entry.getValue();
+			
 			int x = (offx+mP._x)*blockSize, y = (offy+mP._y)*blockSize;
 			
 			g.setColor(getBlockBaseColor(b));
@@ -292,12 +295,12 @@ public class DrawingMethods {
 		}
 	}
 	
-	public BufferedImage getPieceImage(Piece piece, int blockSize) {
-		int[] bounds = piece.getBounds();
+	public BufferedImage getPieceImage(Piece piece, int rotation, int blockSize) {
+		int[] bounds = piece.getBounds(rotation);
 		int xsize = bounds[2]-bounds[0]+1, ysize = bounds[3]-bounds[1]+1;
 		
 		BufferedImage img = new BufferedImage(xsize, ysize, BufferedImage.TYPE_INT_ARGB);
-		drawPiece(img.getGraphics(), piece, blockSize);
+		drawPiece(img.getGraphics(), piece, rotation, blockSize);
 		return img;
 	}
 	

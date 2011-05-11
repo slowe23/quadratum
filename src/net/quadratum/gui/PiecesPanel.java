@@ -9,9 +9,9 @@ import net.quadratum.core.Piece;
 
 public class PiecesPanel extends JPanel {
 	private PieceListPanel _pieceListPanel;
-	private JButton _scrollUp, _scrollDown;
+	private JButton _scrollUp, _scrollDown, _rotate;
 	private JTextArea _pieceInfo;
-
+	
 	private int _resources;
 	
 	private UnitImagePanel _unitImagePanel;
@@ -39,10 +39,19 @@ public class PiecesPanel extends JPanel {
 		
 		add(imagePanel);
 		
+		JPanel otherPanel = new JPanel();
+		otherPanel.setLayout(new BorderLayout());
+		
 		StaticMethods.STD std = StaticMethods.createScrollingTextDisplay(5);
 		_pieceInfo = std._jta;
 		std._jsp.setBorder(StaticMethods.getTitleBorder("Piece Info"));
-		add(std._jsp);
+		otherPanel.add(std._jsp, BorderLayout.CENTER);
+		
+		_rotate = new JButton("Rotate Piece");
+		_rotate.addActionListener(actionListener);
+		otherPanel.add(_rotate, BorderLayout.SOUTH);
+		
+		add(otherPanel);
 		
 		_scrollUp.setEnabled(false);
 		_scrollDown.setEnabled(false);
@@ -76,7 +85,7 @@ public class PiecesPanel extends JPanel {
 				Piece p = _pieceListPanel.getCurrentPiece();
 				
 				if(p!=null && p._cost<=_resources)
-					_unitImagePanel.pieceSelected(_pieceListPanel.getCurrentPieceID(), _pieceListPanel.getCurrentPiece());
+					_unitImagePanel.pieceSelected(_pieceListPanel.getCurrentPieceID(), _pieceListPanel.getCurrentPiece(), _pieceListPanel.getCurrentRotation());
 				else
 					_unitImagePanel.noPieceSelected();
 			}
@@ -100,13 +109,14 @@ public class PiecesPanel extends JPanel {
 					_pieceListPanel.scrollUp();
 				} else if(source==_scrollDown) {
 					_pieceListPanel.scrollDown();
-				} else {
+				} else if(source==_rotate) {
+					_pieceListPanel.rotatePiece(1);
 					return;
 				}
 				
 				_pieceInfo.setText(getPieceString(_pieceListPanel.getCurrentPiece()));
 				_pieceInfo.setCaretPosition(0);
-
+				
 				updateUIP();
 			}
 			
