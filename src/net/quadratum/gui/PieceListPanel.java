@@ -94,7 +94,7 @@ public class PieceListPanel extends JPanel {
 	
 	public synchronized int getCurrentRotation() {
 		if(_rotates==null || _rotates.length==0)
-			return null;
+			return -1;
 		
 		return _rotates[_index];
 	}

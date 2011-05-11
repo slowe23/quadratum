@@ -11,7 +11,7 @@ public class PiecesPanel extends JPanel {
 	private PieceListPanel _pieceListPanel;
 	private JButton _scrollUp, _scrollDown, _rotate;
 	private JTextArea _pieceInfo;
-
+	
 	private int _resources;
 	
 	private UnitImagePanel _unitImagePanel;
@@ -116,7 +116,7 @@ public class PiecesPanel extends JPanel {
 				
 				_pieceInfo.setText(getPieceString(_pieceListPanel.getCurrentPiece()));
 				_pieceInfo.setCaretPosition(0);
-
+				
 				updateUIP();
 			}
 			
