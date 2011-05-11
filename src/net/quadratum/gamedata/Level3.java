@@ -188,8 +188,8 @@ public class Level3 implements Level {
 		
 		/**
 		 * Gets a random map point of the specified type.
-		 * @param type
-		 * @return
+		 * @param type a terrain type
+		 * @return a MapPoint to a random location of the given type, or null.
 		 */
 		private MapPoint getRandomLocationOfType(int type) {
 			Set<MapPoint> spots = new HashSet<MapPoint>();
