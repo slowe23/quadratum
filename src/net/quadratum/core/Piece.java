@@ -22,7 +22,9 @@ public class Piece implements Serializable {
 	
 	/** Cached bounding box values */
 	private int[] _bounds;
-	private final Object _boundsLock = new Object();
+	
+	/** Bounds lock */
+	private final transient Object _boundsLock = new Object();
 	
 	/** The cost of this Piece. */
 	public int _cost;
