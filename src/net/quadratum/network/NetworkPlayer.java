@@ -177,13 +177,14 @@ public class NetworkPlayer extends NetworkClient implements Player {
 		} else if (parts[0].equals("updateunit")) {
 			// The player wants to update a unit with a piece.
 			boolean success = false;
-			// protocol: updateunit \t unit ID \t piece ID \t x \t y
+			// protocol: updateunit \t unit ID \t piece ID \t x \t y \t rotation
 			try {
 				int unitID = Integer.parseInt(parts[1]);
 				int pieceID = Integer.parseInt(parts[2]);
 				int x = Integer.parseInt(parts[3]);
 				int y = Integer.parseInt(parts[4]);
-				success = _core.updateUnit(this, unitID, pieceID, new MapPoint(x,y));
+				int rotation = Integer.parseInt(parts[5]);
+				success = _core.updateUnit(this, unitID, pieceID, new MapPoint(x,y), rotation);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}

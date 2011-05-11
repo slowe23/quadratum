@@ -219,8 +219,8 @@ public class VirtualCore extends NetworkClient implements Core {
 	}
 
 	@Override
-	public boolean updateUnit(Player p, int unitID, int pieceID, MapPoint coords) {
-		write("updateunit\t"+unitID+"\t"+pieceID+"\t"+coords._x+"\t"+coords._y+"\n");
+	public boolean updateUnit(Player p, int unitID, int pieceID, MapPoint coords, int rotation) {
+		write("updateunit\t"+unitID+"\t"+pieceID+"\t"+coords._x+"\t"+coords._y+"\t"+rotation+"\n");
 		// protocol: <unitupdated \t> success
 		String[] s = getResponse("unitupdated");
 		boolean b = false;

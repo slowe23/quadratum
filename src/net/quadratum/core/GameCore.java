@@ -1366,7 +1366,7 @@ public class GameCore implements Core
 					+ "\tAnswer: false", 2);
 				return false;
 			}
-			HashMap<MapPoint, Block> blocks = piece.getRotatedBlocks(rotation);
+			Map<MapPoint,Block> blocks = piece.getRotatedBlocks(rotation);
 			for(MapPoint key : blocks.keySet())
 			{
 				if(unit._blocks.containsKey(new MapPoint(coords._x + key._x, coords._y + key._y)))

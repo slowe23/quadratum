@@ -73,14 +73,14 @@ public class Level2 implements Level {
 			if(unit!=-1) {
 				registerUnit(unit, new TurretBehavior());
 				
-				_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
-				_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
-				_core.updateUnit(this, unit, 0, new MapPoint(0, 3));
-				_core.updateUnit(this, unit, 0, new MapPoint(0, 5));
-				_core.updateUnit(this, unit, 2, new MapPoint(3, 0));
-				_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
-				_core.updateUnit(this, unit, 3, new MapPoint(5, 4));
-				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+				_core.updateUnit(this, unit, 4, new MapPoint(6, 0), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 4, new MapPoint(6, 6), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 0, new MapPoint(0, 3), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 0, new MapPoint(0, 5), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 2, new MapPoint(3, 0), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 2, new MapPoint(2, 5), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 3, new MapPoint(5, 4), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 3, new MapPoint(6, 2), Piece.ROTATE_NONE);
 			}
 		}
 		
@@ -89,13 +89,13 @@ public class Level2 implements Level {
 			if(unit!=-1) {
 				registerUnit(unit, new ChaseBehavior(true));
 				
-				_core.updateUnit(this, unit, 0, new MapPoint(5, 4));
-				_core.updateUnit(this, unit, 1, new MapPoint(1, 5));
-				_core.updateUnit(this, unit, 1, new MapPoint(2, 4));
-				_core.updateUnit(this, unit, 3, new MapPoint(5, 0));
-				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
-				_core.updateUnit(this, unit, 4, new MapPoint(4, 6));
-				_core.updateUnit(this, unit, 6, new MapPoint(1, 2));
+				_core.updateUnit(this, unit, 0, new MapPoint(5, 4), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 1, new MapPoint(1, 5), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 1, new MapPoint(2, 4), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 3, new MapPoint(5, 0), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 3, new MapPoint(6, 2), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 4, new MapPoint(4, 6), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 6, new MapPoint(1, 2), Piece.ROTATE_NONE);
 			}
 		}
 		
@@ -104,13 +104,13 @@ public class Level2 implements Level {
 			if(unit!=-1) {
 				registerUnit(unit, new PathBehavior(patrol, true, true));
 				
-				_core.updateUnit(this, unit, 0, new MapPoint(5, 4));
-				_core.updateUnit(this, unit, 1, new MapPoint(1, 5));
-				_core.updateUnit(this, unit, 1, new MapPoint(2, 4));
-				_core.updateUnit(this, unit, 3, new MapPoint(5, 0));
-				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
-				_core.updateUnit(this, unit, 4, new MapPoint(4, 6));
-				_core.updateUnit(this, unit, 6, new MapPoint(1, 2));
+				_core.updateUnit(this, unit, 0, new MapPoint(5, 4), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 1, new MapPoint(1, 5), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 1, new MapPoint(2, 4), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 3, new MapPoint(5, 0), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 3, new MapPoint(6, 2), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 4, new MapPoint(4, 6), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 6, new MapPoint(1, 2), Piece.ROTATE_NONE);
 			}
 		}
 		
@@ -119,13 +119,13 @@ public class Level2 implements Level {
 			if(unit!=-1) {
 				registerUnit(unit, new PathBehavior(path, false, false));
 				
-				_core.updateUnit(this, unit, 0, new MapPoint(5, 4));
-				_core.updateUnit(this, unit, 1, new MapPoint(1, 5));
-				_core.updateUnit(this, unit, 1, new MapPoint(2, 4));
-				_core.updateUnit(this, unit, 3, new MapPoint(5, 0));
-				_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
-				_core.updateUnit(this, unit, 4, new MapPoint(4, 6));
-				_core.updateUnit(this, unit, 6, new MapPoint(1, 2));
+				_core.updateUnit(this, unit, 0, new MapPoint(5, 4), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 1, new MapPoint(1, 5), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 1, new MapPoint(2, 4), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 3, new MapPoint(5, 0), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 3, new MapPoint(6, 2), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 4, new MapPoint(4, 6), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 6, new MapPoint(1, 2), Piece.ROTATE_NONE);
 			}
 		}
 	}
