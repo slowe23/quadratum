@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+// Holds both the terrain and a single users placement area
 public class MapData implements Serializable {
 	
 	/**

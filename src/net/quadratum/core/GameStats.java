@@ -2,8 +2,7 @@ package net.quadratum.core;
 
 import java.io.Serializable;
 
-//A class for storing information about a game
-//TODO: Expand this to provide more detailed information
+// A class for storing information about a game
 public class GameStats  implements Serializable {
 
 	/**

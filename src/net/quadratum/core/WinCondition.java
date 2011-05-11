@@ -2,6 +2,7 @@ package net.quadratum.core;
 
 import java.util.Map;
 
+// Defines how win/loss conditions should be implemented
 public interface WinCondition {
 
 	/**

@@ -1,5 +1,6 @@
 package net.quadratum.core;
 
+// Holds an observer
 public class ObserverContainer
 {
 	public Player _p;

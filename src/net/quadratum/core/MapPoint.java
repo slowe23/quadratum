@@ -2,6 +2,7 @@ package net.quadratum.core;
 
 import java.io.Serializable;
 
+// Represents a single point on the map
 public class MapPoint implements Serializable {
 	
 	/**

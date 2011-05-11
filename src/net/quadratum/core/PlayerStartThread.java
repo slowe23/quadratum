@@ -1,6 +1,6 @@
 package net.quadratum.core;
 
-
+// Used to start call start() without blocking
 public class PlayerStartThread extends Thread
 {
 	Player _player;

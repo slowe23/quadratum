@@ -1,5 +1,6 @@
 package net.quadratum.core;
 
+// Represents a point with floating point numbers
 public class RealPoint {
 	/** The X coordinate of this Point. */
 	public double _x;

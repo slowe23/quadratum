@@ -1,5 +1,6 @@
 package net.quadratum.core;
 
+// Used by GameCore to store information aobut units
 public class UnitInformation
 {
 	/** Has the unit moved this turn? */
