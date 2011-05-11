@@ -1,2 +1,2 @@
-Main-Class: net.quadratum.test.Level1Test
+Main-Class: net.quadratum.main.MainGui
 Class-Path: bin/
