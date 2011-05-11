@@ -7,18 +7,25 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-//Static convenience methods
+/** Static convenience methods */
 public class StaticMethods {
 
 	/**
 	 * Rounds a double to the nearest int value.
-	 * @param d a double to round
-	 * @return an int which is closest to the given double
+	 * 
+	 * @param d A double to round
+	 * @return The closest integer to the given double value
 	 */
 	public static int round(double d) {
 		return longToInt(Math.round(d));
 	}
 	
+	/**
+	 * Calculates the floor of a given double value
+	 *
+	 * @param d A double value
+	 * @return The largest integer which is less than or equal to the double value
+	 */
 	public static int floor(double d) {
 		int iD = (int)d;
 		if(d>=iD)
@@ -30,9 +37,9 @@ public class StaticMethods {
 	/**
 	 * Converts a long to an int, capping it if it excedes the minimum or 
 	 * maximum int values as if it were using saturation arithmetic.
-	 * @param l a long to convert
-	 * @return an int which is either the same value as or the closest value 
-	 * to the given long.
+	 *
+	 * @param l A long to convert
+	 * @return An int which is as close as possible to the given long
 	 */
 	public static int longToInt(long l) {
 		if(l<Integer.MIN_VALUE)
@@ -44,12 +51,23 @@ public class StaticMethods {
 		return (int)l;
 	}
 	
-	//Creates a Color with the RGB values of the given color and the given alpha value (must be in the range 0-255)
+	/**
+	 * Creates a Color with the RGB values of the given color and the given alpha value
+	 *
+	 * @param c The color to use
+	 * @param alpha The alpha value to give the color (must be in the range 0-255)
+	 * @return A new color with the RGB of the original color and the given alpha value
+	 */
 	public static Color applyAlpha(Color c, int alpha) {
 		return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
 	}
 	
-	//Copies a square matrix (or null)
+	/**
+	 * Creates a copy of a given rectangular matrix (or null)
+	 *
+	 * The given matrix must either be null or rectangular
+	 * That is, if the entire array is not null, then all of its rows must be non-null and the same length
+	 */
 	public static int[][] copy(int[][] toCopy) {
 		if(toCopy==null)
 			return null;
@@ -62,7 +80,7 @@ public class StaticMethods {
 		return copy;
 	}
 	
-	//Converts a String into a String array of lines based on the given max width
+	/** Converts a String into a String array of lines based on the given max width */
 	public static String[] getWrap(FontMetrics fmetr, String s, int maxw) {
 		ArrayList<String> list = new ArrayList<String>();
 		String[] words = s.split("\\s");  //Split based on whitespace
@@ -99,7 +117,7 @@ public class StaticMethods {
 		return list.toArray(new String[list.size()]);
 	}
 	
-	//Finds the maxiumum number of characaters of the given string that can fit within the given width
+	/** Finds the maxiumum number of characaters of the given string that can fit within the given width */
 	public static int findOnscreenLength(FontMetrics fmetr, String s, int maxw) {
 		int sw = fmetr.stringWidth(s);
 		
@@ -132,11 +150,12 @@ public class StaticMethods {
 		return maxlength+1;
 	}
 	
+	/** Creates a title border with the given title */
 	public static Border getTitleBorder(String title) {
 		return BorderFactory.createTitledBorder(null, title, TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION);
 	}
 	
-	//Creates a scrolling text area
+	/** Creates a scrolling text area for displaying non-editable text */
 	public static STD createScrollingTextDisplay(int lines) {
 		JTextArea area = new JTextArea();
 		area.setRows(lines);
@@ -148,6 +167,7 @@ public class StaticMethods {
 		return new STD(scrollPane, area);
 	}
 	
+	/** A wrapper class for storing a scrolling text display consisting of a JScrollPane and associated JTextArea */
 	public static class STD {
 		public JScrollPane _jsp;
 		public JTextArea _jta;

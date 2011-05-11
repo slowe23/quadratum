@@ -1,5 +1,3 @@
-//TODO:  Review for thread safety, check for dining philosophers problem
-
 package net.quadratum.gui;
 
 import java.awt.*;
@@ -12,6 +10,7 @@ import java.util.*;
 
 import net.quadratum.core.*;
 
+/** A class for displaying the main map and handling associated user interactions */
 public class MapPanel extends JPanel {
 	private static final int DEFAULT_SCALE = 3;  //Default scale level
 	private static final int MIN_SCALE = 2, MAX_SCALE = 8;
@@ -48,6 +47,7 @@ public class MapPanel extends JPanel {
 		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
+	/** Draws the map */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
@@ -125,19 +125,29 @@ public class MapPanel extends JPanel {
 		}
 	}
 	
+	/** Repaints the map and the minimap */
 	public void repaintBoth() {
 		repaint();
 		_minimap.repaint();
 	}
 	
+	/** Returns whether the given map coordinates are currently onscreen */
 	private synchronized boolean isOnscreen(double x, double y) {
 		return x>=_viewX && y>=_viewY && x<_viewX+getViewWidth() && y<_viewY+getViewHeight();
 	}
 	
+	/** Returns whether the given MapPoint is currently onscreen */
 	private synchronized boolean isOnscreen(MapPoint point) {
 		return point._x>=_viewX && point._y>=_viewY && point._x+1<=_viewX+getViewWidth() && point._y+1<=_viewY+getViewHeight();
 	}
 	
+	/**
+	 * Scrolls the view to the given Action
+	 *
+	 * @param a The action
+	 * @param center If true, the map will center on the given action.
+     *               If false, it will center on the given action only if it is not currently onscreen.
+	 */
 	public synchronized void scrollTo(net.quadratum.core.Action a, boolean center) {
 		if(a!=null) {
 			if(a._dest==null)
@@ -151,6 +161,7 @@ public class MapPanel extends JPanel {
 		}
 	}
 	
+	/** Scrolls the view to a given MapPoint */
 	public synchronized void scrollTo(MapPoint point, boolean center) {
 		if(point!=null) {
 			if(center || !(isOnscreen(point)))
@@ -158,15 +169,18 @@ public class MapPanel extends JPanel {
 		}
 	}
 	
+	/** Scrolls the view to a given set of double map coordinates */
 	public synchronized void scrollTo(double x, double y, boolean center) {
 		if(center || !(isOnscreen(x, y)))
 			center(x, y);
 	}
 	
+	/** Centers the view on the given double map coordinates */
 	private synchronized void center(double cx, double cy) {
 		setViewPos(cx-getViewWidth()/2.0, cy-getViewHeight()/2.0);
 	}
 	
+	/** Centers the map on the average position of the placement area */
 	public synchronized void centerAtPlacementArea() {
 		if(_placement!=null) {
 			int size = _placement.size();
@@ -183,6 +197,7 @@ public class MapPanel extends JPanel {
 		}
 	}
 	
+	/** Notifies this component that the placement area has changed */
 	public void placementUpdated() {
 		synchronized(_guiPlayer._mapData) {
 			synchronized(this) {
@@ -197,6 +212,7 @@ public class MapPanel extends JPanel {
 		repaintBoth();
 	}
 	
+	/** Notifies this component that the terrain has changed */
 	public void mapUpdated() {
 		synchronized(_guiPlayer._mapData) {
 			synchronized(this) {
@@ -213,6 +229,7 @@ public class MapPanel extends JPanel {
 		repaintBoth();
 	}
 	
+	/** Notifies this component that the selected unit has changed */
 	public void selectionUpdated() {
 		synchronized(_guiPlayer._unitsData) {
 			synchronized(this) {
@@ -225,6 +242,7 @@ public class MapPanel extends JPanel {
 		repaintBoth();
 	}
 	
+	/** Notifies this unit that the unit data has changed */
 	public void unitsUpdated() {
 		synchronized(_guiPlayer._unitsData) {
 			synchronized(this) {
@@ -240,27 +258,37 @@ public class MapPanel extends JPanel {
 		repaintBoth();
 	}
 	
+	/** Gets the scale in pixels per map square */
 	private synchronized int getScale() {
 		return 16*_scaleLevel;
 	}
 	
+	/** Sets the scale level */
 	public synchronized void setScaleLevel(int scaleLevel) {
 		_scaleLevel = Math.max(MIN_SCALE, Math.min(scaleLevel, MAX_SCALE));
 	}
 	
+	/** Gets the x-coordinate of the left edge of the onscreen area in map coordinates */
 	public synchronized double getViewX() {
 		return _viewX;
 	}
+	
+	/** Gets the y-coordinate of the upper edge of the onscreen area in map coordinates */
 	public synchronized double getViewY() {
 		return _viewY;
 	}
+	
+	/** Gets the width of the onscreen area in map coordinates */
 	public synchronized double getViewWidth() {
 		return getWidth()/((double)(getScale()));
 	}
+	
+	/** Gets the height of the onscreen area in map coordaintes */
 	public synchronized double getViewHeight() {
 		return getHeight()/((double)(getScale()));
 	}
 	
+	/** Sets the view position to the given double map coordinates */
 	public synchronized void setViewPos(double x, double y) {
 		_viewX = x;
 		_viewY = y;
@@ -268,6 +296,7 @@ public class MapPanel extends JPanel {
 		fixViewPos();
 	}
 	
+	/** Adjusts the view position to prevent scrolling too far off the map */
 	private synchronized void fixViewPos() {
 		if(_terrain!=null) {
 			double vW = getViewWidth(), vH = getViewHeight();
@@ -291,6 +320,7 @@ public class MapPanel extends JPanel {
 		}
 	}
 	
+	/** Handles mouse input for moving the map, selecting units, and performing actions */
 	private class MapPanelMouseInputListener extends MouseInputAdapter {
 		private Point _press;  //The location where the mouse was pressed (null when the mouse is not currently pressed)
 		private double _pvx, _pvy;  //The location of the view where the mouse was last pressed
@@ -344,6 +374,7 @@ public class MapPanel extends JPanel {
 		}
 	}
 	
+	/** Handles mouse wheel input for zooming */
 	private class MapPanelMouseWheelListener implements MouseWheelListener {
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			synchronized(MapPanel.this) {
@@ -357,6 +388,7 @@ public class MapPanel extends JPanel {
 		}
 	}
 	
+	/** Handles resize events and keeps the view position reasonable */
 	private class MapPanelComponentListener extends ComponentAdapter {
 		public void componentShown(ComponentEvent e) {
 			fixViewPos();

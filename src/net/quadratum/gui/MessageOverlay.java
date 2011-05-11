@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
+/** A class for displaying a partially transparent chat panel over the map area */
 public class MessageOverlay extends JPanel implements MessageDisplay {
 	private GUIPlayer _guiPlayer;
 	
@@ -19,7 +20,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 	private final FontMetrics FMETR;
 	
 	private static final int MSG_TIME = 7500;  //Max time in ms to display messages
-	private static final int MSG_NUM = 10;  //Max number of messages to display
+	private static final int MSG_NUM = 5;  //Max number of messages to display
 	private static final int MSG_PAD = 5;  //Number of pixels from the edge to pad messages
 	
 	private boolean _showMessages;
@@ -38,29 +39,30 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		setOpaque(false);
 	}
 	
+	/** Sets the visibility of the message display */
 	public void setShowMessages(boolean b) {
 		_showMessages = b;
 		repaint();
 	}
 	
+	/** Turns on the message display */
 	public void showMessages() {
 		setShowMessages(true);
 	}
 	
+	/** Turns off the message display */
 	public void hideMessages() {
 		setShowMessages(false);
 	}
 	
+	/** Gets the visibility of the message display */
 	public boolean getShowMessages() {
 		return _showMessages;
 	}
 	
+	/** Creates a new message from the given player */
 	public void newMessage(int id, String message) {
 		newMessage(new Message(message.split("\n"), _guiPlayer._drawingMethods.getPlayerColor(id)));
-	}
-	
-	public void newMessage(String message) {
-		newMessage(new Message(message.split("\n"), DrawingMethods.FOREGROUND_COLOR));
 	}
 	
 	private void newMessage(Message mess) {
@@ -84,12 +86,14 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		repaint();
 	}
 	
+	/** Clears all currently displayed messages */
 	public void clearMessages() {
 		_msgs = new LinkedList<Message>();
 		
 		repaint();
 	}
 	
+	/** Displays the messages */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
@@ -142,6 +146,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 		}
 	}
 	
+	/** A class for holding a multiline message with an associated display color */
 	private static class Message {
 		public final String[] _lines;
 		public final Color _color;

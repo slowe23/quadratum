@@ -14,7 +14,9 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.event.*;
 
+/** A tabbed panel which isn't as ugly as the Swing one */
 public class MyTabbedPanel extends JPanel {
 	private MyTabBar _tabs;
 	private JPanel _view;
@@ -34,10 +36,23 @@ public class MyTabbedPanel extends JPanel {
 		add(_view, BorderLayout.CENTER);
 	}
 	
+	/**
+	 * Adds a new tab to this panel
+	 *
+	 * @param s The title of the tab
+	 * @param c The associated component
+	 */
 	public void addTab(String s, Component c) {
 		addTab(s, c, false);
 	}
 	
+	/**
+	 * Adds a new tab to this panel
+	 *
+	 * @param s The title of the tab
+	 * @param c The associated component
+	 * @param sel Whether to select the newly-created tab
+	 */
 	public void addTab(String s, Component c, boolean sel) {
 		if(s==null || c==null)
 			throw new NullPointerException();
@@ -53,16 +68,14 @@ public class MyTabbedPanel extends JPanel {
 			c.setVisible(false);
 	}
 	
-	public int getSelected() {
-		return _selected;
-	}
-	
+	/** Selects the first tab */
 	private void selectFirst() {
 		_selected = 0;
 		Component selected = _view.getComponent(_selected);
 		selected.setVisible(true);
 	}
 	
+	/** Selects the tab with the given index */
 	public void setSelected(int s) {
 		int osel = _selected;
 		
@@ -84,14 +97,12 @@ public class MyTabbedPanel extends JPanel {
 		}
 	}
 	
-	private class MyTabBar extends JPanel implements MouseListener, MouseMotionListener {
+	/** A panel for displaying and interacting with the tab bar */
+	private class MyTabBar extends JPanel {
 		private ArrayList<String> _tabs;
 		
 		private final Font FONT;
 		private final FontMetrics FMETRICS;
-		
-		// XXX never used?
-		private int min_height;
 		
 		private static final int XPAD = 5, YPAD = 3;
 		
@@ -105,14 +116,18 @@ public class MyTabbedPanel extends JPanel {
 			
 			setPreferredSize(new Dimension(0, FMETRICS.getAscent()+FMETRICS.getDescent()+YPAD));
 			
-			addMouseListener(this);
-			addMouseMotionListener(this);
+			MouseInputListener mouseIn = new MyTabBarMouseInputListener();
+			
+			addMouseListener(mouseIn);
+			addMouseMotionListener(mouseIn);
 		}
 		
+		/** Adds a new tab to the tab bar */
 		public void addTab(String s) {
 			_tabs.add(s);
 		}
 		
+		/** Displays the tab bar */
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			
@@ -145,42 +160,40 @@ public class MyTabbedPanel extends JPanel {
 			}
 		}
 		
-		public void mouseEntered(MouseEvent e) { }
-		public void mouseExited(MouseEvent e) { }
-		public void mouseMoved(MouseEvent e) { }
-		public void mouseClicked(MouseEvent e) { }
-		
-		public void mousePressed(MouseEvent e) {
-			reactToEvent(e);
-		}
-		
-		public void mouseDragged(MouseEvent e) {
-			reactToEvent(e);
-		}
-		
-		public void mouseReleased(MouseEvent e) {
-			reactToEvent(e);
-		}
-		
-		private void reactToEvent(MouseEvent e) {
-			int sel = getTab(e.getX(), e.getY());
-			if(sel!=_selected)
-				setSelected(sel);
-		}
-		
-		private int getTab(int x, int y) {
-			if(x<0 || x>=getWidth() || y<0 || y>=getHeight())
-				return _selected;
-			
-			int xx = getWidth();
-			for(int i = _tabs.size()-1; i>=0; i--) {
-				int width = FMETRICS.stringWidth(_tabs.get(i))+2*XPAD;
-				xx -= width;
-				if(x>=xx && x<xx+width)
-					return i;
+		/** A class for handling mouse input */
+		private class MyTabBarMouseInputListener extends MouseInputAdapter {
+			public void mousePressed(MouseEvent e) {
+				reactToEvent(e);
 			}
 			
-			return -1;
+			public void mouseDragged(MouseEvent e) {
+				reactToEvent(e);
+			}
+			
+			public void mouseReleased(MouseEvent e) {
+				reactToEvent(e);
+			}
+			
+			private void reactToEvent(MouseEvent e) {
+				int sel = getTab(e.getX(), e.getY());
+				if(sel!=_selected)
+					setSelected(sel);
+			}
+			
+			private int getTab(int x, int y) {
+				if(x<0 || x>=getWidth() || y<0 || y>=getHeight())
+					return _selected;
+				
+				int xx = getWidth();
+				for(int i = _tabs.size()-1; i>=0; i--) {
+					int width = FMETRICS.stringWidth(_tabs.get(i))+2*XPAD;
+					xx -= width;
+					if(x>=xx && x<xx+width)
+						return i;
+				}
+				
+				return -1;
+			}
 		}
 	}
 }

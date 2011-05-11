@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import net.quadratum.core.*;
 
+/** A class for displaying a minimap */
 public class MinimapPanel extends JPanel {
 	private static final int SCALE = 3;  //Pixels per map square
 	private static final int BORDER = 5;  //Pixels of border
@@ -38,6 +39,7 @@ public class MinimapPanel extends JPanel {
 		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
+	/** Notifies the component that the placement area has changed */
 	public void placementUpdated() {
 		synchronized(_guiPlayer._mapData) {
 			synchronized(this) {
@@ -49,6 +51,7 @@ public class MinimapPanel extends JPanel {
 		}
 	}
 	
+	/** Notifies the component that the terrain has changed */
 	public void mapUpdated() {
 		synchronized(_guiPlayer._mapData) {
 			synchronized(this) {
@@ -70,6 +73,7 @@ public class MinimapPanel extends JPanel {
 		}
 	}
 	
+	/** Generates an image mask for the given placement area */
 	private BufferedImage generatePlacementImage(int w, int h, Set<MapPoint> placementArea) {
 		BufferedImage placementImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		
@@ -81,6 +85,7 @@ public class MinimapPanel extends JPanel {
 		return placementImg;
 	}
 	
+	/** Notifies the component that the selection has been updated */
 	public void selectionUpdated() {
 		synchronized(_guiPlayer._unitsData) {
 			synchronized(this) {
@@ -89,6 +94,7 @@ public class MinimapPanel extends JPanel {
 		}
 	}
 	
+	/** Notifies the component that the units have been updated */
 	public void unitsUpdated() {
 		synchronized(_guiPlayer._unitsData) {
 			synchronized(this) {
@@ -99,6 +105,7 @@ public class MinimapPanel extends JPanel {
 		}
 	}
 	
+	/** Generates an image mask for the given sight area */
 	private BufferedImage generateSightImage(int w, int h, Set<MapPoint> sight) {
 		if(sight==null)
 			return null;
@@ -113,6 +120,7 @@ public class MinimapPanel extends JPanel {
 		return sightImg;
 	}
 	
+	/** Calculates the pixel offsets for the map image */
 	private int[] calcOffsets(double vx, double vy, double vw, double vh) {
 		int offx, offy;
 		
@@ -151,7 +159,7 @@ public class MinimapPanel extends JPanel {
 		return new int[] {offx, offy};
 	}
 	
-	// Paints the minimap
+	/** Paints the minimap */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
@@ -234,6 +242,7 @@ public class MinimapPanel extends JPanel {
 		}
 	}
 	
+	/** A class for handing mouse clicks by centering the map at the clicked location */
 	private class MinimapPanelMouseListener extends MouseAdapter {
 		public void mouseClicked(MouseEvent e) {
 			boolean ok = false;
