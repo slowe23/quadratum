@@ -191,7 +191,7 @@ public class CoreActions
 	public static Set<MapPoint> getTotalSightArea(int player, List<Unit> units, List<UnitInformation> unitInformation, int[][] terrain) {
 		Set<MapPoint> totalSight = new HashSet<MapPoint>();
 		for (int i = 0; i < units.size(); i++) {
-			if (units.get(i)._owner == player) {
+			if (units.get(i)._owner == player && !unitInformation.get(i)._position.equals(new MapPoint(-1, -1))) {
 				totalSight.addAll(getAreaForUnit(i,2,units,unitInformation,terrain,totalSight));
 			}
 		}

@@ -101,9 +101,10 @@ public interface Core {
 	 * @param pieceID the ID of the piece that the player wishes to place in the
 	 * given unit
 	 * @param coords The coordinates in the unit where the piece should be placed
+	 * @param rotation the rotation of the block
 	 * @return true if the update succeeded, false otherwise
 	 */
-	public boolean updateUnit(Player p, int unitID, int pieceID, MapPoint coords);
+	public boolean updateUnit(Player p, int unitID, int pieceID, MapPoint coords, int rotation);
 	
 	/**
 	 * Returns the name of a player
