@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import net.quadratum.core.Piece;
 
+/** A panel for displaying pieces for a given player */
 public class PiecesPanel extends JPanel {
 	private PieceListPanel _pieceListPanel;
 	private JButton _scrollUp, _scrollDown, _rotate;
@@ -59,6 +60,7 @@ public class PiecesPanel extends JPanel {
 		addComponentListener(new PiecesPanelComponentListener());
 	}
 	
+	/** Sets the pieces list to the given list */
 	public void setPieces(List<Piece> pieces) {
 		synchronized(_pieceListPanel) {
 			_pieceListPanel.setPieces(pieces);
@@ -74,11 +76,13 @@ public class PiecesPanel extends JPanel {
 		repaint();
 	}
 	
+	/** Updates the player's resources */
 	public void updateResources(int resources) {
 		_resources = resources;
 		updateUIP();
 	}
 	
+	/** Updates the unit image panel according to the currently selected piece and whether that piece is affordable */
 	private void updateUIP() {
 		if(isVisible()) {
 			synchronized(_pieceListPanel) {
@@ -94,6 +98,7 @@ public class PiecesPanel extends JPanel {
 		}
 	}
 	
+	/** Gets a string description of the given piece */
 	private String getPieceString(Piece p) {
 		if(p==null)
 			return "";
@@ -101,7 +106,9 @@ public class PiecesPanel extends JPanel {
 			return p._name + "\nCost: "+p._cost+"\n" + p._description;
 	}
 	
+	/** An action listener for this component's buttons */
 	private class PiecesPanelActionListener implements ActionListener {
+		/** Responds to buttons by updating things appropriately */
 		public void actionPerformed(ActionEvent e) {
 			synchronized(_pieceListPanel) {
 				Object source = e.getSource();
@@ -123,6 +130,7 @@ public class PiecesPanel extends JPanel {
 		}
 	}
 	
+	/** A component listener for this component -- notifies the unit info panel of tab visibility */
 	private class PiecesPanelComponentListener extends ComponentAdapter {
 		public void componentShown(ComponentEvent e) {
 			updateUIP();

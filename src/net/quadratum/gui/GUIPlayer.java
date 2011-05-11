@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.quadratum.core.*;
 
+/** A class implementing the Player interface that serves as the connection between the core and the GUI */
 public class GUIPlayer implements Player {
 	private int _id;
 	
@@ -46,6 +47,7 @@ public class GUIPlayer implements Player {
 		_readyLock = new Object();
 	}
 	
+	/** Gives the GUI player references to the various components that receive updates */
 	public void setStuff(MapPanel map, UnitInfoPanel selectedInfo, UnitImagePanel selectedImage, UnitsPanel units, PiecesPanel pieces, ButtonsPanel buttons, ObjectivesPanel objectives) {
 		_map = map;
 		_selectedInfo = selectedInfo;
@@ -169,6 +171,7 @@ public class GUIPlayer implements Player {
 		_chat.incomingMessage(from, message);
 	}
 	
+	/** Sends a message to the core to place a piece in the given unit */
 	public void placePiece(Unit unit, int ind, int rotation, MapPoint pos) {
 		blockUntilReady();
 		
@@ -179,6 +182,7 @@ public class GUIPlayer implements Player {
 		}
 	}
 	
+	/** Handles a click on the map by placing a unit, selecting or deselecting, or performing an action, as appropriate */
 	public void click(MapPoint point) {
 		blockUntilReady();
 		
@@ -216,6 +220,7 @@ public class GUIPlayer implements Player {
 		}
 	}
 	
+	/** Handles a click off the map by deselecting the selected unit */
 	public void clickOut() {
 		blockUntilReady();
 		
@@ -225,6 +230,7 @@ public class GUIPlayer implements Player {
 		}
 	}
 	
+	/** Sends out notifications that the placement phase of the game has ended */
 	public void placementDone() {
 		blockUntilReady();
 		
@@ -238,23 +244,26 @@ public class GUIPlayer implements Player {
 		}
 	}
 	
+	/** Called when the turn is done */
 	public void turnDone() {
 		_core.endTurn(this);
 	}
 	
+	/** Called when the game window is closing */
 	public void closing() {
 		blockUntilReady();
 		
 		_core.quit(this);
 	}
 	
+	/** Called when the player has forfeited the game */
 	public void forfeit() {
 		blockUntilReady();
 		
 		_core.quit(this);
-		_gameWindow.setVisible(false);
 	}
 	
+	/** Called in order to select a given unit */
 	public void selectUnit(Unit u) {
 		blockUntilReady();
 		
@@ -265,6 +274,7 @@ public class GUIPlayer implements Player {
 		}
 	}
 	
+	/** Sends out resource updated notifications */
 	private void resourcesUpdated() {
 		blockUntilReady();
 		
@@ -272,18 +282,21 @@ public class GUIPlayer implements Player {
 		_pieces.updateResources(_core.getResources(this));
 	}
 	
+	/** Sends out placement updated notifications */
 	private void placementUpdated() {
 		blockUntilReady();
 		
 		_map.placementUpdated();
 	}
 	
+	/** Sends out map updated notifications */
 	private void mapUpdated() {
 		blockUntilReady();
 		
 		_map.mapUpdated();
 	}
 	
+	/** Sends out selection updated notifications */
 	private void selectionUpdated() {
 		blockUntilReady();
 		
@@ -293,6 +306,7 @@ public class GUIPlayer implements Player {
 		_units.selectionUpdated();
 	}
 	
+	/** Sends out unit updated notifications */
 	private void unitsUpdated() {
 		blockUntilReady();
 		
@@ -302,6 +316,7 @@ public class GUIPlayer implements Player {
 		_units.unitsUpdated();
 	}
 	
+	/** Blocks until the start method has finished setting things up */
 	private void blockUntilReady() {
 		synchronized(_readyLock) {
 			while(!_ready) {

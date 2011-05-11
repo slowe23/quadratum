@@ -12,6 +12,7 @@ import java.util.ListIterator;
 //References: http://www.javaspecialists.eu/archive/Issue010.html
 //            http://download.oracle.com/javase/tutorial/uiswing/layout/custom.html
 
+/** A layout manager that handles components in a row or column that have each been assigned a relative weight */
 public class LineLayout implements LayoutManager2 {
 	public static final int HORIZONTAL = 1, VERTICAL = 0;
 	public static final int FORWARD = 2, REVERSE = 0;
@@ -23,11 +24,12 @@ public class LineLayout implements LayoutManager2 {
 	
 	private final boolean _horizontal, _forward;
 	
-	private java.util.List<WeightedComponent> _comps;  //Components with weights
+	private java.util.List<WeightedComponent> _comps;  //List of components with associated weights
 
 	private Double _weightSum;  //Cached total weight for visible components.  May be null if no value has been cached
 	private Dimension _min, _pref, _max;  //Cached Dimensions for minimum, preferred, and maximum size.  May be null if no value has been cached
 	
+	/** Creates a new line layout with the given line direction */
 	public LineLayout(int dir) {
 		_comps = new ArrayList<WeightedComponent>();
 		
@@ -40,10 +42,12 @@ public class LineLayout implements LayoutManager2 {
 		_forward = (dir & 2) != 0;
 	}
 	
+	/** Adds a new layout component */
 	public void addLayoutComponent(String name, Component comp) {
 		addLayoutComponent(comp, new LineConstraints());
 	}
 	
+	/** Adds a new layout component with the given constraints */
 	public void addLayoutComponent(Component comp, Object constraints) {
 		if(constraints==null)
 			constraints = new LineConstraints();  //If constraints are null, use default constraints
@@ -66,6 +70,7 @@ public class LineLayout implements LayoutManager2 {
 			throw new IllegalArgumentException("Could not add layout component due to invalid constraint object type: "+constraints.getClass());
 	}
 	
+	/** Removes the given component */
 	public void removeLayoutComponent(Component comp) {
 		for(Iterator<WeightedComponent> i = _comps.iterator(); i.hasNext();) {
 			if(i.next().component == comp) {
@@ -75,6 +80,10 @@ public class LineLayout implements LayoutManager2 {
 		}
 	}
 	
+	/**
+	 * Calculates and caches the total weight of all visible components
+	 * Not thread-safe.
+	 */
 	private double getTotalWeight() {
 		if(_weightSum==null) {
 			_weightSum = 0.0;
@@ -87,6 +96,7 @@ public class LineLayout implements LayoutManager2 {
 		return _weightSum;
 	}
 	
+	/** Gets the minimum size the component should be */
 	public Dimension minimumLayoutSize(Container parent) {
 		if(_min==null) {
 			double totalWeight = getTotalWeight();
@@ -112,6 +122,7 @@ public class LineLayout implements LayoutManager2 {
 		return _min;
 	}
 	
+	/** Gets the preferred container size */
 	public Dimension preferredLayoutSize(Container parent) {
 		if(_pref==null) {
 			double totalWeight = getTotalWeight();
@@ -137,6 +148,7 @@ public class LineLayout implements LayoutManager2 {
 		return _pref;
 	}
 	
+	/** Gets the maximum size this container should be */
 	public Dimension maximumLayoutSize(Container parent) {
 		if(_max==null) {
 			double totalWeight = getTotalWeight();
@@ -162,14 +174,17 @@ public class LineLayout implements LayoutManager2 {
 		return _max;
 	}
 	
+	/** Gets a new Dimension with a width and height equal to the maximum width and height of the given dimensions */
 	private static Dimension getMaxDimension(Dimension d1, Dimension d2) {
 		return new Dimension(Math.max(d1.width, d2.width), Math.max(d1.height, d2.height));
 	}
 	
+	/** Gets a new Dimension with a width and height equal to the minimum width and height of the given dimensions */
 	private static Dimension getMinDimension(Dimension d1, Dimension d2) {
 		return new Dimension(Math.min(d1.width, d2.width), Math.min(d1.height, d2.height));
 	}
 	
+	/** Adds insets to a given Dimension */
 	private static void addInsets(Dimension d, Insets insets) {
 		int width = d.width, height = d.height;
 		width += insets.left + insets.right;
@@ -177,6 +192,7 @@ public class LineLayout implements LayoutManager2 {
 		d.setSize(width, height);
 	}
 	
+	/** Returns the alignment along the x axis. */
 	public float getLayoutAlignmentX(Container target) {
 		if(_horizontal) {
 			if(_forward)
@@ -187,6 +203,8 @@ public class LineLayout implements LayoutManager2 {
 			return 0.5f;
 		}
 	}
+	
+	/** Returns the alignment along the y axis. */
 	public float getLayoutAlignmentY(Container target) {
 		if(_horizontal)
 			return 0.5f;
@@ -198,6 +216,7 @@ public class LineLayout implements LayoutManager2 {
 		}
 	}
 	
+	/** Clears cached layout data */
 	public void invalidateLayout(Container target) {
 		_weightSum = null;
 		_min = null;
@@ -205,6 +224,7 @@ public class LineLayout implements LayoutManager2 {
 		_max = null;
 	}
 	
+	/** Lays out the given container */
 	public void layoutContainer(Container target) {
 		Insets insets = target.getInsets();
 		Dimension size = target.getSize();
@@ -235,7 +255,7 @@ public class LineLayout implements LayoutManager2 {
 	}
 }
 
-//A class that adapts a list iterator into a regular iterator that iterates either normally or in reverse over the list
+/** A class that adapts a list iterator into a regular iterator that iterates either normally or in reverse over the list */
 class Literator<E> implements Iterator<E> {
 	private ListIterator<E> _it;
 	private boolean _forward;
@@ -267,7 +287,7 @@ class Literator<E> implements Iterator<E> {
 	}
 }
 
-//A simple class for storing a component and a positive double weight value
+/** A simple class for storing a component and a positive double weight value */
 class WeightedComponent {
 	public final double weight;
 	public final Component component;

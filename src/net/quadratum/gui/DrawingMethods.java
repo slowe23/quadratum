@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import net.quadratum.core.*;
 import net.quadratum.core.Action.ActionType;
 
+/** A class that provides graphical methods that are used by the various GUI components */
 public class DrawingMethods {
 	public static final Color BACKGROUND_COLOR = Color.BLACK, NEUTRAL_COLOR = Color.GRAY, FOREGROUND_COLOR = Color.WHITE;
 	
@@ -23,13 +24,23 @@ public class DrawingMethods {
 	
 	public DrawingMethods() { }
 	
-	public Color getPlayerColor(int id) {
-		if(id>=0 && id<PLAYER_COLORS.length)
-			return PLAYER_COLORS[id];
+	/**
+	 * Gets the Color of a given player
+	 *
+	 * @param player The id of the player in question.
+	 */
+	public Color getPlayerColor(int player) {
+		if(player>=0 && player<PLAYER_COLORS.length)
+			return PLAYER_COLORS[player];
 		else
 			return Color.WHITE;
 	}
 	
+	/**
+	 * Gets the color of a terrain tile
+	 *
+	 * @param terrainValue An integer representing the terrain type
+	 */
 	public Color getTerrainTileColor(int terrainValue) {
 		if(TerrainConstants.isOfType(terrainValue, TerrainConstants.IMPASSABLE))
 			return IMPASSIBLE_COLOR;
@@ -41,6 +52,13 @@ public class DrawingMethods {
 			return LAND_COLOR;
 	}
 	
+	/**
+	 * Draws terrain features for a given terrain tile
+	 *
+	 * @param g A Graphics object whose origin is the upper left corner of the tile
+	 * @param terrainValue An integer representing the terrain type
+	 * @param size The size of the tile (and of the Graphics object's clip rectangle)
+	 */
 	public void drawTerrainFeatures(Graphics g, int terrainValue, int size) {
 		
 		int s = size-4;
@@ -73,6 +91,14 @@ public class DrawingMethods {
 		}
 	}
 	
+	/**
+	 * Draws a single terrain tile
+	 *
+	 * @param g A Graphics object whose origin is the upper left corner of the tile
+	 * @param terrainValue An integer representing the terrain type
+	 * @param size The size of the tile (and of the Graphics object's clip rectangle)
+	 * @param showGrid Whether or not to draw in grid lines for the tile
+	 */
 	public void drawTerrainTile(Graphics g, int terrainValue, int size, boolean showGrid) {
 		g.setColor(LAND_COLOR);
 		g.fillRect(0, 0, size, size);
@@ -85,12 +111,25 @@ public class DrawingMethods {
 		}
 	}
 	
+	/**
+	 * Gets an image of a given terrain tile
+	 *
+	 * @param terrainValue An integer representing the terrain type
+	 * @param size The size of the tile (and of the resulting image)
+	 * @param showGrid Whether or not to draw in grid lines for the tile
+	 */
 	public BufferedImage getTerrainTileImage(int terrainValue, int size, boolean showGrid) {
 		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 		drawTerrainTile(img.getGraphics(), terrainValue, size, showGrid);
 		return img;
 	}
 	
+	/**
+	 * Gets the partially transparent color to be used as a mask over the placement area
+	 *
+	 * @param player The id of the player in question.
+	 * @param placement Whether the mask is for the placement or non-placement area
+	 */
 	public Color getPlacementMaskColor(int player, boolean placement) {
 		if(placement) {
 			Color pCol = getPlayerColor(player);
@@ -99,6 +138,15 @@ public class DrawingMethods {
 			return new Color(0, 0, 0, 63);
 	}
 	
+	/**
+	 * Draws the placement mask over a map tile
+	 *
+	 * @param g A Graphics object whose origin is the upper left corner of the tile
+	 * @param player The id of the player in question.
+	 * @param placementArea The set of all map points in the placement area
+	 * @param location The map point where the tile to be drawn is located
+	 * @param size The size of the tile (and of the Graphics object's clip rectangle)
+	 */
 	public void drawPlacementMask(Graphics g, int player, Set<MapPoint> placementArea, MapPoint location, int size) {
 		if(placementArea.contains(location)) {
 			g.setColor(getPlacementMaskColor(player, true));
@@ -133,12 +181,25 @@ public class DrawingMethods {
 		}
 	}
 	
+	/**
+	 * Gets an image of the placement mask for a map tile
+	 *
+	 * @param player The id of the player in question.
+	 * @param placementArea The set of all map points in the placement area
+	 * @param location The map point where the tile to be drawn is located
+	 * @param size The size of the tile (and of the resulting image)
+	 */
 	public BufferedImage getPlacementMaskImage(int player, Set<MapPoint> placementArea, MapPoint location, int size) {
 		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 		drawPlacementMask(img.getGraphics(), player, placementArea, location, size);
 		return img;
 	}
 	
+	/**
+	 * Gets the partially transparent color to be used as a mask over the visible area
+	 *
+	 * @param sight Whether the mask is for the visible or non-visible area
+	 */
 	public Color getSightMaskColor(boolean sight) {
 		if(sight)
 			return new Color(0, 0, 0, 0);
@@ -146,17 +207,35 @@ public class DrawingMethods {
 			return new Color(0, 0, 0, 127);
 	}
 	
+	/**
+	 * Draws the visible area mask over a tile
+	 *
+	 * @param g A Graphics object whose origin is the upper left corner of the tile
+	 * @param sight Whether the mask is for the visible or non-visible area
+	 * @param size The size of the tile (and of the Graphics object's clip rectangle)
+	 */
 	public void drawSightMask(Graphics g, boolean sight, int size) {
 		g.setColor(getSightMaskColor(sight));
 		g.fillRect(0, 0, size, size);
 	}
 	
+	/**
+	 * Creates an image of the visible area mask for a tile
+	 *
+	 * @param sight Whether the mask is for the visible or non-visible area
+	 * @param size The size of the tile (and of the resulting image)
+	 */
 	public BufferedImage getSightMaskImage(boolean sight, int size) {
 		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 		drawSightMask(img.getGraphics(), sight, size);
 		return img;
 	}
 	
+	/**
+	 * Gets the Color corresponding to the given Block bonus type
+	 *
+	 * @param bonus The bonus type
+	 */
 	public Color getBonusTypeColor(Block.BonusType bonus) {
 		switch(bonus) {
 			case ATTACK:
@@ -180,6 +259,11 @@ public class DrawingMethods {
 		}
 	}
 	
+	/**
+	 * Gets the Color for a given block before adjusting for health
+	 *
+	 * @param b the Block in question
+	 */
 	public Color getBlockBaseColor(Block b) {
 		int red = 0, green = 0, blue = 0;
 		for(Block.BonusType type : b._bonuses.keySet()) {
@@ -197,6 +281,11 @@ public class DrawingMethods {
 		return new Color(red, green, blue);
 	}
 	
+	/**
+	 * Gets the Color for a given block
+	 *
+	 * @param b The block in question
+	 */
 	public Color getBlockColor(Block b) {
 		Color c = getBlockBaseColor(b);
 		
@@ -209,44 +298,76 @@ public class DrawingMethods {
 		return new Color((int)(c.getRed()*healthAmount), (int)(c.getGreen()*healthAmount), (int)(c.getBlue()*healthAmount));
 	}
 	
-	public void drawBlock(Graphics g, Block b, int size) {
+	/**
+	 * Draws a block
+	 *
+	 * @param g A Graphics object whose origin is the upper left corner of the block
+	 * @param b The block in question
+	 * @param blockSize The size of the block (and of the Graphics object's clip rectangle)
+	 */
+	public void drawBlock(Graphics g, Block b, int blockSize) {
 		g.setColor(getBlockColor(b));
-		g.fillRect(0, 0, size, size);
+		g.fillRect(0, 0, blockSize, blockSize);
 		
-		drawBlockMask(g, size);
+		drawBlockMask(g, blockSize);
 	}
 	
-	public BufferedImage getBlockImage(Block b, int size) {
-		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-		drawBlock(img.getGraphics(), b, size);
+	/**
+	 * Gets an image of a given block
+	 *
+	 * @param b The block in question
+	 * @param blockSize The size of the block (and of the resulting image)
+	 */
+	public BufferedImage getBlockImage(Block b, int blockSize) {
+		BufferedImage img = new BufferedImage(blockSize, blockSize, BufferedImage.TYPE_INT_ARGB);
+		drawBlock(img.getGraphics(), b, blockSize);
 		return img;
 	}
 	
-	public void drawBlockMask(Graphics g, int size) {
-		int bevelSize = Math.min(5, size/6);
+	/**
+	 * Draws a decorative mask over a given block
+	 *
+	 * @param g A Graphics object whose origin is the upper left corner of the block
+	 * @param blockSize The size of the block (and of the Graphics object's clip rectangle)
+	 */
+	public void drawBlockMask(Graphics g, int blockSize) {
+		int bevelSize = Math.min(5, blockSize/6);
 		
 		if(bevelSize>0) {
 			//Draw sides of bevel
-			g.setColor(new Color(255, 255, 255, 63));
+			g.setColor(new Color(255, 255, 255, 127));
 			for(int i = 0; i<bevelSize; i++) {
-				g.drawLine(0, i, size-1-i, i);
-				g.drawLine(i, bevelSize, i, size-1-i);
+				g.drawLine(0, i, blockSize-1-i, i);
+				g.drawLine(i, bevelSize, i, blockSize-1-i);
 			}
 			
-			g.setColor(new Color(0, 0, 0, 63));
+			g.setColor(new Color(0, 0, 0, 127));
 			for(int i = 0; i<bevelSize; i++) {
-				g.drawLine(i+1, size-1-i, size-1, size-1-i);
-				g.drawLine(size-1-i, i+1, size-1-i, size-1-bevelSize);
+				g.drawLine(i+1, blockSize-1-i, blockSize-1, blockSize-1-i);
+				g.drawLine(blockSize-1-i, i+1, blockSize-1-i, blockSize-1-bevelSize);
 			}
 		}
 	}
 	
-	public BufferedImage getBlockMaskImage(int size) {
-		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-		drawBlockMask(img.getGraphics(), size);
+	/**
+	 * Gets an image of the mask to draw over a given block
+	 *
+	 * @param blockSize The size of the block (and of the Graphics object's clip rectangle)
+	 */
+	public BufferedImage getBlockMaskImage(int blockSize) {
+		BufferedImage img = new BufferedImage(blockSize, blockSize, BufferedImage.TYPE_INT_ARGB);
+		drawBlockMask(img.getGraphics(), blockSize);
 		return img;
 	}
 	
+	/**
+	 * Draws a given unit
+	 *
+	 * @param g A Graphics object whose origin is the upper left corner of the tile where the unit is located
+	 * @param unit The unit in question
+	 * @param blockSize The size of the blocks making up the unit
+	 * @param size The size of the tile where the unit is located (and of the Graphics object's clip rectangle)
+	 */
 	public void drawUnit(Graphics g, Unit unit, int blockSize, int size) {
 		int uSize = (unit._size+2)*blockSize;
 
@@ -268,12 +389,27 @@ public class DrawingMethods {
 		g.fillRect(off + uSize-blockSize, off + blockSize, blockSize, uSize-2*blockSize);
 	}
 	
+	/**
+	 * Gets an image for a given unit
+	 *
+	 * @param unit The unit in question
+	 * @param blockSize The size of the blocks making up the unit
+	 * @param size The size of the tile where the unit is located (and of the resulting image)
+	 */
 	public BufferedImage getUnitImage(Unit unit, int blockSize, int size) {
 		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 		drawUnit(img.getGraphics(), unit, blockSize, size);
 		return img;
 	}
 	
+	/**
+	 * Draws a piece
+	 *
+	 * @param g A Graphics object whose origin is the upper left corner of the piece
+	 * @param piece The piece in question
+	 * @param rotation The orientation of the piece
+	 * @param blockSize The size of the blocks making up the piece
+	 */
 	public void drawPiece(Graphics g, Piece piece, int rotation, int blockSize) {
 		int[] bounds = piece.getBounds(rotation);
 		int xsize = bounds[2]-bounds[0]+1, ysize = bounds[3]-bounds[1]+1;
@@ -295,6 +431,13 @@ public class DrawingMethods {
 		}
 	}
 	
+	/**
+	 * Gets an image for a given piece
+	 *
+	 * @param piece The piece in question
+	 * @param rotation The orientation of the piece
+	 * @param blockSize The size of the blocks making up the piece
+	 */
 	public BufferedImage getPieceImage(Piece piece, int rotation, int blockSize) {
 		int[] bounds = piece.getBounds(rotation);
 		int xsize = bounds[2]-bounds[0]+1, ysize = bounds[3]-bounds[1]+1;
@@ -304,6 +447,11 @@ public class DrawingMethods {
 		return img;
 	}
 	
+	/**
+	 * Gets the Color corresponding to a given action type
+	 *
+	 * @param actionType The action type
+	 */
 	public Color getActionTypeColor(ActionType actionType) {
 		if(actionType==ActionType.MOVE)
 			return Color.CYAN;
@@ -313,12 +461,21 @@ public class DrawingMethods {
 			return Color.WHITE;
 	}
 	
+	/**
+	 * Draws the given action type
+	 *
+	 * @param g A Graphics object whose origin is the upper left corner of the tile on which to display the action
+	 * @param actionType The action type
+	 * @param unitLocation The location of the unit performing the action
+	 * @param actionLocation The location where the action is being performed
+	 * @param size The size of the tile on which to display the action (and of the Graphics object's clip rectangle)
+	 */
 	public void drawActionType(Graphics g, ActionType actionType, MapPoint unitLocation, MapPoint actionLocation, int size) {
 		g.setColor(getActionTypeColor(actionType));
 		int dx = actionLocation._x-unitLocation._x, dy = actionLocation._y-unitLocation._y;
 		double angle;
 		if(dx==0) {
-			if(dy>0)
+			if(dy>=0)
 				angle = 0.5*Math.PI;
 			else
 				angle = 1.5*Math.PI;
@@ -337,6 +494,14 @@ public class DrawingMethods {
 		g.fillPolygon(new Polygon(xs, ys, 4));
 	}
 	
+	/**
+	 * Gets an image for a given action type
+	 *
+	 * @param actionType The action type
+	 * @param unitLocation The location of the unit performing the action
+	 * @param actionLocation The location where the action is being performed
+	 * @param size The size of the tile on which to display the action (and of the resulting image)
+	 */
 	public BufferedImage getActionTypeImage(ActionType actionType, MapPoint unitLocation, MapPoint actionLocation, int size) {
 		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 		drawActionType(img.getGraphics(), actionType, unitLocation, actionLocation, size);
