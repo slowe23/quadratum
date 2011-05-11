@@ -18,7 +18,7 @@ import net.quadratum.core.Player;
 import net.quadratum.core.Unit;
 import net.quadratum.util.Serializer;
 
-public class NetworkPlayer extends NetworkClient implements Player {
+public class NetworkPlayer extends NetworkClient implements Player, Pingable {
 	
 	/** Core that this Player belongs to. */
 	Core _core;
@@ -215,10 +215,25 @@ public class NetworkPlayer extends NetworkClient implements Player {
 			write("objectives\t"+objectives.replaceAll("(\r)?\n","\t"));
 		}
 	}
+	
+	@Override
+	public boolean keepListening() {
+		return !_done;
+	}
+	
+	@Override
+	public void ping() {
+		write("ping");
+	}
 
 	@Override
 	protected boolean doneReading() {
 		return _done;
+	}
+	
+	@Override
+	protected void disconnected() {
+		close();
 	}
 	
 	@Override
@@ -227,4 +242,5 @@ public class NetworkPlayer extends NetworkClient implements Player {
 		super.close();
 	}
 
+	
 }

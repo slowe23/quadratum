@@ -367,12 +367,12 @@ public class MapEditor extends JFrame {
 		final JLabel lblWidth = new JLabel("Width");
 		final JSpinner spinnerWidth = new JSpinner(new SpinnerNumberModel(
 				MEConstants.DEFAULT_SIZE_X, MEConstants.MIN_SIZE,
-				MEConstants.MAX_SIZE, 1));
+				MEConstants.MAX_SIZE, MEConstants.STEP_SIZE));
 
 		final JLabel lblHeight = new JLabel("Height");
 		final JSpinner spinnerHeight = new JSpinner(new SpinnerNumberModel(
 				MEConstants.DEFAULT_SIZE_Y, MEConstants.MIN_SIZE,
-				MEConstants.MAX_SIZE, 1));
+				MEConstants.MAX_SIZE, MEConstants.STEP_SIZE));
 
 		final JLabel lblTerrain = new JLabel("Terrain");
 		final JComboBox comboboxTerrain = new JComboBox(new String[] { "Land",
