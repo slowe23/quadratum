@@ -23,6 +23,7 @@ public class UnitImagePanel extends JPanel {
 	private boolean _showHover;
 	private Piece _hover;
 	private int _hIndex;
+	private int _hRrrk;
 	private MapPoint _hPos;
 	
 	public UnitImagePanel(GUIPlayer player) {
@@ -44,6 +45,7 @@ public class UnitImagePanel extends JPanel {
 		Unit selected;
 		int uSize = 0, scale = 0, uSSize = 0, ox = 0, oy = 0;
 		Piece hover;
+		int hRot;
 		boolean show;
 		MapPoint hPos;
 		synchronized(this) {
@@ -58,6 +60,7 @@ public class UnitImagePanel extends JPanel {
 			
 			show = _showHover;
 			hover = _hover;
+			hRot = _hRrrk;
 			hPos = _hPos;
 		}
 		
@@ -77,10 +80,11 @@ public class UnitImagePanel extends JPanel {
 			}
 			
 			if(selected._owner==_guiPlayer.getID() && hover!=null && show) {
-				for(Map.Entry<MapPoint, Block> entry : hover._blocks.entrySet()) {
+				int[] hB = hover.getBounds(hRot);
+				for(Map.Entry<MapPoint, Block> entry : hover.getBlocks(hRot).entrySet()) {
 					MapPoint p = new MapPoint(entry.getKey());
-					p._x += hPos._x;
-					p._y += hPos._y;
+					p._x += hPos._x - hB[0];
+					p._y += hPos._y - hB[1];
 					if(p._x>=0 && p._x<uSize && p._y>=0 && p._y<uSize) {
 						g.setColor(StaticMethods.applyAlpha(_guiPlayer._drawingMethods.getBlockColor(entry.getValue()), 127));
 						g.fillRect(ox + p._x*scale, oy + p._y*scale, scale, scale);
@@ -110,8 +114,9 @@ public class UnitImagePanel extends JPanel {
 		repaint();
 	}
 	
-	public synchronized void pieceSelected(int index, Piece selPiece) {
+	public synchronized void pieceSelected(int index, Piece selPiece, int rotation) {
 		_hover = selPiece;
+		_hRrrk = rotation;
 		_hIndex = index;
 		repaint();
 	}

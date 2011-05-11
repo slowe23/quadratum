@@ -273,15 +273,15 @@ public class DrawingMethods {
 		return img;
 	}
 	
-	public void drawPiece(Graphics g, Piece piece, int blockSize) {
-		int[] bounds = piece.getBounds();
+	public void drawPiece(Graphics g, Piece piece, int rotation, int blockSize) {
+		int[] bounds = piece.getBounds(rotation);
 		int xsize = bounds[2]-bounds[0]+1, ysize = bounds[3]-bounds[1]+1;
 		int offx = -1*bounds[0], offy = -1*bounds[1];
 		
 		BufferedImage mask = new BufferedImage(blockSize, blockSize, BufferedImage.TYPE_INT_ARGB);
 		drawBlockMask(mask.getGraphics(), blockSize);
 		
-		for(MapPoint mP : piece._blocks.keySet()) {
+		for(MapPoint mP : piece.getRotatedBlocks(rotation).keySet()) {
 			Block b = piece._blocks.get(mP);
 			int x = (offx+mP._x)*blockSize, y = (offy+mP._y)*blockSize;
 			
@@ -292,12 +292,12 @@ public class DrawingMethods {
 		}
 	}
 	
-	public BufferedImage getPieceImage(Piece piece, int blockSize) {
-		int[] bounds = piece.getBounds();
+	public BufferedImage getPieceImage(Piece piece, int rotation, int blockSize) {
+		int[] bounds = piece.getBounds(rotation);
 		int xsize = bounds[2]-bounds[0]+1, ysize = bounds[3]-bounds[1]+1;
 		
 		BufferedImage img = new BufferedImage(xsize, ysize, BufferedImage.TYPE_INT_ARGB);
-		drawPiece(img.getGraphics(), piece, blockSize);
+		drawPiece(img.getGraphics(), piece, rotation, blockSize);
 		return img;
 	}
 	
