@@ -92,6 +92,8 @@ public class Piece implements Serializable {
 	 * Coordinates are stored in the following order: {min_x, min_y, max_x, max_y}
 	 */
 	public int[] getBounds(int rotation) {
+		int lx, ly, ux, uy;
+		
 		synchronized(_boundsLock) {
 			if(_bounds==null) {
 				_bounds = new int[4];
@@ -109,18 +111,17 @@ public class Piece implements Serializable {
 					any = true;
 				}
 			}
+			lx = _bounds[0]; 
+			ly = _bounds[1]; 
+			ux = _bounds[2]; 
+			uy = _bounds[3];
 		}
 		
-		int lx = _bounds[0], ly = _bounds[1], ux = _bounds[2], uy = _bounds[3], temp;
-		
+		int temp;
 		for (int i = 0; i < rotation; i++) {
-			// Rotation is swapped because of the swapped y axis
-			// Lower left becomes upper left (lower bounds)
 			temp = lx;
 			lx = -uy;
-			uy = temp;
-			// Upper right becomes lower right (upper bounds)
-			temp = ux;
+			uy = ux;
 			ux = -ly;
 			ly = temp;
 		}
