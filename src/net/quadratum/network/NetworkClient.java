@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 public abstract class NetworkClient implements Closeable, Pingable {
 	
@@ -86,7 +86,7 @@ public abstract class NetworkClient implements Closeable, Pingable {
 				while (!doneReading() && (line = _in.readLine()) != null) {
 					new ProcessThread(line).start();
 				}
-			} catch (SocketException e) {
+			} catch (SocketTimeoutException e) {
 				disconnected();
 				close();
 			} catch (IOException e) {

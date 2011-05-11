@@ -212,7 +212,7 @@ public class NetworkPlayer extends NetworkClient implements Player, Pingable {
 			// The player wants to know the objectives.
 			String objectives = _core.getObjectives(this);
 			// send back the objectives, replacing all newlines with tabs
-			write("objectives\t"+objectives.replaceAll("(\r)?\n","\t"));
+			write("objectives\t"+objectives.replaceAll("(\r)?\n","\t")+"\n");
 		}
 	}
 	
@@ -223,7 +223,7 @@ public class NetworkPlayer extends NetworkClient implements Player, Pingable {
 	
 	@Override
 	public void ping() {
-		write("ping");
+		write("ping\n");
 	}
 
 	@Override
