@@ -42,7 +42,8 @@ public class MainConstants {
 	
 	public static final String MAP_DIRECTORY = "maps/";
 	
-	
+	public static final int SOCKET_TIMEOUT = 45000;
+	public static final int PING_TIME = 15000;
 	
 	public static class Defaults {
 		// Map-related default settings

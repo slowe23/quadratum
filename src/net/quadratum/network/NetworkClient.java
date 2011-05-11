@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.SocketException;
 
-public abstract class NetworkClient implements Closeable {
+public abstract class NetworkClient implements Closeable, Pingable {
 	
 	/** Socket that this NetworkClient is using. */
 	Socket _sock;
@@ -25,6 +26,7 @@ public abstract class NetworkClient implements Closeable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		new PingThread(this).start();
 	}
 
 	/**
@@ -52,6 +54,11 @@ public abstract class NetworkClient implements Closeable {
 	 */
 	protected abstract boolean doneReading();
 	
+	/**
+	 * What happens when the player is disconnected.
+	 */
+	protected abstract void disconnected();
+	
 	@Override
 	public void close() {
 		try {
@@ -61,6 +68,11 @@ public abstract class NetworkClient implements Closeable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void ping() {
+		write("ping");
 	}
 	
 	class ReadThread extends Thread {
@@ -74,6 +86,9 @@ public abstract class NetworkClient implements Closeable {
 				while (!doneReading() && (line = _in.readLine()) != null) {
 					new ProcessThread(line).start();
 				}
+			} catch (SocketException e) {
+				disconnected();
+				close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

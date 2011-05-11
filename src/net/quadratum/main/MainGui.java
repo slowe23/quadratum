@@ -25,6 +25,7 @@ import net.quadratum.core.WinCondition;
 import net.quadratum.gamedata.DefaultPieces;
 import net.quadratum.gamedata.Level;
 import net.quadratum.gui.GUIPlayer;
+import net.quadratum.network.NetworkPlayer;
 import net.quadratum.network.VirtualPlayer;
 import net.quadratum.test.CheckWinnerTest;
 
@@ -231,7 +232,7 @@ public class MainGui extends JFrame
 		ServerThread server = new ServerThread(set.getPort());
 		server.run();
 		try {wait(2000);} catch (Exception e) {}
-		List<Player> others = server.stopListening();
+		List<NetworkPlayer> others = server.stopListening();
 		
 		Player human = new GUIPlayer();
 		

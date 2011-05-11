@@ -405,4 +405,14 @@ public class VirtualCore extends NetworkClient implements Core {
 	protected boolean doneReading() {
 		return _done;
 	}
+
+	@Override
+	protected void disconnected() {
+		_localPlayer.end(new GameStats(-1, "Disconnected from server"));
+	}
+
+	@Override
+	public boolean keepListening() {
+		return !_done;
+	}
 }
