@@ -2,6 +2,7 @@ package net.quadratum.core;
 
 import java.io.Serializable;
 
+// Represents a single action that a unit can take/has taken (special case: there is an action for the game starting)
 public class Action implements Serializable {
 
 	/**
@@ -22,8 +23,7 @@ public class Action implements Serializable {
 		ATTACK,
 		UNIT_DIED,
 		GAME_START,
-		UNIT_UPDATED,
-		GATHER_RESOURCES;
+		UNIT_UPDATED;
 	}
 	
 	/**

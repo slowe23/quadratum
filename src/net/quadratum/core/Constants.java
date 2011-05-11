@@ -1,5 +1,6 @@
 package net.quadratum.core;
 
+// Whole bunch of constants
 public class Constants
 {
 	/** Maximum players a game can have. */

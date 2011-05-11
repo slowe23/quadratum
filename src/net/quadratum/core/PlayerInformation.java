@@ -1,5 +1,6 @@
 package net.quadratum.core;
 
+// Holds information about a single player that we don't want to let other players know about
 public class PlayerInformation {
 
 	/**

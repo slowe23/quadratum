@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+// Represents a single unit
 public class Unit implements Serializable {
 		
 	/**

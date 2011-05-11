@@ -2,6 +2,7 @@ package net.quadratum.core;
 
 import java.util.Map;
 
+// Specifies how the core of the game should be implemented
 public interface Core {
 	
 	/**

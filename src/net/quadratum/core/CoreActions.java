@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+// Some static methods that are shared between GameCore and VirtualCore
 public class CoreActions
 {
 	/**
@@ -198,6 +199,7 @@ public class CoreActions
 		return totalSight;
 	}
 	
+	// Holds a point and an int (this is used in BFS where the int is the distance left that can be traveled)
 	private static class PointAndNum
 	{
 		MapPoint _point;

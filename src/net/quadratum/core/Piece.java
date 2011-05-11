@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+// Represents a single piece
 public class Piece implements Serializable {
 	
 	public static final int ROTATE_NONE = 0;
