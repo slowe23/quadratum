@@ -111,7 +111,6 @@ public class PiecesPanel extends JPanel {
 					_pieceListPanel.scrollDown();
 				} else if(source==_rotate) {
 					_pieceListPanel.rotatePiece(1);
-					return;
 				}
 				
 				_pieceInfo.setText(getPieceString(_pieceListPanel.getCurrentPiece()));

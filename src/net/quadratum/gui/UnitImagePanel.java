@@ -150,8 +150,10 @@ public class UnitImagePanel extends JPanel {
 		
 		public void mouseClicked(MouseEvent e) {
 			synchronized(UnitImagePanel.this) {
-				if(_showHover && _hover!=null)
-					_guiPlayer.placePiece(_selected, _hIndex, _hRrrk, _hPos);
+				if(_showHover && _hover!=null) {
+					int[] hB = _hover.getBounds(_hRrrk);
+					_guiPlayer.placePiece(_selected, _hIndex, _hRrrk, new MapPoint(_hPos._x-hB[0], _hPos._y-hB[1]));
+				}
 			}
 		}
 	}
