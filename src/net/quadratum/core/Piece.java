@@ -69,6 +69,24 @@ public class Piece implements Serializable {
 	}
 	
 	/**
+	 * Adds a block to this Piece
+	 * @param p
+	 * @param b
+	 * @return whether or not there was a block already in the specified position
+	 */
+	public boolean addBlock(MapPoint p, Block b) {
+		synchronized(_boundsLock) {
+			_bounds = null;
+			if (_blocks.containsKey(p)) {
+				return false;
+			} else {
+				_blocks.put(p,b);
+				return true;
+			}			
+		}
+	}
+	
+	/**
 	 * Compute the minimum and maximum coordinates (relative to the piece's origin) of blocks in this piece
 	 * Coordinates are stored in the following order: {min_x, min_y, max_x, max_y}
 	 */

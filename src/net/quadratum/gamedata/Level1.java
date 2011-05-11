@@ -76,7 +76,7 @@ public class Level1 implements Level
 			{
 				for(int j = 0; j < 7; j += 2)
 				{
-					_core.updateUnit(this, unit, 4, new MapPoint(i, j));
+					_core.updateUnit(this, unit, 4, new MapPoint(i, j), Piece.ROTATE_NONE);
 				}
 			}
 			
@@ -86,7 +86,7 @@ public class Level1 implements Level
 			{
 				for(int j = 0; j < 7; j += 2)
 				{
-					_core.updateUnit(this, unit, 4, new MapPoint(i, j));
+					_core.updateUnit(this, unit, 4, new MapPoint(i, j), Piece.ROTATE_NONE);
 				}
 			}
 			
@@ -110,28 +110,28 @@ public class Level1 implements Level
 			int unit = _core.placeUnit(this, location, new String("Royal Guard"));
 			for(int i = 0; i < 7; i += 2)
 			{
-				_core.updateUnit(this, unit, 4, new MapPoint(0, i));
+				_core.updateUnit(this, unit, 4, new MapPoint(0, i), Piece.ROTATE_NONE);
 			}
-			_core.updateUnit(this, unit, 2, new MapPoint(2, 0));
-			_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
-			_core.updateUnit(this, unit, 0, new MapPoint(6, 0));
-			_core.updateUnit(this, unit, 0, new MapPoint(5, 1));
-			_core.updateUnit(this, unit, 0, new MapPoint(5, 3));
-			_core.updateUnit(this, unit, 0, new MapPoint(5, 5));
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 0), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 5), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 0, new MapPoint(6, 0), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 0, new MapPoint(5, 1), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 0, new MapPoint(5, 3), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 0, new MapPoint(5, 5), Piece.ROTATE_NONE);
 		}
 		
 		// Places a defender
 		private void placeDefender(MapPoint location)
 		{
 			int unit = _core.placeUnit(this, location, new String("Defender"));
-			_core.updateUnit(this, unit, 4, new MapPoint(6, 0));
-			_core.updateUnit(this, unit, 4, new MapPoint(6, 6));
-			_core.updateUnit(this, unit, 0, new MapPoint(0, 3));
-			_core.updateUnit(this, unit, 0, new MapPoint(0, 5));
-			_core.updateUnit(this, unit, 2, new MapPoint(3, 0));
-			_core.updateUnit(this, unit, 2, new MapPoint(2, 5));
-			_core.updateUnit(this, unit, 3, new MapPoint(5, 4));
-			_core.updateUnit(this, unit, 3, new MapPoint(6, 2));
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 0), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 4, new MapPoint(6, 6), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 3), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 0, new MapPoint(0, 5), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 2, new MapPoint(3, 0), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 2, new MapPoint(2, 5), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 3, new MapPoint(5, 4), Piece.ROTATE_NONE);
+			_core.updateUnit(this, unit, 3, new MapPoint(6, 2), Piece.ROTATE_NONE);
 		}
 		
 		public void updatePieces(List<Piece> pieces) {}
