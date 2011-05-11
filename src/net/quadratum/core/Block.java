@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+// Represents one block
 public class Block implements Serializable {
 
 	/**

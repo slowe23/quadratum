@@ -1,5 +1,6 @@
 package net.quadratum.core;
 
+// Defines the types of terrain
 public class TerrainConstants
 {
 	/** Constant representing land. */

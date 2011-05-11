@@ -16,6 +16,7 @@ import java.util.Set;
 
 import net.quadratum.main.Main;
 
+// Implements all the game logic and is charge or running a single game
 public class GameCore implements Core
 {
 	private Main _main;

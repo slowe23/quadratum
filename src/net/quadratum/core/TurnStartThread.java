@@ -1,6 +1,6 @@
 package net.quadratum.core;
 
-
+// Used to call run() without blocking
 public class TurnStartThread extends Thread
 {
 	/** Player whose turn this thread needs to start. */

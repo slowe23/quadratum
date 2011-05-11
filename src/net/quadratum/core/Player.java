@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+// Represents a single player in the game (can be implemented by GUIs, AIs, etc.)
 public interface Player {
 
 	/** Notifies the player that there is a new game. */
