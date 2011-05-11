@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.quadratum.ai.LevelAI;
+import net.quadratum.ai.TurretBehavior;
 import net.quadratum.core.Action;
 import net.quadratum.core.Core;
 import net.quadratum.core.GameStats;
@@ -54,39 +56,36 @@ public class Level1 implements Level
 		return pieces;
 	}
 	
-	private class Level1AI implements Player
+	private class Level1AI extends LevelAI
 	{
-		Core _core;
-		Map<MapPoint, Integer> _units;
-		Object _lockObject;
-
 		public Level1AI()
 		{
-			_lockObject = new Object();
+			super();
 		}
-
-		public void start(Core core, MapData mapData, int id, int totalPlayers)
+		
+		public void createUnits(int id)
 		{
-			_core = core;
-			int unit;
-			
-			// Place kings
-			unit = _core.placeUnit(this, new MapPoint(19, 4), new String("King"));
-			for(int i = 0; i < 7; i += 2)
-			{
-				for(int j = 0; j < 7; j += 2)
+			// Place king
+			int unit = _core.placeUnit(this, new MapPoint(19, 4), new String("King"));
+			if (unit != -1) {
+				for(int i = 0; i < 7; i += 2)
 				{
-					_core.updateUnit(this, unit, 4, new MapPoint(i, j), Piece.ROTATE_NONE);
+					for(int j = 0; j < 7; j += 2)
+					{
+						_core.updateUnit(this, unit, 4, new MapPoint(i, j), Piece.ROTATE_NONE);
+					}
 				}
 			}
 			
 			// Place queen
 			unit = _core.placeUnit(this, new MapPoint(19, 5), new String("Queen"));
-			for(int i = 0; i < 7; i += 2)
-			{
-				for(int j = 0; j < 7; j += 2)
+			if (unit != -1) {
+				for(int i = 0; i < 7; i += 2)
 				{
-					_core.updateUnit(this, unit, 4, new MapPoint(i, j), Piece.ROTATE_NONE);
+					for(int j = 0; j < 7; j += 2)
+					{
+						_core.updateUnit(this, unit, 4, new MapPoint(i, j), Piece.ROTATE_NONE);
+					}
 				}
 			}
 			
@@ -101,13 +100,17 @@ public class Level1 implements Level
 			placeDefender(new MapPoint(12, 6));
 			placeDefender(new MapPoint(13, 3));
 			placeDefender(new MapPoint(13, 6));
-			_core.ready(this);
 		}
 		
 		// Places a royal guard
 		private void placeRoyalGuard(MapPoint location)
 		{
 			int unit = _core.placeUnit(this, location, new String("Royal Guard"));
+			if(unit == -1)
+			{
+				return;
+			}
+			registerUnit(unit, new TurretBehavior());
 			for(int i = 0; i < 7; i += 2)
 			{
 				_core.updateUnit(this, unit, 4, new MapPoint(0, i), Piece.ROTATE_NONE);
@@ -124,6 +127,11 @@ public class Level1 implements Level
 		private void placeDefender(MapPoint location)
 		{
 			int unit = _core.placeUnit(this, location, new String("Defender"));
+			if(unit == -1)
+			{
+				return;
+			}
+			registerUnit(unit, new TurretBehavior());
 			_core.updateUnit(this, unit, 4, new MapPoint(6, 0), Piece.ROTATE_NONE);
 			_core.updateUnit(this, unit, 4, new MapPoint(6, 6), Piece.ROTATE_NONE);
 			_core.updateUnit(this, unit, 0, new MapPoint(0, 3), Piece.ROTATE_NONE);
@@ -133,59 +141,6 @@ public class Level1 implements Level
 			_core.updateUnit(this, unit, 3, new MapPoint(5, 4), Piece.ROTATE_NONE);
 			_core.updateUnit(this, unit, 3, new MapPoint(6, 2), Piece.ROTATE_NONE);
 		}
-		
-		public void updatePieces(List<Piece> pieces) {}
-		
-		public void end(GameStats stats) {}
-		
-		public void lost() {}
-		
-		public void turnStart()
-		{
-			synchronized(_lockObject)
-			{
-				Map<MapPoint, Action.ActionType> valid;
-				Set<MapPoint> keys = _units.keySet();
-				for(MapPoint key : keys)
-				{
-					valid = _core.getValidActions(this, _units.get(key).intValue());
-					if(valid == null)
-					{
-						continue;
-					}
-					for(MapPoint point : valid.keySet())
-					{
-						if(valid.get(point) == Action.ActionType.ATTACK)
-						{
-							_core.unitAction(this, _units.get(key), point);
-							continue;
-						}
-					}
-				}
-				_core.endTurn(this);
-			}
-		}
-
-		public void updateMapData(MapData mapData) {}
-
-		public void updateMap(Map<MapPoint,Integer> units, Set<MapPoint> sight, Action lastAction)
-		{
-			synchronized(_lockObject)
-			{
-				_units = new HashMap<MapPoint, Integer>();
-				for(MapPoint key : units.keySet())
-				{
-					if(_core.getUnit(this, units.get(key).intValue())._owner == 1)
-					{
-						_units.put(new MapPoint(key), new Integer(units.get(key)));
-					}
-				}
-			}
-		}
-
-		public void chatMessage(int from, String message) {}
-
-		public void updateTurn(int id) {}
 	}
 
 	private class Level1WinCondition implements WinCondition
