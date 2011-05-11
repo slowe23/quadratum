@@ -768,12 +768,12 @@ public class GameCore implements Core
 				// One of these should always be in the bounds.
 				if (ybound1 <= y && y <= ybound2) {
 					putPoint(map,x % size,y % size,
-							1-fracy,steep,swap,size);
+							1-fracy,steep);
 				}
 				y++;
 				if (ybound1 <= y && y <= ybound2) {
 					putPoint(map,x % size,y % size,
-							fracy,steep,swap,size);
+							fracy,steep);
 				}
 				// Add the map.
 				log("Attempting to add map "+map,1);
@@ -812,7 +812,7 @@ public class GameCore implements Core
 	 * @param steep whether or not the coordinates should be transposed.
 	 */
 	private void putPoint(Map<MapPoint,Double> map, int x, int y, 
-			double d, boolean steep, boolean swap, int size) {
+			double d, boolean steep) {
 		if (steep) {
 			log("Adding point at "+y+","+x+" with value "+d,1);
 			map.put(new MapPoint(y,x),d);
@@ -1317,10 +1317,11 @@ public class GameCore implements Core
 	 * @param unitId the id of the unit
 	 * @param pieceId the id of the piece to add
 	 * @param coords the coordinates in the unit to place the piece
+	 * @param rotation the rotation of the piece
 	 * @return true if the piece is added sucessfuly, false otherwise
 	 */
 	@Override
-	public boolean updateUnit(Player p, int unitId, int pieceId, MapPoint coords)
+	public boolean updateUnit(Player p, int unitId, int pieceId, MapPoint coords, int rotation)
 	{
 		synchronized(_turnLockObject)
 		{
@@ -1365,7 +1366,8 @@ public class GameCore implements Core
 					+ "\tAnswer: false", 2);
 				return false;
 			}
-			for(MapPoint key : piece._blocks.keySet())
+			Map<MapPoint,Block> blocks = piece.getRotatedBlocks(rotation);
+			for(MapPoint key : blocks.keySet())
 			{
 				if(unit._blocks.containsKey(new MapPoint(coords._x + key._x, coords._y + key._y)))
 				{
@@ -1383,9 +1385,9 @@ public class GameCore implements Core
 				}
 			}
 			Block toAdd;
-			for(MapPoint key : piece._blocks.keySet())
+			for(MapPoint key : blocks.keySet())
 			{
-				toAdd = new Block(piece._blocks.get(key));
+				toAdd = new Block(blocks.get(key));
 				for(Block.BonusType bonus : toAdd._bonuses.keySet())
 				{
 					unit._stats.put(bonus, toAdd._bonuses.get(bonus) + unit._stats.get(bonus));

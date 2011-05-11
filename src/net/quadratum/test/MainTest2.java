@@ -26,11 +26,11 @@ public class MainTest2 implements Main {
 		awesomeBlock._bonuses.put(Block.BonusType.SIGHT, 100);
 		awesomeBlock._bonuses.put(Block.BonusType.MOVEMENT, 100);
 		awesomeBlock._bonuses.put(Block.BonusType.WATER_MOVEMENT, 100);
-		Piece awesomePiece = new Piece(10, -1, "Awesome Piece", "Provides awesome");
-		awesomePiece._blocks.put(new MapPoint(0, 0), new Block(awesomeBlock));
-		awesomePiece._blocks.put(new MapPoint(0, 1), new Block(awesomeBlock));
-		awesomePiece._blocks.put(new MapPoint(1, 0), new Block(awesomeBlock));
-		awesomePiece._blocks.put(new MapPoint(1, 1), new Block(awesomeBlock));
+		Piece awesomePiece = new Piece(10, "Awesome Piece", "Provides awesome");
+		awesomePiece.addBlock(new MapPoint(0, 0), new Block(awesomeBlock));
+		awesomePiece.addBlock(new MapPoint(0, 1), new Block(awesomeBlock));
+		awesomePiece.addBlock(new MapPoint(1, 0), new Block(awesomeBlock));
+		awesomePiece.addBlock(new MapPoint(1, 1), new Block(awesomeBlock));
 		pieces.add(awesomePiece);
 		// core
 		GameCore core = new GameCore(new MainTest2(),

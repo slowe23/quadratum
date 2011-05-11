@@ -12,6 +12,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -27,9 +30,8 @@ import net.quadratum.gamedata.Level3;
 import net.quadratum.gamedata.Level4;
 import net.quadratum.gamedata.Level5;
 
-public class CampaignPanel extends JPanel implements ActionListener, MouseListener {
+public class CampaignPanel extends JPanel implements ActionListener, MouseListener{
 
-	
 	private MainGui _main;
 	
 	private JButton _playBtn, _returnMainBtn;
@@ -42,6 +44,7 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 		  new Point(190,455), new Point(250, 475), new Point(310, 435)}; // Where level buttons appear on map
 	private static Level[] _levels;
 	private static LvlStatus[] _wins;
+	private static int[] _invalidLevels;
 	
 	private int _levelSelected, _xOffMap, _yOffMap, _xOffIcon, _yOffIcon;
 	private static int _maxLevel;
@@ -66,8 +69,8 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 		//  Map with levels in center. Navigational buttons at southeast.
 		
 		try {
-		_mapImg = Toolkit.getDefaultToolkit().createImage("imgs/campaignMap.gif");
-		_battleImg = Toolkit.getDefaultToolkit().createImage("imgs/campaignBattle.gif");
+			_mapImg = Toolkit.getDefaultToolkit().createImage("imgs/campaignMap.gif");
+			_battleImg = Toolkit.getDefaultToolkit().createImage("imgs/campaignBattle.gif");
 		} catch (Exception e) {
 			System.err.println("Could not load campaign icons.");
 			_mapImg = new BufferedImage(600, 600, BufferedImage.TYPE_INT_RGB);
@@ -75,12 +78,12 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 		}
 		_xOffIcon = 20;//_battleImg.getWidth(null)/2;
 		_yOffIcon = 20;//_battleImg.getHeight(null)/2;
-		JPanel mapPane = new JPanel() {
+		JPanel mapPane = new JPanel() {//implements ImageObserver {
 			public void paint(Graphics g)
 		    {
-		        g.drawImage(_mapImg, 0, 0, null);
+		        g.drawImage(_mapImg, 0, 0, this);
 		        for(Point p : _levelLocs) {
-		        	g.drawImage(_battleImg, p.x-_xOffIcon, p.y-_yOffIcon, null);
+		        	g.drawImage(_battleImg, p.x-_xOffIcon, p.y-_yOffIcon, this);
 		        }
 		    }
 		};
@@ -181,39 +184,88 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 	}
 	
 	private static void loadLevelInfo() {
-		// TODO hard-code level info
 		// - load info about number of levels
-		
-		// Currently hardcoded for demonstration
-		int numLevels = 5;
-		
-		_levels = new Level[numLevels + 1];
-		//_levels[0] = new Tutorial();
-		_levels[1] = new Level1();
-		_levels[2] = new Level2();
-		_levels[3] = new Level3();
-		_levels[4] = new Level4();
-		_levels[5] = new Level5();
-		
-		//load associated win/loss info from a data file
-		_wins = new LvlStatus[numLevels + 1];
-		
-		_wins[0] = LvlStatus.BEATEN;
-		_wins[1] = LvlStatus.BEATEN;
-		_wins[2] = LvlStatus.LOST;
-		_wins[3] = LvlStatus.UNPLAYED;
-		_wins[4] = LvlStatus.UNPLAYED;
-		_wins[5] = LvlStatus.UNPLAYED;
-		
-		_maxLevel = 5;
+		BufferedReader fin = null;
+		int firstUnbeaten;
+		try {
+			// Campaign data file has the following information:
+			// number of levels, not including tutorial
+			// locations of level battles on map, separated as so: x,y;x,y ...
+			// first unbeaten level
+			// whether that level is lost or unplayed (0/anything else)
+			// levels that are disabled, separated by commas
+			fin = new BufferedReader(new FileReader("net/quadratum/gamedata/campaign.dat"));
+			_maxLevel = Integer.parseInt(fin.readLine());
+			String[] locsS = fin.readLine().split(";");
+			Point[] locsP = new Point[locsS.length];
+			boolean locsGood = true;
+			for(int i = 0; i < locsS.length; i++) {
+				String next = locsS[i].trim();
+				int comma = next.indexOf(',');
+				if(comma < 0) {
+					locsGood = false;
+					break;
+				}
+				String x = next.substring(0, comma);
+				String y = next.substring(comma + 1);
+				try {
+					locsP[i] = new Point(Integer.parseInt(x), Integer.parseInt(y));
+				} catch (Exception e) {
+					locsGood = false;
+					break;
+				}
+				
+				if(locsGood)	_levelLocs = locsP;
+			}
+			
+			_wins = new LvlStatus[_maxLevel + 1];
+			firstUnbeaten = Integer.parseInt(fin.readLine());
+			for(int i = 0; i < firstUnbeaten; i++) {
+				_wins[i] = LvlStatus.BEATEN;
+			}
+			if(Integer.parseInt(fin.readLine()) == 0)
+				_wins[firstUnbeaten] = LvlStatus.LOST;
+			
+			String[] invLvls = (fin.readLine().split(","));
+			_invalidLevels = new int[invLvls.length];
+			for(int i = 0; i < _invalidLevels.length; i++) {
+				_invalidLevels[i] = Integer.parseInt(invLvls[i].trim());
+			}
+		} catch (Exception e) {
+			_maxLevel = 5;
+			
+			_wins = new LvlStatus[_maxLevel + 1];
+			
+			_wins[0] = LvlStatus.BEATEN;
+			_wins[1] = LvlStatus.BEATEN;
+			_wins[2] = LvlStatus.LOST;
+			_wins[3] = LvlStatus.UNPLAYED;
+			_wins[4] = LvlStatus.UNPLAYED;
+			_wins[5] = LvlStatus.UNPLAYED;
+		} finally {
+
+			// Currently hardcoded		
+			_levels = new Level[_maxLevel + 1];
+			//_levels[0] = new Tutorial();
+			_levels[1] = new Level1();
+			_levels[2] = new Level2();
+			_levels[3] = new Level3();
+			_levels[4] = new Level4();
+			_levels[5] = new Level5();
+			
+			_invalidLevels = new int[] {0, 4, 5};
+			
+			try {if(fin != null) fin.close();} catch (Exception e) {}
+		}
 	}
 	
 	private Level getLevel(int num) {
 		
-		// temporary safeguard:
-		if(num>3 || num <1)
-			return null;
-		
+		// Safeguard if some levels aren't implemented
+		for(int i : _invalidLevels) {
+			if(num==i)
+				return null;
+		}
 		
 		if(canPlay(num)) {
 			return _levels[num];
@@ -221,7 +273,6 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 		
 		return null;
 	}
-	
 	
 	
 	private enum LvlStatus {

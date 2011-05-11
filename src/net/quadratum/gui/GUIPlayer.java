@@ -169,10 +169,10 @@ public class GUIPlayer implements Player {
 		_chat.incomingMessage(from, message);
 	}
 	
-	public void placePiece(Unit unit, int ind, MapPoint pos) {
+	public void placePiece(Unit unit, int ind, int rotation, MapPoint pos) {
 		blockUntilReady();
 		
-		if(_core.updateUnit(this, unit._id, ind, pos)) {
+		if(_core.updateUnit(this, unit._id, ind, pos, rotation)) {
 			_unitsData.refreshUnit(unit._id);
 			unitsUpdated();
 			resourcesUpdated();

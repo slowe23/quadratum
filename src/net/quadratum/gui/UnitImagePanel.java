@@ -81,7 +81,7 @@ public class UnitImagePanel extends JPanel {
 			
 			if(selected._owner==_guiPlayer.getID() && hover!=null && show) {
 				int[] hB = hover.getBounds(hRot);
-				for(Map.Entry<MapPoint, Block> entry : hover.getBlocks(hRot).entrySet()) {
+				for(Map.Entry<MapPoint, Block> entry : hover.getRotatedBlocks(hRot).entrySet()) {
 					MapPoint p = new MapPoint(entry.getKey());
 					p._x += hPos._x - hB[0];
 					p._y += hPos._y - hB[1];
@@ -151,7 +151,7 @@ public class UnitImagePanel extends JPanel {
 		public void mouseClicked(MouseEvent e) {
 			synchronized(UnitImagePanel.this) {
 				if(_showHover && _hover!=null)
-					_guiPlayer.placePiece(_selected, _hIndex, _hPos);
+					_guiPlayer.placePiece(_selected, _hIndex, _hRrrk, _hPos);
 			}
 		}
 	}

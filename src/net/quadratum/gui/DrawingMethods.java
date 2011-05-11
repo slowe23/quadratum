@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import net.quadratum.core.*;
 import net.quadratum.core.Action.ActionType;
@@ -281,8 +282,10 @@ public class DrawingMethods {
 		BufferedImage mask = new BufferedImage(blockSize, blockSize, BufferedImage.TYPE_INT_ARGB);
 		drawBlockMask(mask.getGraphics(), blockSize);
 		
-		for(MapPoint mP : piece.getRotatedBlocks(rotation).keySet()) {
-			Block b = piece._blocks.get(mP);
+		for(Entry<MapPoint, Block> entry : piece.getRotatedBlocks(rotation).entrySet()) {
+			MapPoint mP = entry.getKey();
+			Block b = entry.getValue();
+			
 			int x = (offx+mP._x)*blockSize, y = (offy+mP._y)*blockSize;
 			
 			g.setColor(getBlockBaseColor(b));
