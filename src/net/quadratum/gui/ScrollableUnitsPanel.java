@@ -9,7 +9,7 @@ import javax.swing.*;
 
 import java.util.*;
 
-//A panel to display and select a player's units
+/** A panel to display and select a player's units */
 public class ScrollableUnitsPanel extends JPanel implements Scrollable {
 	private final GUIPlayer _guiPlayer;
 	
@@ -40,6 +40,7 @@ public class ScrollableUnitsPanel extends JPanel implements Scrollable {
 		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
+	/** Paints the units in a row along with their names */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
@@ -80,6 +81,7 @@ public class ScrollableUnitsPanel extends JPanel implements Scrollable {
 		}
 	}
 	
+	/** Notifies the component that the units have been updated */
 	public synchronized void unitsUpdated() {
 		synchronized(_guiPlayer._unitsData) {
 			_units = _guiPlayer._unitsData.getPlayerUnits();
@@ -87,16 +89,19 @@ public class ScrollableUnitsPanel extends JPanel implements Scrollable {
 		}
 	}
 	
+	/** Notifies the component taht the selected unit has changed */
 	public synchronized void selectionUpdated() {
 		synchronized(_guiPlayer._unitsData) {
 			_selID = _guiPlayer._unitsData.getSelectedID();
 		}
 	}
 	
+	/** Gets the minimum size of this component */
 	public Dimension getMinimumSize() {
 		return new Dimension(WIDTH, HEIGHT);
 	}
 	
+	/** Gets the preferred size of this component */
 	public synchronized Dimension getPreferredSize() {
 		if(_units==null)
 			return new Dimension(WIDTH, HEIGHT);
@@ -104,26 +109,32 @@ public class ScrollableUnitsPanel extends JPanel implements Scrollable {
 			return new Dimension(Math.max(1, _units.size())*WIDTH, HEIGHT);
 	}
 	
+	/** Gets the preferred size of the viewport displaying a portion of this component */
 	public Dimension getPreferredScrollableViewportSize() {
 		return getPreferredSize();
 	}
 	
+	/** Gets the number of pixels corresponding to one "unit" of scrolling */
 	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-		return 1;  //TODO: center on current unit or advance one unit if current unit is centered
+		return 1;
 	}
 	
+	/** Gets the number of pixels corresponding to one "block" of scrolling */
 	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-		return 1;  //TODO: advance one unit
+		return 1;
 	}
 	
+	/** Returns whether the component should be resized to match viewport height */
 	public boolean getScrollableTracksViewportHeight() {
 		return true;  //No vertical scrolling
 	}
 	
+	/** Returns whether the component should be resized to match viewport width */
 	public boolean getScrollableTracksViewportWidth() {
 		return false;
 	}
 	
+	/** A mouse listener that responds to clicks by attempting to select the clicked-on unit */
 	private class ScrollableUnitsPanelMouseListener extends MouseAdapter {
 		public void mouseClicked(MouseEvent e) {
 			java.util.List<Unit> units;

@@ -11,8 +11,7 @@ import javax.swing.event.*;
 
 import net.quadratum.core.*;
 
-//TODO: Only display piece when tabbed panel is on pieces tab
-
+/** Class for displaying the selected unit and placing pieces */
 public class UnitImagePanel extends JPanel {
 	private GUIPlayer _guiPlayer;
 	
@@ -38,6 +37,7 @@ public class UnitImagePanel extends JPanel {
 		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
+	/** Displays an image of the selected unit, with an overlay of the currently selected piece if applicable */
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -100,6 +100,7 @@ public class UnitImagePanel extends JPanel {
 		}
 	}
 	
+	/** Notifies this component that the selected unit may have changed */
 	public void selectionUpdated() {
 		synchronized(_guiPlayer._unitsData) {
 			synchronized(this) {
@@ -109,11 +110,13 @@ public class UnitImagePanel extends JPanel {
 		repaint();
 	}
 	
+	/** Notifies this component that no piece is currently selected in the build tab */
 	public synchronized void noPieceSelected() {
 		_hover = null;
 		repaint();
 	}
 	
+	/** Notifies this component that the given piece has been selected in the building tab */
 	public synchronized void pieceSelected(int index, Piece selPiece, int rotation) {
 		_hover = selPiece;
 		_hRrrk = rotation;
@@ -122,14 +125,17 @@ public class UnitImagePanel extends JPanel {
 	}
 	
 	private class UnitImagePanelMouseInputListener extends MouseInputAdapter {
+		/** Updates the location of the piece preview */
 		public void mouseMoved(MouseEvent e) {
 			adjustHoverPosition(e);
 		}
 		
+		/** Updates the location of the piece preview */
 		public void mouseDragged(MouseEvent e) {
 			adjustHoverPosition(e);
 		}
 		
+		/** Sets the position of the piece placement preview based on the mouse location */
 		private void adjustHoverPosition(MouseEvent e) {
 			synchronized(UnitImagePanel.this) {
 				_showHover = true;
@@ -141,6 +147,7 @@ public class UnitImagePanel extends JPanel {
 			}
 		}
 		
+		/** Responds to a mouse exit event by hiding the piece placement preview */
 		public void mouseExited(MouseEvent e) {
 			synchronized(UnitImagePanel.this) {
 				_showHover = false;
@@ -148,9 +155,10 @@ public class UnitImagePanel extends JPanel {
 			repaint();
 		}
 		
+		/** Responds to a mouse click by attempting to place a piece, if possible */
 		public void mouseClicked(MouseEvent e) {
 			synchronized(UnitImagePanel.this) {
-				if(_showHover && _hover!=null) {
+				if(_showHover && _hover!=null && _selected._owner==_guiPlayer.getID()) {
 					int[] hB = _hover.getBounds(_hRrrk);
 					_guiPlayer.placePiece(_selected, _hIndex, _hRrrk, new MapPoint(_hPos._x-hB[0], _hPos._y-hB[1]));
 				}

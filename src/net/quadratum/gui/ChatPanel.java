@@ -13,6 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+/** A panel for sending and viewing chat messages */
 public class ChatPanel extends JPanel {
 	private ChatHandler _chatHandler;
 	private MessageDisplay _messageDisplay;
@@ -71,12 +72,19 @@ public class ChatPanel extends JPanel {
 		_chatHandler.setChatPanel(this);
 	}
 	
+	/** Allow the user to being interacting with the chat panel */
 	public void start() {
 		_field.setEnabled(true);
 		_fieldButton.setEnabled(true);
 		_show.setEnabled(true);
 	}
 	
+	/**
+	 * Display a message from a given player
+	 *
+	 * @param from The ID of the sender of the message
+	 * @param message The message
+	 */
 	public void addMessage(int from, String message) {
 		String msg = _chatHandler.getPlayerName(from) + ": " + message;
 		synchronized(_area) {
@@ -89,6 +97,7 @@ public class ChatPanel extends JPanel {
 		}
 	}
 	
+	/** A class for handling button events */
 	private class ChatPanelActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(_field.getText().length()>0) {
@@ -98,6 +107,7 @@ public class ChatPanel extends JPanel {
 		}
 	}
 	
+	/** A class for handling item events from the input text field */
 	private class ChatPanelItemListener implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			_messageDisplay.setShowMessages(e.getStateChange()==ItemEvent.SELECTED);

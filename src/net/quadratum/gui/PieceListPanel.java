@@ -7,6 +7,7 @@ import java.awt.*;
 
 import net.quadratum.core.Piece;
 
+/** A panel for displaying a certain piece out of a list of pieces */
 public class PieceListPanel extends JPanel {
 	GUIPlayer _guiPlayer;
 	
@@ -22,6 +23,7 @@ public class PieceListPanel extends JPanel {
 		setBackground(DrawingMethods.BACKGROUND_COLOR);
 	}
 	
+	/** Displays the piece */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
@@ -47,6 +49,7 @@ public class PieceListPanel extends JPanel {
 		}
 	}
 	
+	/** Sets the piece list */
 	public synchronized void setPieces(List<Piece> pieces) {
 		if(pieces==null) {
 			_pieces = null;
@@ -78,6 +81,7 @@ public class PieceListPanel extends JPanel {
 		}
 	}
 	
+	/** Gets the ID of the currently displayed piece (null if nothing is selected) */
 	public synchronized Integer getCurrentPieceID() {
 		if(_pieces==null || _pieces.length==0)
 			return null;
@@ -85,6 +89,7 @@ public class PieceListPanel extends JPanel {
 		return _index;
 	}
 	
+	/** Gets the currently displayed piece (or null if nothing) */
 	public synchronized Piece getCurrentPiece() {
 		if(_pieces==null || _pieces.length==0)
 			return null;
@@ -92,14 +97,15 @@ public class PieceListPanel extends JPanel {
 		return _pieces[_index];
 	}
 	
-	public synchronized int getCurrentRotation() {
+	/** Gets the orientation of the currently displayed piece (null if nothing) */
+	public synchronized Integer getCurrentRotation() {
 		if(_rotates==null || _rotates.length==0)
-			return -1;
+			return null;
 		
 		return _rotates[_index];
 	}
 	
-	/** Rotates the current piece by the given amount */
+	/** Rotates the current piece by the given amount (relative to its current orientation) */
 	public synchronized void rotatePiece(int s) {
 		if(_rotates!=null && _rotates.length>0) {
 			int r = _rotates[_index] + s;
@@ -107,29 +113,34 @@ public class PieceListPanel extends JPanel {
 		}
 	}
 	
-	/** Sets the rotation of the current piece to the given value */
+	/** Sets the absolute rotation of the current piece*/
 	public synchronized void setPieceRotation(int r) {
 		if(_rotates!=null && _rotates.length>0)
 			_rotates[_index] = mod(r, 4);
 	}
 	
+	/** Displays the previous unit in the list from the one which is currently selected.  Loops around. */
 	public synchronized void scrollUp() {
 		scroll(_index-1);
 	}
 	
+	/** Displays the next unit in the list from the one which is currently selected.  Loops around. */
 	public synchronized void scrollDown() {
 		scroll(_index+1);
 	}
 	
+	/** Displays the given unit in the list */
 	public synchronized void scrollTo(int index) {
 		scroll(index);
 	}
 	
+	/** Scrolls to the piece corresponding to the given double value between 0 (first piece) and 1 (last piece) along the list*/
 	public synchronized void scrollTo(double amount) {
 		if(_pieces!=null && _pieces.length>0)
 			scroll(StaticMethods.round(amount*(_pieces.length)));
 	}
 	
+	/** Scrolls to the given index in the list */
 	private synchronized void scroll(int index) {
 		if(_pieces!=null && _pieces.length>0)
 			_index = mod(index, _pieces.length);

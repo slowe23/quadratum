@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 
+/** A simple layoutmanager that stretches all elements in a container to the size of the container.  Can be used for a layered pane */
 public class FillLayout implements LayoutManager {
 	private boolean _includeInvisible;  //Whether currently invisible components are counted when calculating min or preferred size
 	
