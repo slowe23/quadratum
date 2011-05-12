@@ -12,6 +12,12 @@ import net.quadratum.core.MapPoint;
 import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
 
+/**
+ * A class that represents a player connected to the host on one of the client's
+ * sides. Probably not necessary...
+ * @author Zircean
+ *
+ */
 public class VirtualPlayer implements Player {
 
 	@Override

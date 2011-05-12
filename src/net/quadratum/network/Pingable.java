@@ -1,5 +1,11 @@
 package net.quadratum.network;
 
+/**
+ * An interface implemented by classes that will send heartbeat
+ * messages across a socket until a certain condition is not met.
+ * @author Zircean
+ *
+ */
 public interface Pingable {
 
 	/**

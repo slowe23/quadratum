@@ -16,6 +16,11 @@ import net.quadratum.network.NetworkPlayer;
 import net.quadratum.network.PingThread;
 import net.quadratum.network.Pingable;
 
+/**
+ * A thread that collects connections for the host.
+ * @author Zircean
+ *
+ */
 public class ServerThread extends Thread implements Pingable {
 
 	/** List of connected sockets. */
@@ -28,6 +33,9 @@ public class ServerThread extends Thread implements Pingable {
 	/** Port this ServerThread listens on. */
 	int _port = MainConstants.Defaults.PREFERRED_PORT;
 	
+	/**
+	 * Constructor for ServerThread.
+	 */
 	public ServerThread() {
 		_connectedSockets = new LinkedList<Socket>();
 		_connectedPlayers = new LinkedList<NetworkPlayer>();
