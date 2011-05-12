@@ -9,6 +9,14 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
+/**
+ * A network client with basic functionality. Automatically pings the
+ * client on the other side, which will ensure connections stay alive given
+ * a socket with some sort of timeout set. This class also abstracts out
+ * the reading loop, so that processing of requests may be handled more simply.
+ * @author Zircean
+ *
+ */
 public abstract class NetworkClient implements Closeable, Pingable {
 	
 	/** Socket that this NetworkClient is using. */
@@ -18,6 +26,10 @@ public abstract class NetworkClient implements Closeable, Pingable {
 	/** Reader that gets messages from sock. */
 	BufferedReader _in;
 	
+	/**
+	 * Constructor for NetworkClient.
+	 * @param sock the socket that this client is going to use.
+	 */
 	public NetworkClient(Socket sock) {
 		_sock = sock;
 		try {

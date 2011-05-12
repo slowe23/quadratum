@@ -18,6 +18,14 @@ import net.quadratum.core.Player;
 import net.quadratum.core.Unit;
 import net.quadratum.util.Serializer;
 
+/**
+ * A Player stand-in that works on the host side of a network game by taking
+ * input from the actual player on the other side of the network and translating
+ * it into actions on the host core. It takes care of keeping connections alive as
+ * well.
+ * @author Zircean
+ *
+ */
 public class NetworkPlayer extends NetworkClient implements Player, Pingable {
 	
 	/** Core that this Player belongs to. */
@@ -26,9 +34,13 @@ public class NetworkPlayer extends NetworkClient implements Player, Pingable {
 	/** Player ID of this Player. */
 	int _playerID;
 	
-	/** */
+	/** Whether or not we are done listening. */
 	boolean _done;
 	
+	/**
+	 * Constructor for NetworkPlayer.
+	 * @param sock the socket to the client player.
+	 */
 	public NetworkPlayer(Socket sock) {
 		super(sock);
 		

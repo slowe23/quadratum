@@ -23,6 +23,14 @@ import net.quadratum.core.Unit;
 import net.quadratum.core.UnitInformation;
 import net.quadratum.util.Serializer;
 
+/**
+ * A virtual core that exists on the client side of a networked game and stands
+ * in for the core to a local player. This core's purpose is to relay most
+ * messages across the network, although there are some things that it caches and
+ * does not send across to ensure that the program remains responsive.
+ * @author Zircean
+ *
+ */
 public class VirtualCore extends NetworkClient implements Core {
 	
 	/** Local player. */
@@ -61,6 +69,10 @@ public class VirtualCore extends NetworkClient implements Core {
 	/** Helps synchronization with parallel unit requests. */
 	int _unitRequests;
 	
+	/**
+	 * Constructor for VirtualCore.
+	 * @param sock the socket to the host
+	 */
 	public VirtualCore(Socket sock) {
 		super(sock);
 		
