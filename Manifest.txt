@@ -1,0 +1,2 @@
+Main-Class: net.quadratum.main.MainGui
+Class-Path: bin/
