@@ -92,7 +92,7 @@ public class DefaultPieces {
 		pieces.add(defensePiece);
 
 		// Water movement piece
-		Piece waterPiece = new Piece(50, "Water Movement", "Provides the water movement ability (30 hp per block)");
+		Piece waterPiece = new Piece(50, "Jesus", "Allows the unit to walk on water - resurrection not included (30 hp per block)");
 		waterPiece.addBlock(new MapPoint(0,0), new Block(waterBlock));
 		waterPiece.addBlock(new MapPoint(0,1), new Block(waterBlock));
 		waterPiece.addBlock(new MapPoint(0,2), new Block(waterBlock));

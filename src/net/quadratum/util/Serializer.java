@@ -25,6 +25,9 @@ public class Serializer {
 	 * @return a byte array representing this object.
 	 */
 	public static <T extends Serializable> byte[] getByteArray(T t) {
+		if (t == null) {
+			return new byte[] {0};
+		}
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {
 			ObjectOutputStream objstream = new ObjectOutputStream(stream);
@@ -53,6 +56,9 @@ public class Serializer {
 	 * @return the object represented by the given byte array.
 	 */
 	public static <T extends Serializable> T getObject(byte[] b) {
+		if (b.length == 1 && b[0] == 0) {
+			return null;
+		}
 		ByteArrayInputStream stream = new ByteArrayInputStream(b);
 		T t = null;
 		try {

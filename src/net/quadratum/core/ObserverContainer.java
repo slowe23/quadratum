@@ -10,4 +10,14 @@ public class ObserverContainer
 		_p = player;
 		_quit = false;
 	}
+	
+	public boolean equals(Object obj)
+	{
+		return obj instanceof ObserverContainer && ((ObserverContainer) obj)._p == _p;
+	}
+	
+	public int hashCode()
+	{
+		return _p.hashCode();
+	}
 }
