@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import net.quadratum.ai.test.TestAI_MTC;
+import net.quadratum.ai.DefaultLevelAI;
 import net.quadratum.core.Block;
 import net.quadratum.core.GameCore;
 import net.quadratum.core.MapPoint;
@@ -187,7 +187,7 @@ public class MainGui extends JFrame
 		//then create GuiPlayer and AIPlayer
 		Player human = new GUIPlayer();
 		// TODO make this not a test AI later
-		Player ai = new TestAI_MTC();
+		Player ai = new DefaultLevelAI();
 		
 		int maxU = set.getMaxUnits();
 		int res = set.getStartingResources();
