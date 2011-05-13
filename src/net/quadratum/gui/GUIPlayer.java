@@ -6,6 +6,8 @@ import net.quadratum.core.*;
 
 /** A class implementing the Player interface that serves as the connection between the core and the GUI */
 public class GUIPlayer implements Player {
+	private boolean _isPlayer;
+	
 	private int _id;
 	
 	public final DrawingMethods _drawingMethods;
@@ -19,6 +21,7 @@ public class GUIPlayer implements Player {
 	private MapPanel _map;  //Map and minimap display
 	private UnitInfoPanel _selectedInfo;  //Displays info for the selected unit
 	private UnitImagePanel _selectedImage;  //Displays an image of the selected unit
+	
 	private UnitsPanel _units;  //Displays the player's units
 	private PiecesPanel _pieces;  //Displays the available pieces
 	private ButtonsPanel _buttonsPanel;  //Displays some stuff
@@ -32,6 +35,12 @@ public class GUIPlayer implements Player {
 	private final Object _readyLock;
 	
 	public GUIPlayer() {
+		this(true);
+	}
+	
+	public GUIPlayer(boolean isPlayer) {
+		_isPlayer = isPlayer;
+		
 		_drawingMethods = new DrawingMethods();
 		
 		_mapData = new MapData();
@@ -45,6 +54,11 @@ public class GUIPlayer implements Player {
 		
 		_ready = false;
 		_readyLock = new Object();
+	}
+	
+	/** Returns true if this GUIPlayer is a player, false if it is an observer */
+	public boolean isPlayer() {
+		return _isPlayer;
 	}
 	
 	/** Gives the GUI player references to the various components that receive updates */
@@ -72,9 +86,10 @@ public class GUIPlayer implements Player {
 		
 		_selectedInfo.start(_core);
 		
-		_buttonsPanel.start(_core.getRemainingUnits(this));
-		
-		_objectives.setText(_core.getObjectives(this));
+		if(_isPlayer) {
+			_buttonsPanel.start(_core.getRemainingUnits(this));
+			_objectives.setText(_core.getObjectives(this));
+		}
 		
 		_gameWindow.setVisible(true);
 		
@@ -98,7 +113,8 @@ public class GUIPlayer implements Player {
 	public void updatePieces(List<Piece> pieces) {
 		blockUntilReady();
 		
-		_pieces.setPieces(pieces);
+		if(_isPlayer)
+			_pieces.setPieces(pieces);
 	}
 	
 	/** Updates the map data. Currently unused but should be supported for future flexibility */
@@ -148,7 +164,10 @@ public class GUIPlayer implements Player {
 			_chat.incomingMessage(-1, _core.getPlayerName(turn)+"'s turn.");
 
 		selectionUpdated();
-		_buttonsPanel.turn(turn==_id);
+		if(_isPlayer) {
+			_buttonsPanel.turn(turn==_id);
+			_objectives.setText(_core.getObjectives(this));
+		}
 	}
 	
 	/** Notifies the player that he has lost. */
@@ -156,7 +175,8 @@ public class GUIPlayer implements Player {
 		blockUntilReady();
 		
 		_chat.incomingMessage(-1, "You have lost.");
-		_buttonsPanel.lost();
+		if(_isPlayer)
+			_buttonsPanel.lost();
 	}
 	
 	/** Notifies the player that the game has ended. */
@@ -208,7 +228,8 @@ public class GUIPlayer implements Player {
 								unitsUpdated();
 								placementUpdated();
 								
-								_buttonsPanel.updateToPlace(_core.getRemainingUnits(this));
+								if(_isPlayer)
+									_buttonsPanel.updateToPlace(_core.getRemainingUnits(this));
 							}
 						} else {
 							_unitsData.deselect();
@@ -240,7 +261,9 @@ public class GUIPlayer implements Player {
 			
 			_core.ready(this);
 			resourcesUpdated();
-			_buttonsPanel.gameStart();
+			
+			if(_isPlayer)
+				_buttonsPanel.gameStart();
 		}
 	}
 	
@@ -261,6 +284,7 @@ public class GUIPlayer implements Player {
 		blockUntilReady();
 		
 		_core.quit(this);
+		_gameWindow.setVisible(false);
 	}
 	
 	/** Called in order to select a given unit */
@@ -278,8 +302,10 @@ public class GUIPlayer implements Player {
 	private void resourcesUpdated() {
 		blockUntilReady();
 		
-		_buttonsPanel.updateResources(_core.getResources(this));
-		_pieces.updateResources(_core.getResources(this));
+		if(_isPlayer) {
+			_buttonsPanel.updateResources(_core.getResources(this));
+			_pieces.updateResources(_core.getResources(this));
+		}
 	}
 	
 	/** Sends out placement updated notifications */
@@ -303,7 +329,8 @@ public class GUIPlayer implements Player {
 		_map.selectionUpdated();
 		_selectedInfo.selectionUpdated();
 		_selectedImage.selectionUpdated();
-		_units.selectionUpdated();
+		if(_isPlayer)
+			_units.selectionUpdated();
 	}
 	
 	/** Sends out unit updated notifications */
@@ -313,7 +340,8 @@ public class GUIPlayer implements Player {
 		_map.unitsUpdated();
 		_selectedInfo.selectionUpdated();
 		_selectedImage.selectionUpdated();
-		_units.unitsUpdated();
+		if(_isPlayer)
+			_units.unitsUpdated();
 	}
 	
 	/** Blocks until the start method has finished setting things up */
