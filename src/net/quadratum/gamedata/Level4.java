@@ -51,7 +51,12 @@ public class Level4 implements Level
 	@Override
 	public WinCondition getWinCondition()
 	{
-		return new CheckWinner();
+		return new CheckWinner() {
+			@Override
+			public String getObjectives() {
+				return "Defend your area from the incoming attackers!";
+			}
+		};
 	}
 	
 	private class Level4AI extends LevelAI
