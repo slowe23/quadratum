@@ -31,6 +31,8 @@ public class Constants
 	public static final int ATTACK_RANGE_MODIFIER = 120;
 	/** Sight modifier. */
 	public static final int SIGHT_MODIFIER = 120;
+	/** Attack width modifier. */
+	public static final int ATTACK_WIDTH_MODIFIER = 120;
 	
 	/** Debug flag. When set to true, core logs to log.txt, otherwise it logs to System.out. */
 	public static final boolean DEBUG_TO_FILE = true;
