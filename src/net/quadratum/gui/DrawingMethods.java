@@ -48,6 +48,10 @@ public class DrawingMethods {
 			return WATER_COLOR;
 		else if(TerrainConstants.isOfType(terrainValue, TerrainConstants.RESOURCES))
 			return RESOURCES_COLOR;
+		else if(TerrainConstants.isOfType(terrainValue, TerrainConstants.MOUNTAIN))
+			return MOUNTAIN_COLOR;
+		else if(TerrainConstants.isOfType(terrainValue, TerrainConstants.BUNKER))
+			return BUNKER_COLOR;
 		else
 			return LAND_COLOR;
 	}

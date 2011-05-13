@@ -302,7 +302,7 @@ public class MapPanel extends JPanel {
 			double vW = getViewWidth(), vH = getViewHeight();
 			int tW = _terrain.length, tH = _terrain[0].length;
 				
-			if(vW<tW) {
+			if(vW<=tW+2) {
 				if(_viewX<-1)
 					_viewX = -1;
 				else if(_viewX+vW>tW+1)
@@ -310,7 +310,7 @@ public class MapPanel extends JPanel {
 			} else
 				_viewX = (tW-vW)/2.0;
 			
-			if(vH<tH) {
+			if(vH<=tH+2) {
 				if(_viewY<-1)
 					_viewY = -1;
 				else if(_viewY+vH>tH+1)
@@ -337,10 +337,15 @@ public class MapPanel extends JPanel {
 		
 		public synchronized void mouseDragged(MouseEvent e) {
 			synchronized(MapPanel.this) {
-				if(_press!=null)
+				if(_press!=null) {
 					setViewPos(_pvx - (e.getX()-_press.x)/((double)(getScale())), _pvy - (e.getY()-_press.y)/((double)(getScale())));
-				
-				repaintBoth();
+
+					_press = new Point(e.getX(), e.getY());
+					_pvx = getViewX();
+					_pvy = getViewY();
+					
+					repaintBoth();
+				}
 			}
 		}
 		
