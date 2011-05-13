@@ -24,6 +24,8 @@ import net.quadratum.core.Player;
 import net.quadratum.core.WinCondition;
 import net.quadratum.gamedata.DefaultPieces;
 import net.quadratum.gamedata.Level;
+import net.quadratum.gamedata.Tutorial;
+import net.quadratum.gamedata.TutorialCore;
 import net.quadratum.gui.GUIPlayer;
 import net.quadratum.network.NetworkPlayer;
 import net.quadratum.network.VirtualPlayer;
@@ -275,7 +277,12 @@ public class MainGui extends JFrame
 			return;
 		}
 		
-		GameCore gc = new GameCore(this, level.getMap(), level.getWinCondition(), level.getPieces());
+		GameCore gc;
+		if (level instanceof Tutorial) {
+			gc = new TutorialCore(this, level.getMap(), level.getWinCondition(), level.getPieces());
+		} else {
+			gc = new GameCore(this, level.getMap(), level.getWinCondition(), level.getPieces());
+		}
 		
 		Player human = new GUIPlayer();
 		Player ai = level.getAI();

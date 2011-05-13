@@ -18,18 +18,11 @@ public class CheckWinner implements WinCondition
 	@Override
     public boolean hasPlayerLost(Map<MapPoint, Unit> units, PlayerInformation playerInformation, int playerNumber)
 	{
-		if(units.size() == 0)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return units.size() == 0;
 	}
 
 	public String getObjectives()
 	{
-		return new String("Kill all enemy units");
+		return new String("Kill all enemy units!");
 	}
 }

@@ -29,6 +29,7 @@ import net.quadratum.gamedata.Level2;
 import net.quadratum.gamedata.Level3;
 import net.quadratum.gamedata.Level4;
 import net.quadratum.gamedata.Level5;
+import net.quadratum.gamedata.Tutorial;
 
 public class CampaignPanel extends JPanel implements ActionListener, MouseListener{
 
@@ -161,7 +162,7 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 	}
 	
 	private boolean canPlay(int level) {
-		return (level <= _maxLevel && level > -1);
+		return (level <= _maxLevel && level >= 0);
 	}
 
 	private void displayLevelInfo(int level) {
@@ -246,14 +247,15 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 
 			// Currently hardcoded		
 			_levels = new Level[_maxLevel + 1];
-			//_levels[0] = new Tutorial();
+			
+			_levels[0] = new Tutorial();
 			_levels[1] = new Level1();
 			_levels[2] = new Level2();
 			_levels[3] = new Level3();
 			_levels[4] = new Level4();
 			_levels[5] = new Level5();
 			
-			_invalidLevels = new int[] {0, 4, 5};
+			_invalidLevels = new int[0];
 			
 			try {if(fin != null) fin.close();} catch (Exception e) {}
 		}
