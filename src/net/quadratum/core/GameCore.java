@@ -604,10 +604,10 @@ public class GameCore implements Core
 				
 				// Calculate the start and end positions of the attack lines
 				
-				int attackLines = Math.min(attacker._size,
+				int attackLines = Math.max(1,Math.min(attacker._size,
 						Constants.INITIAL_ATTACK_WIDTH+
 						(attacker._stats.get(Block.BonusType.ATTACK_WIDTH) / 
-							Constants.ATTACK_WIDTH_MODIFIER));
+							Constants.ATTACK_WIDTH_MODIFIER)));
 				
 				RealPoint[] lineStarts = new RealPoint[attackLines];
 				RealPoint[] lineEnds = new RealPoint[attackLines];
