@@ -10,6 +10,7 @@ import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
 import net.quadratum.core.WinCondition;
 import net.quadratum.main.CheckWinner;
+import net.quadratum.core.MapData;
 
 public class Level4 implements Level
 {
@@ -66,7 +67,7 @@ public class Level4 implements Level
 			super();
 		}
 		
-		public void createUnits(int id)
+		public void createUnits(MapData mapData, int id)
 		{
 			placeAttacker(new MapPoint(6, 0));
 			placeAttacker(new MapPoint(6, 3));

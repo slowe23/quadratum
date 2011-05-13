@@ -8,9 +8,9 @@ import java.util.Map;
 public class Piece implements Serializable {
 	
 	public static final int ROTATE_NONE = 0;
-	public static final int ROTATE_CW = 1;
-	public static final int ROTATE_180 = 2;
-	public static final int ROTATE_CCW = 3;
+	public static final int ROTATE_CW = 1;  //90° clockwise rotation
+	public static final int ROTATE_180 = 2;  //180° rotation
+	public static final int ROTATE_CCW = 3;  //90° counterclockwise rotation
 
 	/**
 	 * Serialization UID
