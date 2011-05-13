@@ -1275,9 +1275,9 @@ public class GameCore implements Core
 				if(toAdd._size % 2 == 0)
 				{
 					// Add a 2x2 block
-					for(int i = Constants.UNIT_SIZE / 2 - 1; i <= Constants.UNIT_SIZE / 2; i++)
+					for(int i = toAdd._size / 2 - 1; i <= toAdd._size / 2; i++)
 					{
-						for(int j = Constants.UNIT_SIZE / 2 - 1; j <= Constants.UNIT_SIZE / 2; j++)
+						for(int j = toAdd._size / 2 - 1; j <= toAdd._size / 2; j++)
 						{
 							toAdd._blocks.put(new MapPoint(i, j), new Block(heartBlock));
 						}
@@ -1287,9 +1287,9 @@ public class GameCore implements Core
 				else
 				{
 					// Add a 3x3 block
-					for(int i = (int) Math.floor(Constants.UNIT_SIZE / 2) - 1; i <= (int) Math.floor(Constants.UNIT_SIZE / 2) + 1; i++)
+					for(int i = (int) Math.floor(toAdd._size / 2) - 1; i <= (int) Math.floor(toAdd._size / 2) + 1; i++)
 					{
-						for(int j = (int) Math.floor(Constants.UNIT_SIZE / 2) - 1; j <= (int) Math.floor(Constants.UNIT_SIZE / 2) + 1; j++)
+						for(int j = (int) Math.floor(toAdd._size / 2) - 1; j <= (int) Math.floor(toAdd._size / 2) + 1; j++)
 						{
 							toAdd._blocks.put(new MapPoint(i, j), new Block(heartBlock));
 						}

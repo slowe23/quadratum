@@ -13,7 +13,7 @@ public class Level5Test implements Main {
 	{
 		Player player = new GUIPlayer();
 		Level level = new Level5();
-		GameCore core = new GameCore(new Level5Test(), "maps/level5-temp.qmap",
+		GameCore core = new GameCore(new Level5Test(), level.getMap(),
 				level.getWinCondition(), level.getPieces());
 		core.addPlayer(player, "Local Player", level.getMaxUnits(), level.getStartingResources());
 		core.addPlayer(level.getAI(), "AI Player", Integer.MAX_VALUE, Integer.MAX_VALUE);
