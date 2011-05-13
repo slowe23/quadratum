@@ -397,6 +397,11 @@ public class VirtualCore extends NetworkClient implements Core {
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
+		} else if (parts[0].equals("ping")) {
+			// Nothing needs to happen here. The ping just makes
+			// sure that we're still connected. If no message is
+			// received for 45 seconds, then we know to kill the
+			// connection.
 		} else {
 			// A response was sent. Put it in the response map.
 			// First, wait until the spot is free.
