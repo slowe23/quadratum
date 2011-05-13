@@ -290,8 +290,7 @@ public class MainGui extends JFrame
 		
 		int maxU = level.getMaxUnits();
 		gc.addPlayer(human, "You", maxU, level.getStartingResources());
-		gc.addPlayer(ai, "Opponent", Integer.MAX_VALUE, Integer.MAX_VALUE);
-		
+		gc.addPlayer(ai, "Opponent", Integer.MAX_VALUE, Integer.MAX_VALUE);		
 		
 		hideMe();
 		

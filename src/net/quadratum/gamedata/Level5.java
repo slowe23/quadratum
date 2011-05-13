@@ -9,6 +9,7 @@ import net.quadratum.ai.LevelAI;
 import net.quadratum.ai.PathBehavior;
 import net.quadratum.ai.TurretBehavior;
 import net.quadratum.core.Block;
+import net.quadratum.core.Constants;
 import net.quadratum.core.MapPoint;
 import net.quadratum.core.Piece;
 import net.quadratum.core.Player;
@@ -58,15 +59,20 @@ public class Level5 implements Level {
 		// Attack/range block
 		Block attackrangeBlock = new Block(120);
 		attackrangeBlock._bonuses.put(Block.BonusType.ATTACK, 36);
-		attackrangeBlock._bonuses.put(Block.BonusType.RANGE, 12);
+		attackrangeBlock._bonuses.put(Block.BonusType.RANGE, 
+				Constants.ATTACK_RANGE_MODIFIER / 10); // 10 for +1
 		
 		// Sight block
 		Block sightBlock = new Block(130);
-		sightBlock._bonuses.put(Block.BonusType.SIGHT, 60);
+		sightBlock._bonuses.put(Block.BonusType.SIGHT, 
+				Constants.SIGHT_MODIFIER / 2); // 2 for +1
 		
-		// Movement block
-		Block movementBlock = new Block(150);
-		movementBlock._bonuses.put(Block.BonusType.MOVEMENT, 120);
+		// Movement/width block
+		Block movementwidthBlock = new Block(150);
+		movementwidthBlock._bonuses.put(Block.BonusType.MOVEMENT, 
+				Constants.MOVEMENT_MODIFIER); // 1 for +1
+		movementwidthBlock._bonuses.put(Block.BonusType.ATTACK_WIDTH, 
+				Constants.ATTACK_WIDTH_MODIFIER / 2); // 1 for +0.5
 		
 		// Defense block
 		Block defenseBlock = new Block(200);
@@ -87,9 +93,9 @@ public class Level5 implements Level {
 		sightPiece.addBlock(new MapPoint(1,0), sightBlock);
 		pieces.add(sightPiece);
 		
-		// Movement piece - +1 movement
+		// Movement/width piece - +1 movement, +0.5 attack width
 		Piece movementPiece = new Piece(10000, "Hax Moves", "Provides hax");
-		movementPiece.addBlock(new MapPoint(0,0), movementBlock);
+		movementPiece.addBlock(new MapPoint(0,0), movementwidthBlock);
 		pieces.add(movementPiece);
 		
 		// Defense piece - +80 defense
