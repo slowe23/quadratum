@@ -17,9 +17,8 @@ public class GameWindow extends JFrame {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
-		addWindowListener(new GameWindowWindowListener());
-		
 		_guiPlayer = player;
+		boolean isPlayer = _guiPlayer.isPlayer();
 		
 		Container content = getContentPane();
 		content.setLayout(new BorderLayout());
@@ -37,12 +36,15 @@ public class GameWindow extends JFrame {
 		mapPane.add(msg, new Integer(1));
 		
 		//Add a strip at the top with buttons and stuff
-		ButtonsPanel buttons = new ButtonsPanel(_guiPlayer);
-		JPanel panel = new JPanel();
-		panel.setLayout(new BorderLayout());
-		panel.setOpaque(false);
-		panel.add(buttons, BorderLayout.NORTH);
-		mapPane.add(panel, new Integer(2));
+		ButtonsPanel buttons = null;
+		if(isPlayer) {
+			buttons = new ButtonsPanel(_guiPlayer);
+			JPanel panel = new JPanel();
+			panel.setLayout(new BorderLayout());
+			panel.setOpaque(false);
+			panel.add(buttons, BorderLayout.NORTH);
+			mapPane.add(panel, new Integer(2));
+		}
 		
 		content.add(mapPane, BorderLayout.CENTER);
 		
@@ -76,19 +78,28 @@ public class GameWindow extends JFrame {
 		MyTabbedPanel infoArea = new MyTabbedPanel();
 		
 		//Add unit tab
-		UnitsPanel units = new UnitsPanel(_guiPlayer);
-		infoArea.addTab("Units", units);
+		UnitsPanel units = null;
+		if(isPlayer) {
+			units = new UnitsPanel(_guiPlayer);
+			infoArea.addTab("Units", units);
+		}
 		
 		//Add pieces tab
-		PiecesPanel pieces = new PiecesPanel(_guiPlayer, uImg);
-		infoArea.addTab("Pieces", pieces);
+		PiecesPanel pieces = null;
+		if(isPlayer) {
+			pieces = new PiecesPanel(_guiPlayer, uImg);
+			infoArea.addTab("Pieces", pieces);
+		}
 		
 		//Add objectives tab
-		ObjectivesPanel objectives = new ObjectivesPanel();
-		infoArea.addTab("Objectives", objectives, true);
+		ObjectivesPanel objectives = null;
+		if(isPlayer) {
+			objectives = new ObjectivesPanel();
+			infoArea.addTab("Objectives", objectives, true);
+		}
 		
 		//Add chat tab
-		ChatPanel chat = new ChatPanel(chatHandler, msg);
+		ChatPanel chat = new ChatPanel(chatHandler, msg, isPlayer);
 		infoArea.addTab("Chat", chat);
 		
 		constraints = new LineConstraints(0.4);
@@ -97,6 +108,8 @@ public class GameWindow extends JFrame {
 		content.add(controls, BorderLayout.SOUTH);
 		
 		_guiPlayer.setStuff(map, uInfo, uImg, units, pieces, buttons, objectives);
+		
+		addWindowListener(new GameWindowWindowListener());
 	}
 	
 	
