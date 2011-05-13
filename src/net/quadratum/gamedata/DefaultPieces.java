@@ -44,12 +44,31 @@ public class DefaultPieces {
 		// Archer block
 		Block archerBlock = new Block(40);
 		archerBlock._bonuses.put(Block.BonusType.ATTACK, 12); 
-		archerBlock._bonuses.put(Block.BonusType.RANGE, 18); // 7 for +1
+		archerBlock._bonuses.put(Block.BonusType.RANGE, 
+				(int) Math.ceil(Constants.ATTACK_RANGE_MODIFIER / 7.0)); // 7 for +1
 		
 		// Beserker block
 		Block beserkerBlock = new Block(55);
 		beserkerBlock._bonuses.put(Block.BonusType.ATTACK, 15);
 		beserkerBlock._bonuses.put(Block.BonusType.DEFENSE, 4);
+		
+		// Sentry block
+		Block sentryBlock = new Block(45);
+		sentryBlock._bonuses.put(Block.BonusType.SIGHT, Constants.SIGHT_MODIFIER / 5); // 5 for +1
+		sentryBlock._bonuses.put(Block.BonusType.DEFENSE, 4);
+		
+		// Scout block
+		Block scoutBlock = new Block(30);
+		scoutBlock._bonuses.put(Block.BonusType.SIGHT, 
+				(int) Math.ceil(Constants.SIGHT_MODIFIER / 7.0)); // 7 for +1
+		scoutBlock._bonuses.put(Block.BonusType.MOVEMENT, 
+				(int) Math.ceil(Constants.MOVEMENT_MODIFIER / 7.0));
+		
+		// Blitzkreig block
+		Block blitzkreigBlock = new Block(40);
+		blitzkreigBlock._bonuses.put(Block.BonusType.ATTACK, 20);
+		blitzkreigBlock._bonuses.put(Block.BonusType.MOVEMENT, 
+				Constants.MOVEMENT_MODIFIER / 6); // 6 for +1
 
 		// Attack piece
 		Piece attackPiece = new Piece(10, "Attack", "Provides +120 damage (50 hp per block)");
@@ -122,13 +141,43 @@ public class DefaultPieces {
 		pieces.add(archerPiece);
 		
 		// Beserker piece
-		Piece beserkerPiece = new Piece(120, "Beserker", "Provides +75 attack and +20 defense (55 hp per block)");
+		Piece beserkerPiece = new Piece(150, "Beserker", "Provides +75 attack and +20 defense (55 hp per block)");
 		beserkerPiece.addBlock(new MapPoint(1,0), new Block(beserkerBlock));
 		beserkerPiece.addBlock(new MapPoint(2,0), new Block(beserkerBlock));
 		beserkerPiece.addBlock(new MapPoint(0,1), new Block(beserkerBlock));
 		beserkerPiece.addBlock(new MapPoint(1,1), new Block(beserkerBlock));
 		beserkerPiece.addBlock(new MapPoint(0,2), new Block(beserkerBlock));
 		pieces.add(beserkerPiece);
+		
+		// Sentry piece
+		Piece sentryPiece = new Piece(130, "Guard", "Provides +1 sight radius and +20 defense (45 hp per block)");
+		sentryPiece.addBlock(new MapPoint(1,0), new Block(sentryBlock));
+		sentryPiece.addBlock(new MapPoint(0,1), new Block(sentryBlock));
+		sentryPiece.addBlock(new MapPoint(1,1), new Block(sentryBlock));
+		sentryPiece.addBlock(new MapPoint(2,1), new Block(sentryBlock));
+		sentryPiece.addBlock(new MapPoint(1,2), new Block(sentryBlock));
+		pieces.add(sentryPiece);
+		
+		// Scout piece
+		Piece scoutPiece = new Piece(110, "Scout", "Provides +1 sight and movement radius (30 hp per block)");
+		scoutPiece.addBlock(new MapPoint(0,0), new Block(scoutBlock));
+		scoutPiece.addBlock(new MapPoint(0,1), new Block(scoutBlock));
+		scoutPiece.addBlock(new MapPoint(1,1), new Block(scoutBlock));
+		scoutPiece.addBlock(new MapPoint(2,1), new Block(scoutBlock));
+		scoutPiece.addBlock(new MapPoint(1,2), new Block(scoutBlock));
+		scoutPiece.addBlock(new MapPoint(2,2), new Block(scoutBlock));
+		scoutPiece.addBlock(new MapPoint(1,3), new Block(scoutBlock));
+		pieces.add(scoutPiece);
+		
+		// Blitzkreig piece
+		Piece blitzkreigPiece = new Piece(140, "Blitzkreig", "Provides +120 attack and +1 movement radius (40 hp per block)");
+		blitzkreigPiece.addBlock(new MapPoint(1,0), new Block(blitzkreigBlock));
+		blitzkreigPiece.addBlock(new MapPoint(0,1), new Block(blitzkreigBlock));
+		blitzkreigPiece.addBlock(new MapPoint(1,1), new Block(blitzkreigBlock));
+		blitzkreigPiece.addBlock(new MapPoint(2,1), new Block(blitzkreigBlock));
+		blitzkreigPiece.addBlock(new MapPoint(3,1), new Block(blitzkreigBlock));
+		blitzkreigPiece.addBlock(new MapPoint(2,2), new Block(blitzkreigBlock));
+		pieces.add(blitzkreigPiece);
 		
 		return pieces;
 	}
