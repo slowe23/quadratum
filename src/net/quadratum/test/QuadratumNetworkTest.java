@@ -43,7 +43,7 @@ public class QuadratumNetworkTest implements Main
 			createNetworkPlayer(player2, "Network AI Player", 5);
 			for (Player p : server.stopListening()) {
 				// XXX Massively hacky
-				core.addPlayer(p, "Network AI Player", 2, 160);
+				core.addPlayer(p, "Network AI Player", 2, 150);
 			}
 			core.addObserver(new GUIPlayer());
 			core.startGame();

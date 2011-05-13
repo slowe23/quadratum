@@ -23,3 +23,8 @@ RUNNING TESTS
 =============
 
 Run ./util/test.sh
+
+RUNNING THE MAP EDITOR
+======================
+
+Run ./util/map.sh

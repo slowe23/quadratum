@@ -83,7 +83,6 @@ public class ConnectionCheck extends JPanel {
 	}
 	
 	public boolean testConnection(String addr, int port) {
-		// TODO -stubbed
 		
 		if( ! validPortNumber(port) ) {
 			_status.setText("Invalid port number");
@@ -96,7 +95,7 @@ public class ConnectionCheck extends JPanel {
 			echo = new Socket(addr, port);
 			echo.close();
 		} catch (Exception e) {
-			// TODO set status message accordingly
+			// TODO set specific status message
 			
 			_status.setText("Connection problem");
 			return false;
@@ -114,7 +113,7 @@ public class ConnectionCheck extends JPanel {
 		return testConnection(addr.toString(), port);
 	}
 	
-	public boolean validPortNumber(int port) {
+	public static boolean validPortNumber(int port) {
 		return port >= MIN_PORT_NUM && port <= MAX_PORT_NUM;
 	}
 	
@@ -123,7 +122,7 @@ public class ConnectionCheck extends JPanel {
 	 * 		  or -1 if the int is invalid,
 	 * 		  or -2 if the string can't be parsed to an int.
 	 */
-	public int validPortNumber(String port) {
+	public static int validPortNumber(String port) {
 		int p = -1;
 		try {
 			p = Integer.parseInt(port.trim());
