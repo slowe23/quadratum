@@ -24,9 +24,9 @@ public class GameCore implements Core
 	private ArrayList<HashSet<MapPoint>> _startingLocations;
 	private ArrayList<Unit> _units;
 	private ArrayList<UnitInformation> _unitInformation;
-	private ArrayList<Player> _players;
+	protected ArrayList<Player> _players;
 	private ArrayList<PlayerInformation> _playerInformation;
-	private ArrayList<Piece>[] _pieces;
+	protected ArrayList<Piece>[] _pieces;
 	private WinCondition _winCondition;
 	private int _turn; // -1 = not started, -2 = game over
 	private boolean _started;
