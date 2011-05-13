@@ -29,6 +29,7 @@ public class NetJoinPanel extends JPanel implements ActionListener {
 	private Socket _sock;
 	JButton _connectBtn, _disconnBtn;
 	private MainGui _main;
+	private VirtualCore _vc;
 	
 	
 	public NetJoinPanel(ActionListener al) {
@@ -148,6 +149,7 @@ public class NetJoinPanel extends JPanel implements ActionListener {
 			
 			try {
 				_sock = new Socket(addr, port);
+				_vc = new VirtualCore(_sock);
 			} catch (UnknownHostException uhe) {
 				_message.setText("Cannot identify that host");
 				return;
@@ -156,12 +158,13 @@ public class NetJoinPanel extends JPanel implements ActionListener {
 				return;
 			}
 			
+			//_vc = new VirtualCore(_sock);
 			_message.setText("Successfully connected! Waiting for host to start.");
 			
 			_connectBtn.setEnabled(false);
 			_disconnBtn.setEnabled(true);
 			
-			_main.actionPerformed(new ActionEvent(this, 23, MainConstants.START_GAME));
+			_main.actionPerformed(new ActionEvent(this, 23, "joinNetGame"));
 			return;
 		}
 		
@@ -183,6 +186,10 @@ public class NetJoinPanel extends JPanel implements ActionListener {
 	
 	public synchronized Socket getSocket() {
 		return _sock;
+	}
+	
+	public synchronized VirtualCore getVC() {
+		return _vc;
 	}
 	
 	public synchronized boolean isConnected() {

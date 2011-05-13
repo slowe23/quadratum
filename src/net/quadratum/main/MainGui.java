@@ -215,10 +215,12 @@ public class MainGui extends JFrame
 //		hideMe();
 	}
 	
-	public void joinNetworkGame(Socket sock) {
-		VirtualCore vc = new VirtualCore(sock);
+	public void joinNetworkGame(VirtualCore vc) {
+		//VirtualCore vc = new VirtualCore(sock);
 		vc.addPlayer(new GUIPlayer(), "Local Player", 5, 5000);
 		vc.startGame();
+		
+		hideMe();
 		
 		try {
 			if (SwingUtilities.isEventDispatchThread()) {
@@ -260,7 +262,7 @@ public class MainGui extends JFrame
 		gc.addPlayer(human, "human", maxU, res);
 		
 		for(int i = 1; i < others.size(); i++) {
-			gc.addPlayer(new VirtualPlayer(), "virtual player"+i, maxU, res);
+			gc.addPlayer(others.get(i), "virtual player"+i, maxU, res);
 		}
 		hideMe();
 
@@ -373,6 +375,10 @@ public class MainGui extends JFrame
 			else {
 				createQuickGame();
 			}
+		}
+		
+		if(e.getActionCommand().equals("joinNetGame")) {
+			joinNetworkGame(((NetJoinPanel) _netJoinPanel).getVC());
 		}
 		
 		

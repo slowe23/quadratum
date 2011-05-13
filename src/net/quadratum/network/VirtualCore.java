@@ -111,6 +111,7 @@ public class VirtualCore extends NetworkClient implements Core {
 	public void startGame() {
 		// Start this thread, so it can listen for messages.
 		new ReadThread().start();
+		System.out.println("");
 	}
 
 	@Override

@@ -141,6 +141,7 @@ public class NetHostPanel extends JPanel implements ActionListener {
 		try {
 			_serverThd = new ActionServerThread(_port, this);
 			_playerIds = new LinkedList<Integer>();
+			_serverThd.start();
 		} catch (Exception e) {
 			logMessage("Could not open server connection on port " + _port, WARNING);
 			
@@ -184,16 +185,16 @@ public class NetHostPanel extends JPanel implements ActionListener {
 			//Player[]
 			List<NetworkPlayer> currList = _serverThd.getCurrentPlayers();//.toArray(new Player[] {});
 			
-			int len = currList.size();
-			if(len == _pList.getModel().getSize()) {
-				for(int i = 0; i<len; i++) {
-					if(currList.get(i) != _pList.getModel().getElementAt(i)) {
-						logMessage("Warning - player list changed. Verify you" +
-								" have the players you want, then try again.", WARNING);
-						_serverThd.freeze(false);
-						return;
-					}
-				}
+			int len = currList.size()+1;
+			if(len == _pList.getModel().getSize()+1) {
+//				for(int i = 0; i<len-1; i++) {
+//					if(currList.get(i) != _pList.getModel().getElementAt(i)) {
+//						logMessage("Warning - player list changed. Verify you" +
+//								" have the players you want, then try again.", WARNING);
+//						_serverThd.freeze(false);
+//						return;
+//					}
+//				}
 				// We have the right list
 				if(len < _minPlayers) {
 					logMessage("Not enough players to start. Wait and try again.", WARNING);
