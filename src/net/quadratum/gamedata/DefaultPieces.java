@@ -35,69 +35,99 @@ public class DefaultPieces {
 		Block waterBlock = new Block(30);
 		waterBlock._bonuses.put(Block.BonusType.WATER_MOVEMENT, 1); // 1 for +1
 		
-		// Sight/range block
-		Block sightrangeBlock = new Block(40);
-		sightrangeBlock._bonuses.put(Block.BonusType.SIGHT, 20); // 6 for +1
-		sightrangeBlock._bonuses.put(Block.BonusType.RANGE, 20);
+		// Seer block
+		Block seerBlock = new Block(35);
+		seerBlock._bonuses.put(Block.BonusType.SIGHT, 20); // 6 for +1
+		seerBlock._bonuses.put(Block.BonusType.RANGE, 20);
+		
+		// Archer block
+		Block archerBlock = new Block(40);
+		archerBlock._bonuses.put(Block.BonusType.ATTACK, 12); 
+		archerBlock._bonuses.put(Block.BonusType.RANGE, 18); // 7 for +1
+		
+		// Beserker block
+		Block beserkerBlock = new Block(55);
+		beserkerBlock._bonuses.put(Block.BonusType.ATTACK, 15);
+		beserkerBlock._bonuses.put(Block.BonusType.DEFENSE, 4);
 
 		// Attack piece
 		Piece attackPiece = new Piece(10, "Attack", "Provides +120 damage (50 hp per block)");
-		attackPiece.addBlock(new MapPoint(0, 0), new Block(attackBlock));
-		attackPiece.addBlock(new MapPoint(0, 1), new Block(attackBlock));
-		attackPiece.addBlock(new MapPoint(1, 1), new Block(attackBlock));
-		attackPiece.addBlock(new MapPoint(1, 2), new Block(attackBlock));
+		attackPiece.addBlock(new MapPoint(0,0), new Block(attackBlock));
+		attackPiece.addBlock(new MapPoint(0,1), new Block(attackBlock));
+		attackPiece.addBlock(new MapPoint(1,1), new Block(attackBlock));
+		attackPiece.addBlock(new MapPoint(1,2), new Block(attackBlock));
 		pieces.add(attackPiece);
 
 		// Movement piece
-		Piece movementPiece = new Piece(40, "Movement", "Provides +120 movement - +1 movement radius (50 hp per block)");
-		movementPiece.addBlock(new MapPoint(0, 0), new Block(movementBlock));
-		movementPiece.addBlock(new MapPoint(0, 1), new Block(movementBlock));
-		movementPiece.addBlock(new MapPoint(0, 2), new Block(movementBlock));
-		movementPiece.addBlock(new MapPoint(1, 2), new Block(movementBlock));
+		Piece movementPiece = new Piece(40, "Movement", "Provides +1 movement radius (50 hp per block)");
+		movementPiece.addBlock(new MapPoint(0,0), new Block(movementBlock));
+		movementPiece.addBlock(new MapPoint(0,1), new Block(movementBlock));
+		movementPiece.addBlock(new MapPoint(0,2), new Block(movementBlock));
+		movementPiece.addBlock(new MapPoint(1,2), new Block(movementBlock));
 		pieces.add(movementPiece);
 		
 		// Range piece
-		Piece rangePiece = new Piece(30, "Range", "Provides +120 sight - +1 range radius (50 hp per block)");
-		rangePiece.addBlock(new MapPoint(0, 0), new Block(rangeBlock));
-		rangePiece.addBlock(new MapPoint(0, 1), new Block(rangeBlock));
-		rangePiece.addBlock(new MapPoint(1, 1), new Block(rangeBlock));
-		rangePiece.addBlock(new MapPoint(2, 1), new Block(rangeBlock));
-		rangePiece.addBlock(new MapPoint(2, 0), new Block(rangeBlock));
+		Piece rangePiece = new Piece(30, "Range", "Provides +1 range radius (50 hp per block)");
+		rangePiece.addBlock(new MapPoint(0,0), new Block(rangeBlock));
+		rangePiece.addBlock(new MapPoint(2,0), new Block(rangeBlock));
+		rangePiece.addBlock(new MapPoint(0,1), new Block(rangeBlock));
+		rangePiece.addBlock(new MapPoint(1,1), new Block(rangeBlock));
+		rangePiece.addBlock(new MapPoint(2,1), new Block(rangeBlock));
 		pieces.add(rangePiece);
 
 		// Sight piece
-		Piece sightPiece = new Piece(20, "Sight", "Provides +120 sight - +1 sight radius (50 hp per block)");
-		sightPiece.addBlock(new MapPoint(0, 0), new Block(sightBlock));
-		sightPiece.addBlock(new MapPoint(0, 1), new Block(sightBlock));
-		sightPiece.addBlock(new MapPoint(0, 2), new Block(sightBlock));
-		sightPiece.addBlock(new MapPoint(1, 1), new Block(sightBlock));
+		Piece sightPiece = new Piece(20, "Sight", "Provides +1 sight radius (50 hp per block)");
+		sightPiece.addBlock(new MapPoint(0,0), new Block(sightBlock));
+		sightPiece.addBlock(new MapPoint(0,1), new Block(sightBlock));
+		sightPiece.addBlock(new MapPoint(1,1), new Block(sightBlock));
+		sightPiece.addBlock(new MapPoint(0,2), new Block(sightBlock));
 		pieces.add(sightPiece);
 
 		// Defense piece
 		Piece defensePiece = new Piece(30, "Defense", "Provides +20 defense (100 hp per block)");
-		defensePiece.addBlock(new MapPoint(0, 0), new Block(defenseBlock));
-		defensePiece.addBlock(new MapPoint(0, 1), new Block(defenseBlock));
-		defensePiece.addBlock(new MapPoint(1, 0), new Block(defenseBlock));
-		defensePiece.addBlock(new MapPoint(1, 1), new Block(defenseBlock));
+		defensePiece.addBlock(new MapPoint(0,0), new Block(defenseBlock));
+		defensePiece.addBlock(new MapPoint(1,0), new Block(defenseBlock));
+		defensePiece.addBlock(new MapPoint(0,1), new Block(defenseBlock));
+		defensePiece.addBlock(new MapPoint(1,1), new Block(defenseBlock));
 		pieces.add(defensePiece);
 
 		// Water movement piece
 		Piece waterPiece = new Piece(50, "Water Movement", "Provides the water movement ability (30 hp per block)");
-		waterPiece.addBlock(new MapPoint(0, 0), new Block(waterBlock));
-		waterPiece.addBlock(new MapPoint(0, 1), new Block(waterBlock));
-		waterPiece.addBlock(new MapPoint(0, 2), new Block(waterBlock));
-		waterPiece.addBlock(new MapPoint(0, 3), new Block(waterBlock));
+		waterPiece.addBlock(new MapPoint(0,0), new Block(waterBlock));
+		waterPiece.addBlock(new MapPoint(0,1), new Block(waterBlock));
+		waterPiece.addBlock(new MapPoint(0,2), new Block(waterBlock));
+		waterPiece.addBlock(new MapPoint(0,3), new Block(waterBlock));
 		pieces.add(waterPiece);
 		
-		// Sight/range piece
-		Piece sightrangePiece = new Piece(100, "Sight/Range", "Provides +120 sight and range - +1 sight and range radius (40 hp per block)");
-		sightrangePiece.addBlock(new MapPoint(0,0), new Block(sightrangeBlock));
-		sightrangePiece.addBlock(new MapPoint(1,0), new Block(sightrangeBlock));
-		sightrangePiece.addBlock(new MapPoint(0,1), new Block(sightrangeBlock));
-		sightrangePiece.addBlock(new MapPoint(1,1), new Block(sightrangeBlock));
-		sightrangePiece.addBlock(new MapPoint(2,0), new Block(sightrangeBlock));
-		sightrangePiece.addBlock(new MapPoint(3,0), new Block(sightrangeBlock));
-		pieces.add(sightrangePiece);
+		// Seer piece
+		Piece seerPiece = new Piece(110, "Seer", "Provides +1 sight and range radius (35 hp per block)");
+		seerPiece.addBlock(new MapPoint(0,0), new Block(seerBlock));
+		seerPiece.addBlock(new MapPoint(1,0), new Block(seerBlock));
+		seerPiece.addBlock(new MapPoint(2,0), new Block(seerBlock));
+		seerPiece.addBlock(new MapPoint(3,0), new Block(seerBlock));
+		seerPiece.addBlock(new MapPoint(0,1), new Block(seerBlock));
+		seerPiece.addBlock(new MapPoint(1,1), new Block(seerBlock));
+		pieces.add(seerPiece);
+		
+		// Archer piece
+		Piece archerPiece = new Piece(100, "Archer", "Provides +84 attack and +1 range radius (40 hp per block)");
+		archerPiece.addBlock(new MapPoint(1,0), new Block(archerBlock));
+		archerPiece.addBlock(new MapPoint(0,1), new Block(archerBlock));
+		archerPiece.addBlock(new MapPoint(1,1), new Block(archerBlock));
+		archerPiece.addBlock(new MapPoint(2,1), new Block(archerBlock));
+		archerPiece.addBlock(new MapPoint(1,2), new Block(archerBlock));
+		archerPiece.addBlock(new MapPoint(1,3), new Block(archerBlock));
+		archerPiece.addBlock(new MapPoint(2,3), new Block(archerBlock));
+		pieces.add(archerPiece);
+		
+		// Beserker piece
+		Piece beserkerPiece = new Piece(120, "Beserker", "Provides +75 attack and +20 defense");
+		beserkerPiece.addBlock(new MapPoint(1,0), new Block(beserkerBlock));
+		beserkerPiece.addBlock(new MapPoint(2,0), new Block(beserkerBlock));
+		beserkerPiece.addBlock(new MapPoint(0,1), new Block(beserkerBlock));
+		beserkerPiece.addBlock(new MapPoint(1,1), new Block(beserkerBlock));
+		beserkerPiece.addBlock(new MapPoint(0,2), new Block(beserkerBlock));
+		pieces.add(beserkerPiece);
 		
 		return pieces;
 	}

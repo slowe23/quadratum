@@ -14,8 +14,10 @@ import net.quadratum.core.PlayerInformation;
 import net.quadratum.core.Unit;
 import net.quadratum.core.WinCondition;
 
-public class Level5 implements Level
-{
+public class Level5 implements Level {
+	
+	int _numberOfDefaultPieces;
+	
 	public Level5() {}
 
 	public String getMap() {
@@ -47,6 +49,7 @@ public class Level5 implements Level
 	
 	private ArrayList<Piece> getAIPieces() {
 		ArrayList<Piece> pieces = DefaultPieces.getPieces();
+		_numberOfDefaultPieces = pieces.size();
 		
 		// These are hax blocks used by the General.
 		
@@ -288,22 +291,26 @@ public class Level5 implements Level
 				// TODO change behavior
 				registerUnit(unit, new ChaseBehavior(false));
 				// 7 - attack, 8 - sight, 9 - movement, 10 - defense
-				_core.updateUnit(this, unit, 7, new MapPoint(0,0), Piece.ROTATE_NONE);
-				_core.updateUnit(this, unit, 7, new MapPoint(7,0), Piece.ROTATE_CW);
-				_core.updateUnit(this, unit, 8, new MapPoint(3,1), Piece.ROTATE_NONE);
-				_core.updateUnit(this, unit, 9, new MapPoint(2,2), Piece.ROTATE_NONE);
-				_core.updateUnit(this, unit, 10, new MapPoint(3,2), Piece.ROTATE_NONE);
-				_core.updateUnit(this, unit, 9, new MapPoint(5,2), Piece.ROTATE_NONE);
-				_core.updateUnit(this, unit, 8, new MapPoint(1,3), Piece.ROTATE_CW);
-				_core.updateUnit(this, unit, 10, new MapPoint(2,3), Piece.ROTATE_CW);
-				_core.updateUnit(this, unit, 10, new MapPoint(5,3), Piece.ROTATE_CW);
-				_core.updateUnit(this, unit, 8, new MapPoint(6,3), Piece.ROTATE_CW);
-				_core.updateUnit(this, unit, 9, new MapPoint(2,5), Piece.ROTATE_NONE);
-				_core.updateUnit(this, unit, 10, new MapPoint(3,5), Piece.ROTATE_NONE);
-				_core.updateUnit(this, unit, 9, new MapPoint(5,5), Piece.ROTATE_NONE);
-				_core.updateUnit(this, unit, 8, new MapPoint(3,6), Piece.ROTATE_NONE);
-				_core.updateUnit(this, unit, 7, new MapPoint(0,7), Piece.ROTATE_CCW);
-				_core.updateUnit(this, unit, 7, new MapPoint(7,7), Piece.ROTATE_180);
+				int attack = _numberOfDefaultPieces+1;
+				int sight = _numberOfDefaultPieces+2;
+				int movement = _numberOfDefaultPieces+3;
+				int defense = _numberOfDefaultPieces+4;
+				_core.updateUnit(this, unit, attack, new MapPoint(0,0), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, attack, new MapPoint(7,0), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, sight, new MapPoint(3,1), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, movement, new MapPoint(2,2), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, defense, new MapPoint(3,2), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, movement, new MapPoint(5,2), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, sight, new MapPoint(1,3), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, defense, new MapPoint(2,3), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, defense, new MapPoint(5,3), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, sight, new MapPoint(6,3), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, movement, new MapPoint(2,5), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, defense, new MapPoint(3,5), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, movement, new MapPoint(5,5), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, sight, new MapPoint(3,6), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, attack, new MapPoint(0,7), Piece.ROTATE_CCW);
+				_core.updateUnit(this, unit, attack, new MapPoint(7,7), Piece.ROTATE_180);
 			}
 		}
 		
