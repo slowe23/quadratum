@@ -777,11 +777,13 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 	public String getPresetMap() {
 		if(usingPresetMap()) {
 			String filename = (String)(_mapSelector.getSelectedObjects()[0]);
-			return MainConstants.MAP_DIRECTORY + "/" + filename;
-		}
-			else {
-				System.err.println("Preset maps not yet selectable.");
+			if (!filename.endsWith(".qmap")) {
+				filename += ".qmap";
 			}
+			return MainConstants.MAP_DIRECTORY + "/" + filename;
+		} else {
+			System.err.println("Preset maps not yet selectable.");
+		}
 		return null;
 	}
 

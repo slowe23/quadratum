@@ -492,13 +492,12 @@ public class MapEditor extends JFrame {
 		@Override
 		public boolean accept(File pathname) {
 			String name = pathname.getName().toLowerCase();
-			return pathname.isDirectory() || name.endsWith(".qmap")
-					|| name.endsWith(".qmp");
+			return pathname.isDirectory() || name.endsWith(".qmap");
 		}
 
 		@Override
 		public String getDescription() {
-			return "Quadratum Map File (.qmap, .qmp)";
+			return "Quadratum Map File (.qmap)";
 		}
 
 	}
