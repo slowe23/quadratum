@@ -60,7 +60,6 @@ public class ServerThread extends Thread implements Pingable {
 			server = new ServerSocket(_port);
 			server.setSoTimeout(1000);
 		} catch (IOException e) {
-			e.printStackTrace();
 			return;
 		}
 		// Create a ping thread.
@@ -73,15 +72,13 @@ public class ServerThread extends Thread implements Pingable {
 			} catch (SocketTimeoutException e) {
 				continue;
 			} catch (IOException e) {
-				e.printStackTrace();
+				return;
 			} 
 		}
 		// We've stopped listening. Close the socket.
 		try {
 			server.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} catch (IOException e) { }
 	}
 	
 	/**
@@ -138,9 +135,7 @@ public class ServerThread extends Thread implements Pingable {
 		_keepListening = false;
 		try {
 			join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		} catch (InterruptedException e) { }
 		return _connectedPlayers;
 	}
 	

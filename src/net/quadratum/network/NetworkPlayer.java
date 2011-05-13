@@ -127,7 +127,7 @@ public class NetworkPlayer extends NetworkClient implements Player, Pingable {
 				int y = Integer.parseInt(parts[3]);
 				success = _core.unitAction(this, id, new MapPoint(x,y));
 			} catch (NumberFormatException e) {
-				e.printStackTrace();
+				return;
 			}
 			// send back whether or not it succeeded
 			write("unitaction\t"+success+"\n");
@@ -138,7 +138,7 @@ public class NetworkPlayer extends NetworkClient implements Player, Pingable {
 			try {
 				id = Integer.parseInt(parts[1]);
 			} catch (NumberFormatException e) {
-				e.printStackTrace();
+				return;
 			}
 			// Get the valid actions for this unit.
 			HashMap<MapPoint, Action.ActionType> map = null;
@@ -164,7 +164,7 @@ public class NetworkPlayer extends NetworkClient implements Player, Pingable {
 				int y = Integer.parseInt(parts[2]);
 				id = _core.placeUnit(this, new MapPoint(x,y), parts[3]);
 			} catch (NumberFormatException e) {
-				e.printStackTrace();
+				return;
 			}
 			// send back whether or not it succeeded
 			write("unitplaced\t"+id+"\n");
@@ -182,7 +182,7 @@ public class NetworkPlayer extends NetworkClient implements Player, Pingable {
 				id = Integer.parseInt(parts[1]);
 				u = _core.getUnit(this, id);
 			} catch (NumberFormatException e) {
-				e.printStackTrace();
+				return;
 			}
 			// Write the unit back across the wire...
 			write("unit\t"+id+"\t"+Serializer.getEncodedString(u)+"\n");
@@ -198,7 +198,7 @@ public class NetworkPlayer extends NetworkClient implements Player, Pingable {
 				int rotation = Integer.parseInt(parts[5]);
 				success = _core.updateUnit(this, unitID, pieceID, new MapPoint(x,y), rotation);
 			} catch (NumberFormatException e) {
-				e.printStackTrace();
+				return;
 			}
 			// send back whether it succeeded
 			write("unitupdated\t"+success+"\n");
@@ -211,7 +211,7 @@ public class NetworkPlayer extends NetworkClient implements Player, Pingable {
 				id = Integer.parseInt(parts[1]);
 				name = _core.getPlayerName(id);
 			} catch (NumberFormatException e) {
-				e.printStackTrace();
+				return;
 			}
 			// send back the id and player name
 			write("playername\t"+id+"\t"+name+"\n");

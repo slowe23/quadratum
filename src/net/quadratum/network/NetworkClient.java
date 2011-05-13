@@ -49,9 +49,7 @@ public abstract class NetworkClient implements Closeable, Pingable {
 		try {
 			_out.write(s);
 			_out.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} catch (IOException e) { }
 	}
 	
 	/**
@@ -77,9 +75,7 @@ public abstract class NetworkClient implements Closeable, Pingable {
 			_out.close();
 			_in.close();
 			_sock.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} catch (IOException e) { }
 	}
 	
 	@Override
@@ -101,9 +97,7 @@ public abstract class NetworkClient implements Closeable, Pingable {
 			} catch (SocketTimeoutException e) {
 				disconnected();
 				close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			} catch (IOException e) { }
 			close();
 		}
 	}

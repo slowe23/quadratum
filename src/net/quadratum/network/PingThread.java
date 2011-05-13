@@ -21,10 +21,8 @@ public class PingThread extends Thread {
 		while (_host.keepListening()) {
 			try {
 				Thread.sleep(MainConstants.PING_TIME);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			_host.ping();
+			} catch (InterruptedException e) { }
+			// _host.ping();
 		}
 	}
 }

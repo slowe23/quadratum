@@ -78,14 +78,12 @@ public class Piece implements Serializable {
 	 * @return whether or not there was a block already in the specified position
 	 */
 	public boolean addBlock(MapPoint p, Block b) {
-		synchronized(_boundsLock) {
-			_bounds = null;
-			if (_blocks.containsKey(p)) {
-				return false;
-			} else {
-				_blocks.put(p,b);
-				return true;
-			}			
+		_bounds = null;
+		if (_blocks.containsKey(p)) {
+			return false;
+		} else {
+			_blocks.put(p,b);
+			return true;
 		}
 	}
 	
@@ -96,28 +94,26 @@ public class Piece implements Serializable {
 	public int[] getBounds(int rotation) {
 		int lx, ly, ux, uy;
 		
-		synchronized(_boundsLock) {
-			if(_bounds==null) {
-				_bounds = new int[4];
-				boolean any = false;
-				for(MapPoint m : _blocks.keySet()) {
-					if(!any || m._x<_bounds[0])
-						_bounds[0] = m._x;
-					if(!any || m._y<_bounds[1])
-						_bounds[1] = m._y;
-					if(!any || m._x>_bounds[2])
-						_bounds[2] = m._x;
-					if(!any || m._y>_bounds[3])
-						_bounds[3] = m._y;
-	
-					any = true;
-				}
+		if(_bounds==null) {
+			_bounds = new int[4];
+			boolean any = false;
+			for(MapPoint m : _blocks.keySet()) {
+				if(!any || m._x<_bounds[0])
+					_bounds[0] = m._x;
+				if(!any || m._y<_bounds[1])
+					_bounds[1] = m._y;
+				if(!any || m._x>_bounds[2])
+					_bounds[2] = m._x;
+				if(!any || m._y>_bounds[3])
+					_bounds[3] = m._y;
+
+				any = true;
 			}
-			lx = _bounds[0]; 
-			ly = _bounds[1]; 
-			ux = _bounds[2]; 
-			uy = _bounds[3];
 		}
+		lx = _bounds[0]; 
+		ly = _bounds[1]; 
+		ux = _bounds[2]; 
+		uy = _bounds[3];
 		
 		int temp;
 		for (int i = 0; i < rotation; i++) {

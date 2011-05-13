@@ -237,9 +237,7 @@ public class VirtualCore extends NetworkClient implements Core {
 		boolean b = false;
 		try {
 			b = Boolean.parseBoolean(s[0]);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
+		} catch (NumberFormatException e) { }
 		return b;
 	}
 	
@@ -264,9 +262,7 @@ public class VirtualCore extends NetworkClient implements Core {
 		int i = 0;
 		try {
 			i = Integer.parseInt(s[0]);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
+		} catch (NumberFormatException e) { }
 		return i;
 	}
 	
@@ -303,6 +299,8 @@ public class VirtualCore extends NetworkClient implements Core {
 	 * @return the data provided in the response
 	 */
 	private String[] getResponse(String resp) {
+		System.out.println("Waiting for response for "+resp);
+		System.out.println("Current responses: "+_responses);
 		String[] s = null;
 		boolean done = false;
 		while (!done) {
@@ -322,6 +320,7 @@ public class VirtualCore extends NetworkClient implements Core {
 	 */
 	@Override
 	protected void process(String message) {
+		System.out.println("Got message: "+message);
 		String[] parts = message.split("\t");
 		// Look at the first part of the incoming message
 		if (parts[0].equals("start")) {
@@ -332,8 +331,8 @@ public class VirtualCore extends NetworkClient implements Core {
 			try {
 				id = Integer.parseInt(parts[2]);
 				numplayers = Integer.parseInt(parts[3]);
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
+			} catch (NumberFormatException e) { 
+				return;
 			}
 			// Set the VirtualCore's data.
 			_mapData = md;
@@ -386,7 +385,7 @@ public class VirtualCore extends NetworkClient implements Core {
 				int id = Integer.parseInt(parts[1]);
 				_localPlayer.chatMessage(id, parts[2]);
 			} catch (NumberFormatException e) {
-				e.printStackTrace();
+				return;
 			}
 		} else if (parts[0].equals("updateturn")) {
 			// The turn has changed.
@@ -395,7 +394,7 @@ public class VirtualCore extends NetworkClient implements Core {
 				int id = Integer.parseInt(parts[1]);
 				_localPlayer.updateTurn(id);
 			} catch (NumberFormatException e) {
-				e.printStackTrace();
+				return;
 			}
 		} else if (parts[0].equals("ping")) {
 			// Nothing needs to happen here. The ping just makes
