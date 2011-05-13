@@ -30,6 +30,7 @@ public class ServerThread extends Thread implements Pingable {
 	
 	/** Flag telling this ServerThread to keep listening for connections. */
 	boolean _keepListening;
+	boolean _accept;
 	/** Port this ServerThread listens on. */
 	int _port = MainConstants.Defaults.PREFERRED_PORT;
 	
@@ -53,6 +54,7 @@ public class ServerThread extends Thread implements Pingable {
 	@Override
 	public void run() {
 		_keepListening = true;
+		_accept = true;
 		ServerSocket server;
 		
 		// Create the ServerSocket that everything will connect to.
@@ -68,7 +70,8 @@ public class ServerThread extends Thread implements Pingable {
 		while (_keepListening) {
 			try {
 				Socket sock = server.accept();
-				addPlayer(sock);
+				if(_accept)
+					addPlayer(sock);
 			} catch (SocketTimeoutException e) {
 				continue;
 			} catch (IOException e) {
@@ -85,7 +88,7 @@ public class ServerThread extends Thread implements Pingable {
 	 * Adds a player to the connected players list.
 	 * @param sock the socket to make a player out of.
 	 */
-	private synchronized void addPlayer(Socket sock) {
+	protected synchronized void addPlayer(Socket sock) {
 		// Add the socket.
 		_connectedSockets.add(sock);
 		// Set the socket timeout.
@@ -139,6 +142,10 @@ public class ServerThread extends Thread implements Pingable {
 		return _connectedPlayers;
 	}
 	
+	public synchronized void freeze(boolean b) {
+		_accept = b;
+	}
+	
 	@Override
 	public synchronized void ping() {
 		for (NetworkPlayer p : _connectedPlayers) {
@@ -151,10 +158,11 @@ public class ServerThread extends Thread implements Pingable {
 		return _keepListening;
 	}
 	
-	private synchronized void socketClosed(Socket sock) {
+	protected synchronized int socketClosed(Socket sock) {
 		int i = _connectedSockets.indexOf(sock);
 		_connectedSockets.remove(i);
 		_connectedPlayers.remove(i);
+		return i;
 	}
 	
 	class ListenThread extends Thread {

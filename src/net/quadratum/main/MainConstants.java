@@ -51,6 +51,7 @@ public class MainConstants {
 		public static final boolean ALLOW_WATER =     true;
 		public static final boolean ALLOW_BUNKERS =   true;
 		public static final boolean ALLOW_MOUNTAINS = true;
+		public static final boolean ALLOW_RESOURCES = true;
 		public static final int MAP_TILE_WIDTH =  25;
 		public static final int MAP_TILE_HEIGHT = 25;
 		
