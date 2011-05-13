@@ -47,7 +47,7 @@ public class Level2 implements Level {
 			super();
 		}
 		
-		public void createUnits(int id) {
+		public void createUnits(MapData mapData, int id) {
 			placeTurret(new MapPoint(4, 3));
 			placeTurret(new MapPoint(5, 2));
 			placeTurret(new MapPoint(10, 7));
