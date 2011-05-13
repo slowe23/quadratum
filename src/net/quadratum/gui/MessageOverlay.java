@@ -20,7 +20,7 @@ public class MessageOverlay extends JPanel implements MessageDisplay {
 	private final FontMetrics FMETR;
 	
 	private static final int MSG_TIME = 7500;  //Max time in ms to display messages
-	private static final int MSG_NUM = 5;  //Max number of messages to display
+	private static final int MSG_NUM = 8;  //Max number of messages to display
 	private static final int MSG_PAD = 5;  //Number of pixels from the edge to pad messages
 	
 	private boolean _showMessages;

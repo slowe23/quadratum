@@ -67,9 +67,7 @@ public class Tutorial implements Level {
 			_core.placeUnit(this, new MapPoint(11,7), "Enemy");
 			_core.placeUnit(this, new MapPoint(11,8), "Enemy");
 			_core.ready(this);
-			giveDirections("Welcome to Quadratum! To begin,");
-			giveDirections("place a piece on the highlighted area, then click");
-			giveDirections("the \"Start Game\" button in the top right corner.");
+			giveDirections("Welcome to Quadratum! To begin, place a piece on the highlighted area, then click the \"Start Game\" button in the top right corner.");
 		}
 		
 		/**
@@ -121,28 +119,19 @@ public class Tutorial implements Level {
 				if (!_placedUnit) {
 					if (units.size() > 0) {
 						_ai.addPiece(new Piece(DefaultPieces.getPieces().get(1)));
-						_ai.giveDirections("Good job! Now try adding some movement blocks");
-						_ai.giveDirections("to your unit and move him up to the gold");
-						_ai.giveDirections("diamond-shaped objects. I put the movement blocks");
-						_ai.giveDirections("in your blocks list for you.");
+						_ai.giveDirections("Good job! Now try adding some movement blocks to your unit and move him up to the gold diamond-shaped objects. I put the movement blocks in your blocks list for you.");
 						_placedUnit = true;
 					}
 				} else if (!_movedToResources) {
 					if (hasUnitInBounds(units,3,7,4,8)) {
-						_ai.giveDirections("Very good! These gold squares are resources.");
-						_ai.giveDirections("Standing on them will give you resources every");
-						_ai.giveDirections("turn, which you spend to add blocks. Now try");
-						_ai.giveDirections("moving to the right to the gray shapes.");
+						_ai.giveDirections("Very good! These gold squares are resources. Standing on them will give you resources every turn, which you spend to add blocks. Now try moving to the right to the gray shapes.");
 						_movedToResources = true;
 					}
 				} else if (!_movedToBunkers) {
 					if (hasUnitInBounds(units,8,7,9,8)) {
 						_ai.addPiece(new Piece(DefaultPieces.getPieces().get(0)));
 						_ai.addPiece(new Piece(DefaultPieces.getPieces().get(2)));
-						_ai.giveDirections("This terrain type is a bunker. They give you");
-						_ai.giveDirections("a defensive boost. Make sure to make use of them");
-						_ai.giveDirections("in battle! I'm adding attack and range blocks to");
-						_ai.giveDirections("your list. Place some and kill the enemies!");
+						_ai.giveDirections("This terrain type is a bunker. They give you a defensive boost. Make sure to make use of them in battle! I'm adding attack and range blocks to your list. Place some and kill the enemies!");
 						_movedToBunkers = true;
 					}
 				} else if (!_killedEnemies) {
@@ -150,17 +139,13 @@ public class Tutorial implements Level {
 				} else if (!_movedToMountains) {
 					if (hasUnitInBounds(units,8,2,9,3)) {
 						_ai.addPiece(new Piece(DefaultPieces.getPieces().get(5)));
-						_ai.giveDirections("This terrain is a mountain. You get a range");
-						_ai.giveDirections("bonus when you are on top of one of these.");
-						_ai.giveDirections("I added a water movement block to your list,");
-						_ai.giveDirections("so use it to cross the moat in the top right.");
+						_ai.giveDirections("This terrain is a mountain. You get a range bonus when you are on top of one of these. I added a water movement block to your list, so use it to cross the moat in the top right.");
 						_movedToMountains = true;
 					}
 				} else if (!_movedToCorner) {
 					if (hasUnitInBounds(units,13,0,13,0) || hasUnitInBounds(units,14,0,14,0)
 							|| hasUnitInBounds(units,14,1,14,1)) {
-						_ai.giveDirections("Congratulations! You completed the tutorial.");
-						_ai.giveDirections("Try playing the campaign next!");
+						_ai.giveDirections("Congratulations! You completed the tutorial. Try playing the campaign next!");
 						_movedToCorner = true;
 					}
 				} else if (_movedToCorner) {
@@ -169,8 +154,7 @@ public class Tutorial implements Level {
 			} else if (playerNumber == 1) {
 				if (!_killedEnemies) {
 					if (units.size() == 0) {
-						_ai.giveDirections("Nice job! Trying moving around the water to the");
-						_ai.giveDirections("brown triangular spaces...");
+						_ai.giveDirections("Nice job! Trying moving around the water to the brown triangular spaces...");
 						_killedEnemies = true;
 					}
 				}
