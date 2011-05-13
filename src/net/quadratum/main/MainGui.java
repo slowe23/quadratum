@@ -239,14 +239,8 @@ public class MainGui extends JFrame
 		int res = set.getStartingResources();
 		gc.addPlayer(human, "human", maxU, res);
 		
-<<<<<<< local
 		for(int i = 1; i < others.size(); i++) {
 			gc.addPlayer(new VirtualPlayer(), "virtual player"+i, maxU, res);
-=======
-		// what is going on here holy crap
-		for(int i = 1; i < maxU; i++) {
-			gc.addPlayer(new VirtualPlayer(), "virtual player "+i, maxU, res);
->>>>>>> other
 		}
 		hideMe();
 
@@ -278,22 +272,11 @@ public class MainGui extends JFrame
 		}
 		
 		GameCore gc;
-<<<<<<< local
-		if(level instanceof Tutorial)
-=======
 		if (level instanceof Tutorial) {
->>>>>>> other
 			gc = new TutorialCore(this, level.getMap(), level.getWinCondition(), level.getPieces());
-<<<<<<< local
-		else
-=======
 		} else {
->>>>>>> other
 			gc = new GameCore(this, level.getMap(), level.getWinCondition(), level.getPieces());
-<<<<<<< local
-=======
 		}
->>>>>>> other
 		
 		Player human = new GUIPlayer();
 		Player ai = level.getAI();
