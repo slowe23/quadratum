@@ -606,7 +606,8 @@ public class GameCore implements Core
 				
 				int attackLines = Math.min(attacker._size,
 						Constants.INITIAL_ATTACK_WIDTH+
-						attacker._stats.get(Block.BonusType.ATTACK_WIDTH));
+						(attacker._stats.get(Block.BonusType.ATTACK_WIDTH) / 
+							Constants.ATTACK_WIDTH_MODIFIER));
 				
 				RealPoint[] lineStarts = new RealPoint[attackLines];
 				RealPoint[] lineEnds = new RealPoint[attackLines];
