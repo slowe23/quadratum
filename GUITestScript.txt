@@ -1,0 +1,65 @@
+Enter a game of some kind (e.g. a new quick-play game)
+
+The game should begin during the placement phase.  The map should be displayed with the placement area visible.  There should be a display of resources and units to place and a button to begin a game.  At the bottom there should be a minimap, a selected unit display, and a tabbed panel with tabs for units, pieces, objectives, and chat.
+
+Click the units tab.  This should not have any units until you have placed them.
+
+Click the pieces tab.  This should show an image of a piece accompanied by text about the piece.  There should also be buttons to scroll through the list and rotate the current piece.
+
+Scroll through the list by clicking the previous and next buttons.  The piece displayed should change and the info should be updated accordingly.
+
+Rotate the selected piece by clicking the rotate button.  The piece should rotate clockwise.
+
+Rotate a piece (piece 1) to some orientation (A).  Change the piece so some other piece (2) and rotate it to some other orientation (B).  Return to piece 1.  It should still have orientation A.  Return to piece 2.  It should still have orientation B.
+
+Click the objectives tab.  It should display some text about game objectives.
+
+Click the chat tab.  It should contain a text area for the chat history, a text field for writing chat messages, a button for sending the message in the text field, and a check box for whether to show recent messages over the map.  The chat history should display any chat messages that have currently been sent or received.
+
+Type a message into the text field and press enter.  The text area should clear.  The message should appear at the bottom left corner of the screen for a while.  The message should also appear in the chat history text area.
+
+Type a message into the text field and click the send button.  The same thing should happen as above.
+
+Send a chat message, then uncheck the checkbox.  The chat message should disappear from the bottom left corner of the map area.  Check the checkbox again.  The chat message should reappear over the map area.
+
+Look at the minimap.  It should show a scaled-down version of the map.  There should be a rectangle indicating the portion of the map which is visible in the main map area.
+
+Click on the minimap.  The map should center on the clicked location (unless it was near the edge, in which case it should come as close to centered as possible.  The minimap should track the new location of the map by changing the position of the view rectangle.
+
+Scroll the mouse wheel while over the map.  The map should zoom in when scrolling down and out when scrolling up.  The view should stay centered unless near the edge of the map.  The minimap should track the zoomed size of the map area by changing the size of the view rectangle.
+
+Press and drag the mouse over the map.  The map should scroll accordingly.  The minimap should track scrolling by changing its view rectangle.
+
+Click the mouse on the map somewhere other than the placement area.  Nothing should happen.
+
+Click the mouse in the placement area to place a unit.  A unit should appear on the map.  The placement area should be updated to exclude the tile where the unit has been placed.  The unit should be emphasized on the map to show it is selected.  The unit should also appear with emphasis on the minimap.  The selected unit area in the control panel should be updated to display text info and an image of the unit.  The units to place at the top of the screen should be updated.
+
+Click the units tab.  The new unit should be present and emphasized to show it is selected.
+
+Click on the map area somewhere outside of the unit's tile.  The unit should be deselected.  The selected unit area of the control panel should update to reflect this change.  So should the units tab and minimap.
+
+Click on the placement area again to place a new unit.  The new units should be selected.  Everything should be updated accordingly.
+
+With a unit selected, click on the pieces tab.  Mouse over the selected unit image.  If the currently selected piece can be afforded, a translucent image of the piece should appear over the unit.  This image should have the same orientation as the piece in the pieces tab.  Its upper left corner should be located at the mouse position.
+
+Mouse off the selected unit image.  The translucent piece preview should disappear.
+
+Click on the selected unit image somewhere where the selected piece can be validly placed.  The piece should be placed there and the unit should be updated accordingly in the selected units area, units tab, and main map area.  The resources should decrease by the cost of the piece.
+
+Click on the units tab.  Click on one of the units there.  The unit should be selected (updating everything accordingly).  If the unit is off-screen, the map should recenter on the unit.
+
+Click the start game button.  The game should enter the gameplay phase.  The units to place text and start game buttons at the top right corner of the window should disappear and be replaced with end turn and forfeit buttons.  The placement area should disappear.  Fog of war should now be displayed with a sight area around each unit and the rest of the map darkened.
+
+Click on a unit that has some available actions such as movement.  The unit's available actions should appear as arrow icons pointing in the direction of the action.  Click on an arrow.  The unit should perform the appropriate action.  The arrows should update to reflect the unit's new available actions (possibly none).
+
+Click on a unit that has some available actions, then place a piece in that unit.  The unit's available actions should disappear, since units are not allowed to move after placing pieces.  If the piece affects the unit's stats, they should be updated in the unit info text area.  If the piece affects the unit's sight range, the fog of war should be updated.
+
+Click the end turn button.  The button should be disabled while any opponents take their turns.  The button should be re-enabled when it is the player's turn again.
+
+Engage in battle with an enemy unit (this might take a while).  If a unit's blocks are damaged they should darken (when damaged) and disappear (when destroyed) according to the results of that attack.
+
+Win or lose the game.  A dialog should inform you of game stats.  Upon closing the dialog the game window should close and return you to the menu screen.
+
+Start a new game, then close the game window.  The game window should close and return you to the menu screen.
+
+Start a new game, place units, start the game, then forfeit.  The game window should close and return you to the menu screen.
