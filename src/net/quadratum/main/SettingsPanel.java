@@ -265,7 +265,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		
 		
 		/* Quickplay options: AI difficulty */
-		_qpSettings = new JPanel();
+		/* QPFlag _qpSettings = new JPanel();
 		_qpSettings.setLayout(new BoxLayout(_qpSettings, BoxLayout.X_AXIS));
 		_qpSettings.add(new JLabel("AI difficulty:"));
 		
@@ -280,7 +280,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		
 		_qpSettings.add(Box.createHorizontalGlue());
 		_qpSettings.add(_aiLevel);
-		_qpSettings.setBorder(BorderFactory.createTitledBorder("Quick play only"));
+		_qpSettings.setBorder(BorderFactory.createTitledBorder("Quick play only")); */
 		
 		
 		/* Right side: Network game settings, followed by other network settings */
@@ -431,8 +431,8 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		//leftSide.add(qpSettings, BorderLayout.PAGE_END);
 		leftSide.setLayout(new BoxLayout(leftSide, BoxLayout.Y_AXIS));
 		leftSide.add(uniSettings);
-		leftSide.add(Box.createRigidArea(outerSpacing));
-		leftSide.add(_qpSettings);
+		// QPFlag leftSide.add(Box.createRigidArea(outerSpacing));
+		// QPFlag leftSide.add(_qpSettings);
 		leftSide.add(Box.createVerticalGlue());
 		leftSide.add(Box.createRigidArea(new Dimension(0, 1)));
 		
@@ -459,7 +459,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		
 		
 		// Outer buttons
-		_startGameBtn = new JButton("Start game");
+		_startGameBtn = new JButton("Create game");
 		_returnMainBtn = new JButton("Return to main menu");
 		_useDefaultsBtn = new JButton("Restore defaults");
 		//init btns
@@ -519,7 +519,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		//_netComponents.setEnabled( network );
 		setRecursiveEnabled(_netComponents, network);
 		//  _numPlayers.setEnabled ( network );
-		_aiLevel.setEnabled   ( !network );
+		// QPFlag _aiLevel.setEnabled   ( !network );
 	}
 	
 	private void setRecursiveEnabled(Component c, boolean b) {
@@ -545,6 +545,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		_water.setSelected(Defaults.ALLOW_WATER);
 		_bunkers.setSelected(Defaults.ALLOW_BUNKERS);
 		_mtns.setSelected(Defaults.ALLOW_MOUNTAINS);
+		_res.setSelected(Defaults.ALLOW_RESOURCES);
 		_timeLimitCB.setSelected(false);
 			_timeLimit.setEnabled(_timeLimitCB.isSelected());
 		_turnLimitCB.setSelected(Defaults.LIMIT_DURATION);
@@ -559,7 +560,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		_resSpinner.setValue(Defaults.INIT_NUM_RESOURCES);
 		
 		// sliders
-		_aiLevel.setValue(Defaults.AI_DIFFICULTY);
+		// QPFlag _aiLevel.setValue(Defaults.AI_DIFFICULTY);
 		_timeLimit.setValue(Defaults.TURN_LIMIT_SECS);
 		_turnLimit.setValue(Defaults.PLAYER_TURNS_LIMIT);
 		
@@ -648,6 +649,7 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 			_water.setEnabled(!b);
 			_bunkers.setEnabled(!b);
 			_mtns.setEnabled(!b);
+			_res.setEnabled(!b);
 			
 			return;
 		}
@@ -829,6 +831,10 @@ public class SettingsPanel extends JPanel implements Settings, ItemListener, Act
 		
 		//System.err.println("Preset maps not yet selectable.");
 		return false;
+	}
+	
+	public boolean checkConnection() {
+		return _connectionCheck.testConnection(_portNumber.getText());
 	}
 
 	@Override

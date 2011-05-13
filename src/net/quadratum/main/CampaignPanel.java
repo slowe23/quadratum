@@ -15,6 +15,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -46,6 +48,7 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 	private static Level[] _levels;
 	private static LvlStatus[] _wins;
 	private static int[] _invalidLevels;
+	private static final String _dataFile = "src/net/quadratum/gamedata/campaign.dat";
 	
 	private int _levelSelected, _xOffMap, _yOffMap, _xOffIcon, _yOffIcon;
 	private static int _maxLevel;
@@ -139,13 +142,16 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		// Campaign level selected, game started, maybe mouseover?
-		
 		String s = e.getActionCommand();
 		
 		if(s.equals("play")) {
 			if(canPlay(_levelSelected)) {
+				if(_wins[_levelSelected].val < 1 &&
+				   _wins[_levelSelected-1].val < 1) {
+					_levelStatus.setText("<html>You haven't advanced far<br>" +
+										 "enough play this level.</html>");
+					return;
+				}
 				_main.startCampaignGame(getLevel(_levelSelected));
 			}
 			
@@ -163,6 +169,14 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 	
 	private boolean canPlay(int level) {
 		return (level <= _maxLevel && level >= 0);
+	}
+	
+	private boolean allowedLevel(int level) {
+		for(int i : _invalidLevels) {
+			if(level==i)
+				return false;
+		}
+		return true;
 	}
 
 	private void displayLevelInfo(int level) {
@@ -184,6 +198,44 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 		}
 	}
 	
+	private static void beatLevel(int level) {
+		if(_wins[level] == LvlStatus.BEATEN)
+		{
+			//Give message congratulating you for beating this level again
+			return;
+		}
+		
+		BufferedReader fin = null;
+		PrintWriter fout = null;
+		try {
+			fin = new BufferedReader(new FileReader(_dataFile));
+			String[] lines = new String[5];
+			for(int i = 0; i<5; i++)
+				lines[i] = fin.readLine();
+			fin.close();
+
+			// Increment first unplayed level; set next to unplayed
+			lines[2] = "" + (Integer.parseInt(lines[2].trim()) + 1);
+			lines[3] = "0";
+			
+			fout = new PrintWriter(new FileWriter(_dataFile));
+			for(int i = 0; i<5; i++)
+				fout.println(lines[i]);
+			fout.close();
+		} catch (Exception e) {
+			//Give message about possible failure of saving win info
+		} finally {
+			try {
+				fin.close();
+				fout.close();
+			} catch (Exception e) {}
+		}
+	}
+	
+	private static void loseLevel(int level) {
+		//see above
+	}
+	
 	private static void loadLevelInfo() {
 		// - load info about number of levels
 		BufferedReader fin = null;
@@ -195,7 +247,7 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 			// first unbeaten level
 			// whether that level is lost or unplayed (0/anything else)
 			// levels that are disabled, separated by commas
-			fin = new BufferedReader(new FileReader("net/quadratum/gamedata/campaign.dat"));
+			fin = new BufferedReader(new FileReader(_dataFile));
 			_maxLevel = Integer.parseInt(fin.readLine());
 			String[] locsS = fin.readLine().split(";");
 			Point[] locsP = new Point[locsS.length];
@@ -216,8 +268,9 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 					break;
 				}
 				
-				if(locsGood)	_levelLocs = locsP;
 			}
+			if(locsGood)	_levelLocs = locsP;
+			
 			
 			_wins = new LvlStatus[_maxLevel + 1];
 			firstUnbeaten = Integer.parseInt(fin.readLine());
@@ -226,6 +279,10 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 			}
 			if(Integer.parseInt(fin.readLine()) == 0)
 				_wins[firstUnbeaten] = LvlStatus.LOST;
+			for(int i = firstUnbeaten; i < _maxLevel; ) {
+				i++;
+				_wins[i] = LvlStatus.UNPLAYED;
+			}
 			
 			String[] invLvls = (fin.readLine().split(","));
 			_invalidLevels = new int[invLvls.length];
@@ -243,11 +300,12 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 			_wins[3] = LvlStatus.UNPLAYED;
 			_wins[4] = LvlStatus.UNPLAYED;
 			_wins[5] = LvlStatus.UNPLAYED;
+			
+			_invalidLevels = new int[] {0, 4, 5};
 		} finally {
 
 			// Currently hardcoded		
 			_levels = new Level[_maxLevel + 1];
-			
 			_levels[0] = new Tutorial();
 			_levels[1] = new Level1();
 			_levels[2] = new Level2();
@@ -255,21 +313,20 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 			_levels[4] = new Level4();
 			_levels[5] = new Level5();
 			
-			_invalidLevels = new int[0];
 			
+			_invalidLevels = new int[0];
+
 			try {if(fin != null) fin.close();} catch (Exception e) {}
 		}
 	}
 	
 	private Level getLevel(int num) {
 		
-		// Safeguard if some levels aren't implemented
-		for(int i : _invalidLevels) {
-			if(num==i)
-				return null;
-		}
-		
 		if(canPlay(num)) {
+			// Safeguard if some levels aren't implemented
+			if(!allowedLevel(num))
+				return null;
+			
 			return _levels[num];
 		}
 		
