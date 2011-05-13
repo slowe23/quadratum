@@ -17,6 +17,7 @@ public class Level5Test implements Main {
 				level.getWinCondition(), level.getPieces());
 		core.addPlayer(player, "Local Player", level.getMaxUnits(), level.getStartingResources());
 		core.addPlayer(level.getAI(), "AI Player", Integer.MAX_VALUE, Integer.MAX_VALUE);
+		core.addObserver(new GUIPlayer());
 		core.startGame();
 	}
 

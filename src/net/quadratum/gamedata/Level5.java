@@ -1,10 +1,12 @@
 package net.quadratum.gamedata;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 
 import net.quadratum.ai.ChaseBehavior;
 import net.quadratum.ai.LevelAI;
+import net.quadratum.ai.PathBehavior;
 import net.quadratum.ai.TurretBehavior;
 import net.quadratum.core.Block;
 import net.quadratum.core.MapPoint;
@@ -70,7 +72,7 @@ public class Level5 implements Level {
 		Block defenseBlock = new Block(200);
 		defenseBlock._bonuses.put(Block.BonusType.DEFENSE, 40);
 		
-		// Attack/range piece - +1440 attack, +1 range
+		// Attack/range piece - +360 attack, +1 range
 		Piece attackrangePiece = new Piece(10000, "Hax Attax", "Provides hax");
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4 - i; j++) {
@@ -100,8 +102,6 @@ public class Level5 implements Level {
 	}
 	
 	class Level5AI extends LevelAI {
-		
-		int _general;
 
 		public Level5AI() {
 			super();
@@ -152,6 +152,13 @@ public class Level5 implements Level {
 			// Place runners
 			placeRunner(new MapPoint(27,4));
 			placeRunner(new MapPoint(27,5));
+			
+			// Place patrols
+			placePatrol(new MapPoint(19,4), new MapPoint(2,4));
+			placePatrol(new MapPoint(19,5), new MapPoint(2,5));
+			
+			// Place bodyguard
+			placeBodyguard(new MapPoint(47,5));
 			
 			// Place general
 			placeGeneral(new MapPoint(48,4));
@@ -284,17 +291,68 @@ public class Level5 implements Level {
 			}
 		}
 		
+		/**
+		 * Places a patrol unit. Patrol units pace back and forth between their start
+		 * spot and the given other location, and attack on sight.
+		 * @param location the point at which to place a patrol
+		 * @param toGo the extent of the patrol's search
+		 */
+		private void placePatrol(final MapPoint location, final MapPoint toGo) {
+			int unit = _core.placeUnit(this, location, "Patroller");
+			if (unit != -1) {
+				registerUnit(unit, new PathBehavior(new LinkedList<MapPoint>() {
+					{ add(toGo); add(location); }},true,true));
+				_core.updateUnit(this, unit, 2, new MapPoint(1,0), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, 0, new MapPoint(3,0), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, 0, new MapPoint(6,0), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 0, new MapPoint(4,1), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, 1, new MapPoint(2,3), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, 7, new MapPoint(6,3), Piece.ROTATE_180);
+				_core.updateUnit(this, unit, 7, new MapPoint(1,4), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 1, new MapPoint(5,4), Piece.ROTATE_CCW);
+				_core.updateUnit(this, unit, 0, new MapPoint(0,5), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 0, new MapPoint(5,5), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, 0, new MapPoint(6,6), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, 2, new MapPoint(6,7), Piece.ROTATE_CCW);
+			}
+		}
+		
+		/**
+		 * Places a bodyguard.
+		 * @param location the location to place this bodyguard.
+		 */
+		private void placeBodyguard(MapPoint location) {
+			int unit = _core.placeUnit(this, location, "Bodyguard");
+			if (unit != -1) {
+				registerUnit(unit, new ChaseBehavior(false));
+				_core.updateUnit(this, unit, 1, new MapPoint(0,0), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 6, new MapPoint(1,0), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 1, new MapPoint(7,0), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, 6, new MapPoint(7,1), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, 8, new MapPoint(3,3), Piece.ROTATE_180);
+				_core.updateUnit(this, unit, 8, new MapPoint(4,3), Piece.ROTATE_CCW);
+				_core.updateUnit(this, unit, 8, new MapPoint(3,4), Piece.ROTATE_CW);
+				_core.updateUnit(this, unit, 8, new MapPoint(4,4), Piece.ROTATE_NONE);
+				_core.updateUnit(this, unit, 6, new MapPoint(0,6), Piece.ROTATE_CCW);
+				_core.updateUnit(this, unit, 1, new MapPoint(0,7), Piece.ROTATE_CCW);
+				_core.updateUnit(this, unit, 6, new MapPoint(6,7), Piece.ROTATE_180);
+				_core.updateUnit(this, unit, 1, new MapPoint(7,7), Piece.ROTATE_180);
+			}
+		}
+		
+		/**
+		 * Places the general.
+		 * @param location the location at which to place the general
+		 */
 		private void placeGeneral(MapPoint location) {
 			int unit = _core.placeUnit(this, location, "General");
 			if (unit != -1) {
-				_general = unit;
-				// TODO change behavior
 				registerUnit(unit, new ChaseBehavior(false));
-				// 7 - attack, 8 - sight, 9 - movement, 10 - defense
-				int attack = _numberOfDefaultPieces+1;
-				int sight = _numberOfDefaultPieces+2;
-				int movement = _numberOfDefaultPieces+3;
-				int defense = _numberOfDefaultPieces+4;
+				// Hax stuff
+				int attack = _numberOfDefaultPieces;
+				int sight = _numberOfDefaultPieces+1;
+				int movement = _numberOfDefaultPieces+2;
+				int defense = _numberOfDefaultPieces+3;
 				_core.updateUnit(this, unit, attack, new MapPoint(0,0), Piece.ROTATE_NONE);
 				_core.updateUnit(this, unit, attack, new MapPoint(7,0), Piece.ROTATE_CW);
 				_core.updateUnit(this, unit, sight, new MapPoint(3,1), Piece.ROTATE_NONE);
