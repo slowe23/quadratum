@@ -210,10 +210,6 @@ public class VirtualCore extends NetworkClient implements Core {
 
 	@Override
 	public Unit getUnit(Player p, int unitID) {
-		// check to see if we have the unit already
-		if (_units.containsKey(unitID)) {
-			return _units.get(unitID);
-		}
 		write("getunit\t"+unitID+"\n");
 		// protocol: <unit \t> id \t unitobject
 		String[] s = getResponse("unit");
@@ -299,8 +295,6 @@ public class VirtualCore extends NetworkClient implements Core {
 	 * @return the data provided in the response
 	 */
 	private String[] getResponse(String resp) {
-		System.out.println("Waiting for response for "+resp);
-		System.out.println("Current responses: "+_responses);
 		String[] s = null;
 		boolean done = false;
 		while (!done) {
@@ -320,7 +314,6 @@ public class VirtualCore extends NetworkClient implements Core {
 	 */
 	@Override
 	protected void process(String message) {
-		System.out.println("Got message: "+message);
 		String[] parts = message.split("\t");
 		// Look at the first part of the incoming message
 		if (parts[0].equals("start")) {
