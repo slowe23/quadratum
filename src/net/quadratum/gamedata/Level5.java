@@ -27,7 +27,7 @@ public class Level5 implements Level {
 	}
 
 	public int getStartingResources() {
-		return 1500;
+		return 2000;
 	}
 
 	public int getMaxUnits() {
@@ -324,7 +324,7 @@ public class Level5 implements Level {
 		private void placeBodyguard(MapPoint location) {
 			int unit = _core.placeUnit(this, location, "Bodyguard");
 			if (unit != -1) {
-				registerUnit(unit, new ChaseBehavior(false));
+				registerUnit(unit, new ChaseBehavior(false,12));
 				_core.updateUnit(this, unit, 1, new MapPoint(0,0), Piece.ROTATE_NONE);
 				_core.updateUnit(this, unit, 6, new MapPoint(1,0), Piece.ROTATE_NONE);
 				_core.updateUnit(this, unit, 1, new MapPoint(7,0), Piece.ROTATE_CW);
@@ -347,7 +347,7 @@ public class Level5 implements Level {
 		private void placeGeneral(MapPoint location) {
 			int unit = _core.placeUnit(this, location, "General");
 			if (unit != -1) {
-				registerUnit(unit, new ChaseBehavior(false));
+				registerUnit(unit, new ChaseBehavior(false,8));
 				// Hax stuff
 				int attack = _numberOfDefaultPieces;
 				int sight = _numberOfDefaultPieces+1;

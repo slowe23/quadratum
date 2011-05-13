@@ -170,7 +170,7 @@ public class DefaultPieces {
 		pieces.add(scoutPiece);
 		
 		// Blitzkreig piece
-		Piece blitzkreigPiece = new Piece(140, "Blitzkreig", "Provides +120 attack and +1 movement radius (40 hp per block)");
+		Piece blitzkreigPiece = new Piece(150, "Blitzkreig", "Provides +120 attack and +1 movement radius (40 hp per block)");
 		blitzkreigPiece.addBlock(new MapPoint(1,0), new Block(blitzkreigBlock));
 		blitzkreigPiece.addBlock(new MapPoint(0,1), new Block(blitzkreigBlock));
 		blitzkreigPiece.addBlock(new MapPoint(1,1), new Block(blitzkreigBlock));

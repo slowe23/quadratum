@@ -57,4 +57,25 @@ public abstract class AbstractBehavior implements UnitBehavior {
 		
 		return null;
 	}
+	
+	protected static MapPoint findClosestEnemy(MapPoint location, Map<MapPoint, Unit> units) {
+		Unit me = units.get(location);
+		int friends = me._owner;
+		
+		MapPoint closestEnemy = null;
+		int closestDist = 0;
+		
+		for(Entry<MapPoint, Unit> entry : units.entrySet()) {
+			MapPoint p = entry.getKey();
+			Unit u = entry.getValue();
+			if(u._owner!=friends) {
+				int dist = taxicabDistance(p, location);
+				if(closestEnemy==null || dist<closestDist) {
+					closestEnemy = p;
+					closestDist = dist;
+				}
+			}
+		}
+		return closestEnemy;
+	}
 }

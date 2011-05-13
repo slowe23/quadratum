@@ -13,35 +13,26 @@ import net.quadratum.core.Action.ActionType;
  * If it cannot move any closer to its target, it will attempt to attack it
  * If it cannot attack its target, but can attack some other unit (e.g. for line-of-sight reasons) it will attack that unit
  * If there are no enemies in sight and wandering is enabled, the unit will make a random move
+ * You can also specify a distance past which the unit will not chase.
  */
 public class ChaseBehavior extends AbstractBehavior {
 	private boolean _wander;
+	private int _maxDistance;
 	
 	public ChaseBehavior(boolean wander) {
+		this(wander, Integer.MAX_VALUE);
+	}
+	
+	public ChaseBehavior(boolean wander, int distance) {
 		_wander = wander;
+		_maxDistance = distance;
 	}
 	
 	public MapPoint behave(MapPoint location, Map<MapPoint, ActionType> availableActions, Map<MapPoint, Unit> units) {
 		if(isBad(location, availableActions, units))
 			return null;
 		
-		Unit me = units.get(location);
-		int friends = me._owner;
-		
-		MapPoint closestEnemy = null;
-		int closestDist = 0;
-		
-		for(Entry<MapPoint, Unit> entry : units.entrySet()) {
-			MapPoint p = entry.getKey();
-			Unit u = entry.getValue();
-			if(u._owner!=friends) {
-				int dist = taxicabDistance(p, location);
-				if(closestEnemy==null || dist<closestDist) {
-					closestEnemy = p;
-					closestDist = dist;
-				}
-			}
-		}
+		MapPoint closestEnemy = findClosestEnemy(location, units);
 		
 		if(closestEnemy==null) {
 			if(_wander)
@@ -53,7 +44,12 @@ public class ChaseBehavior extends AbstractBehavior {
 		Set<MapPoint> moves = new HashSet<MapPoint>(), attacks = new HashSet<MapPoint>();
 		filter(availableActions, moves, attacks);
 		
-		MapPoint advance = moveTowards(location, closestEnemy, moves);
+		MapPoint advance;
+		if (taxicabDistance(location, closestEnemy) <= _maxDistance) {
+			advance = moveTowards(location, closestEnemy, moves);
+		} else {
+			advance = null;
+		}
 		
 		if(advance==null)
 			return (attacks.contains(closestEnemy) ? closestEnemy : randomAction(attacks));
