@@ -3,6 +3,7 @@ package net.quadratum.gamedata;
 import java.util.ArrayList;
 
 import net.quadratum.core.Block;
+import net.quadratum.core.Constants;
 import net.quadratum.core.MapPoint;
 import net.quadratum.core.Piece;
 
@@ -17,15 +18,15 @@ public class DefaultPieces {
 
 		// Movement block
 		Block movementBlock = new Block(50);
-		movementBlock._bonuses.put(Block.BonusType.MOVEMENT, 30); // 4 for +1
+		movementBlock._bonuses.put(Block.BonusType.MOVEMENT, Constants.MOVEMENT_MODIFIER / 4); // 4 for +1
 
 		// Range block
 		Block rangeBlock = new Block(50);
-		rangeBlock._bonuses.put(Block.BonusType.RANGE, 24); // 5 for +1
+		rangeBlock._bonuses.put(Block.BonusType.RANGE, Constants.ATTACK_RANGE_MODIFIER / 5); // 5 for +1
 
 		// Sight block
 		Block sightBlock = new Block(50);
-		sightBlock._bonuses.put(Block.BonusType.SIGHT, 30); // 4 for +1
+		sightBlock._bonuses.put(Block.BonusType.SIGHT, Constants.SIGHT_MODIFIER / 4); // 4 for +1
 
 		// Defense block
 		Block defenseBlock = new Block(100);
@@ -37,8 +38,8 @@ public class DefaultPieces {
 		
 		// Seer block
 		Block seerBlock = new Block(35);
-		seerBlock._bonuses.put(Block.BonusType.SIGHT, 20); // 6 for +1
-		seerBlock._bonuses.put(Block.BonusType.RANGE, 20);
+		seerBlock._bonuses.put(Block.BonusType.SIGHT, Constants.SIGHT_MODIFIER / 6); // 6 for +1
+		seerBlock._bonuses.put(Block.BonusType.RANGE, Constants.ATTACK_RANGE_MODIFIER / 6);
 		
 		// Archer block
 		Block archerBlock = new Block(40);
@@ -121,7 +122,7 @@ public class DefaultPieces {
 		pieces.add(archerPiece);
 		
 		// Beserker piece
-		Piece beserkerPiece = new Piece(120, "Beserker", "Provides +75 attack and +20 defense");
+		Piece beserkerPiece = new Piece(120, "Beserker", "Provides +75 attack and +20 defense (55 hp per block)");
 		beserkerPiece.addBlock(new MapPoint(1,0), new Block(beserkerBlock));
 		beserkerPiece.addBlock(new MapPoint(2,0), new Block(beserkerBlock));
 		beserkerPiece.addBlock(new MapPoint(0,1), new Block(beserkerBlock));
