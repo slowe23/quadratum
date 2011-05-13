@@ -1,1 +1,1 @@
-java -cp bin net.quadratum.test.MainTest2
+java -cp bin net.quadratum.main.MainGui

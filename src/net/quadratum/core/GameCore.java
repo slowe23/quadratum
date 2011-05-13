@@ -119,6 +119,7 @@ public class GameCore implements Core
 			HashSet<MapPoint> bunkers = new HashSet<MapPoint>();
 			HashSet<MapPoint> mountains = new HashSet<MapPoint>();
 			HashSet<MapPoint> resources = new HashSet<MapPoint>();
+			HashSet<MapPoint> impassables = new HashSet<MapPoint>();
 			while((line = reader.readLine()) != null)
 			{
 				if(line.startsWith("height|") && line.length() > 7)
@@ -161,6 +162,20 @@ public class GameCore implements Core
 							throw new RuntimeException();
 						}
 						water.add(new MapPoint((new Integer(temp[0])).intValue(), (new Integer(temp[1])).intValue()));
+					}
+				}
+				else if(line.startsWith("impassibles|"))
+				{
+					locations = line.split("\\|");
+					for(int i = 1; i < locations.length; i++)
+					{
+						temp = locations[i].split(",");
+						if(temp.length != 2)
+						{
+							log("Invalid impassable location(s) in map file", 3);
+							throw new RuntimeException();
+						}
+						impassables.add(new MapPoint((new Integer(temp[0])).intValue(), (new Integer(temp[1])).intValue()));
 					}
 				}
 				else if(line.startsWith("bunkers|"))
@@ -272,6 +287,18 @@ public class GameCore implements Core
 					_terrain[point._x][point._y] = _terrain[point._x][point._y] ^ TerrainConstants.RESOURCES;
 				}
 			}
+			for(MapPoint point : impassables)
+			{
+				if(point._x < 0 || point._x >= width || point._y < 0 || point._y >= height)
+				{
+					log("Invalid impassable coordinates in map data", 3);
+					throw new RuntimeException();
+				}
+				else
+				{
+					_terrain[point._x][point._y] = _terrain[point._x][point._y] ^ TerrainConstants.IMPASSABLE;
+				}
+			}
 			file.close();
 		}
 		catch(Exception e)
@@ -344,7 +371,7 @@ public class GameCore implements Core
 	 */
 	private int getPlayerId(Player p)
 	{
-		if(_observers.contains(p))
+		if(_observers.contains(new ObserverContainer(p)))
 		{
 			return -2;
 		}
@@ -1462,7 +1489,7 @@ public class GameCore implements Core
 	public Unit getUnit(Player p, int unitId)
 	{
 		int player = getPlayerId(p);
-		if(unitId >= _units.size() && unitId < 0)
+		if(unitId >= _units.size() || unitId < 0)
 		{
 			log("Player " + player + " called getUnit(unitId: " + unitId + ") on a unit that did not exist", 2);
 			return null;
