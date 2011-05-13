@@ -99,8 +99,10 @@ public class ButtonsPanel extends Container {
 				_guiPlayer.placementDone();
 			else if(e.getSource()==_endTurn)
 				_guiPlayer.turnDone();
-			else if(e.getSource()==_forfeit)
+			else if(e.getSource()==_forfeit) {
+				_forfeit.setEnabled(false);
 				_guiPlayer.forfeit();
+			}
 		}
 	}
 }
