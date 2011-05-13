@@ -17,6 +17,7 @@ import net.quadratum.core.PlayerInformation;
 import net.quadratum.core.TerrainConstants;
 import net.quadratum.core.Unit;
 import net.quadratum.core.WinCondition;
+import net.quadratum.main.CheckWinner;
 
 public class Level3 implements Level {
 	
@@ -39,7 +40,7 @@ public class Level3 implements Level {
 	}
 	
 	public WinCondition getWinCondition() {
-		return new Level3WinCondition();
+		return new CheckWinner();
 	}
 	
 	public ArrayList<Piece>[] getPieces() {
@@ -207,23 +208,6 @@ public class Level3 implements Level {
 				}
 			}
 			return null;
-		}
-	}
-
-	class Level3WinCondition implements WinCondition {
-		public boolean hasPlayerWon(Map<MapPoint, Unit> units, PlayerInformation playerInformation, int playerNumber)
-		{
-			return false;
-		}
-		
-		public boolean hasPlayerLost(Map<MapPoint, Unit> units, PlayerInformation playerInformation, int playerNumber)
-		{
-			return units.size() == 0;
-		}
-		
-		public String getObjectives()
-		{
-			return new String("Kill the enemy units!");
 		}
 	}
 }
