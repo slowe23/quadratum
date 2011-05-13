@@ -1,0 +1,13 @@
+syntax: glob
+
+*~
+*.class
+.DS_Store
+.classpath
+.project
+log.txt
+bin
+*.jar
+*.zip
+*.orig
+maps/random.qmap

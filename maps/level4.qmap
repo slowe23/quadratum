@@ -1,0 +1,8 @@
+width|10
+height|10
+players|2
+start|0,0|1,1|1,0|0,1
+start|6,6|6,3|3,6|6,0|0,6
+bunkers|1,1|1,0|0,1
+mountains|0,0
+resources|2,2|2,0|0,2|2,1|1,2
