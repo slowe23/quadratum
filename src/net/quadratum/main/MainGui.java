@@ -189,8 +189,8 @@ public class MainGui extends JFrame
 		
 		int maxU = set.getMaxUnits();
 		int res = set.getStartingResources();
-		gc.addPlayer(human, "human", maxU, res);
-		gc.addPlayer(ai, "ai", maxU, res);
+		gc.addPlayer(human, "You", maxU, res);
+		gc.addPlayer(ai, "Opponent", maxU, res);
 		
 		
 		hideMe();
@@ -243,8 +243,9 @@ public class MainGui extends JFrame
 		int res = set.getStartingResources();
 		gc.addPlayer(human, "human", maxU, res);
 		
+		// what is going on here holy crap
 		for(int i = 1; i < maxU; i++) {
-			gc.addPlayer(new VirtualPlayer(), "virtual player"+i, maxU, res);
+			gc.addPlayer(new VirtualPlayer(), "virtual player "+i, maxU, res);
 		}
 		hideMe();
 
@@ -288,8 +289,8 @@ public class MainGui extends JFrame
 		Player ai = level.getAI();
 		
 		int maxU = level.getMaxUnits();
-		gc.addPlayer(human, "human", maxU, level.getStartingResources());
-		gc.addPlayer(ai, "ai", Integer.MAX_VALUE, Integer.MAX_VALUE);
+		gc.addPlayer(human, "You", maxU, level.getStartingResources());
+		gc.addPlayer(ai, "Opponent", Integer.MAX_VALUE, Integer.MAX_VALUE);
 		
 		
 		hideMe();
