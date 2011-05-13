@@ -139,6 +139,7 @@ public class VirtualCore extends NetworkClient implements Core {
 
 	@Override
 	public Map<MapPoint, ActionType> getValidActions(Player p, int unitID) {
+		/*
 		// Busyloop until we're done building the list (synchronization sucks)
 		while (_units.size() < _unitRequests) { }
 		_unitRequests = 0;
@@ -161,14 +162,12 @@ public class VirtualCore extends NetworkClient implements Core {
 					new ArrayList<UnitInformation>(_unitInfo.values()),
 					_mapData._terrain);
 		}
+		*/
 		
-		
-		/*
 		write("getvalidactions\t"+unitID+"\n");
 		// protocol: <validactions \t> id \t mapobject
 		String[] s = getResponse("validactions");
 		return Serializer.<HashMap<MapPoint,ActionType>>getObject(s[1]);
-		*/
 	}
 
 	@Override
