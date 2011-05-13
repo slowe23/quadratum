@@ -24,6 +24,8 @@ import net.quadratum.core.Player;
 import net.quadratum.core.WinCondition;
 import net.quadratum.gamedata.DefaultPieces;
 import net.quadratum.gamedata.Level;
+import net.quadratum.gamedata.Tutorial;
+import net.quadratum.gamedata.TutorialCore;
 import net.quadratum.gui.GUIPlayer;
 import net.quadratum.network.NetworkPlayer;
 import net.quadratum.network.VirtualPlayer;
@@ -34,7 +36,8 @@ public class MainGui extends JFrame
 
 	// JPanel with actual contents
 	private JPanel _mainMenuPanel, _singlePlayerPanel, _campaignPanel,
-				   _networkGamePanel, _networkLobbyPanel, _settingsPanel;
+				   _networkGamePanel, _settingsPanel,
+				   _netJoinPanel, _netHostPanel;
 	private GameCore _gc;
 	private boolean _lastGameCampaign; //maybe use Panel _returnDest instead
 	private boolean _resize = false;
@@ -95,8 +98,9 @@ public class MainGui extends JFrame
 		_singlePlayerPanel = new SinglePlayerPanel(this);
 		_campaignPanel = new CampaignPanel(this);
 		_networkGamePanel = new NetworkGamePanel(this);
-		_networkLobbyPanel = new NetworkLobbyPanel(this);
 		_settingsPanel = new SettingsPanel(this);
+		_netJoinPanel = new NetJoinPanel(this);
+		_netHostPanel = new NetHostPanel(this, ((SettingsPanel) _settingsPanel));
 	}
 	
 	
@@ -209,7 +213,7 @@ public class MainGui extends JFrame
 //		hideMe();
 	}
 	
-	private void createNetworkGame() {
+	public void createNetworkGame(List<NetworkPlayer> others) {
 		Settings set = (Settings)_settingsPanel;
 		
 		String map;
@@ -228,12 +232,6 @@ public class MainGui extends JFrame
 		pieces = getStdPieces();
 		
 		GameCore gc = new GameCore(this, map, wc, pieces);
-		
-		ServerThread server = new ServerThread(set.getPort());
-		server.run();
-		try {wait(2000);} catch (Exception e) {}
-		List<NetworkPlayer> others = server.stopListening();
-		
 		Player human = new GUIPlayer();
 		
 		//add players to core
@@ -241,7 +239,7 @@ public class MainGui extends JFrame
 		int res = set.getStartingResources();
 		gc.addPlayer(human, "human", maxU, res);
 		
-		for(int i = 1; i < maxU; i++) {
+		for(int i = 1; i < others.size(); i++) {
 			gc.addPlayer(new VirtualPlayer(), "virtual player"+i, maxU, res);
 		}
 		hideMe();
@@ -262,8 +260,6 @@ public class MainGui extends JFrame
 	
 	
 	public void startCampaignGame(Level level) {
-		//level can be some other unique campaign level identifier
-		// TODO STUBBED
 		
 		_lastGameCampaign = true;
 		
@@ -275,7 +271,11 @@ public class MainGui extends JFrame
 			return;
 		}
 		
-		GameCore gc = new GameCore(this, level.getMap(), level.getWinCondition(), level.getPieces());
+		GameCore gc;
+		if(level instanceof Tutorial)
+			gc = new TutorialCore(this, level.getMap(), level.getWinCondition(), level.getPieces());
+		else
+			gc = new GameCore(this, level.getMap(), level.getWinCondition(), level.getPieces());
 		
 		Player human = new GUIPlayer();
 		Player ai = level.getAI();
@@ -338,19 +338,21 @@ public class MainGui extends JFrame
 			return;
 		}
 		
+		if(MainConstants.JOIN.equals(e.getActionCommand())) {
+			changePanel(_netJoinPanel);
+			return;
+		}
+		
 		// new game - pass to core
 		if(MainConstants.START_GAME.equals(e.getActionCommand())) {
 			if(((SettingsPanel) _settingsPanel).usingNetworkSettings()) {
-				createNetworkGame();
+				//createNetworkGame();
+				changePanel(_netHostPanel);
+				((NetHostPanel) _netHostPanel).start();
 			}
 			else {
 				createQuickGame();
 			}
-		}
-		
-		// different window?
-		if(MainConstants.CAMPAIGN.equals(e.getActionCommand())) {
-			// Start campaign map viewer
 		}
 		
 		
