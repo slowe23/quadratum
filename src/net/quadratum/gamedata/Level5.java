@@ -332,7 +332,16 @@ public class Level5 implements Level
 		
 		public boolean hasPlayerLost(Map<MapPoint, Unit> units, PlayerInformation playerInformation, int playerNumber) {
 			if (playerNumber == 1) {
-				// TODO check to see if general is dead
+				boolean generalAlive = false;
+				for (Unit u : units.values()) {
+					if (u._name.equals("General")) {
+						generalAlive = true;
+						break;
+					}
+				}
+				if (!generalAlive) {
+					return true;
+				}
 			}
 			return units.size() == 0;
 		}
