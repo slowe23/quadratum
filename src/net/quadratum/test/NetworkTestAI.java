@@ -44,8 +44,6 @@ class NetworkTestAI implements Player
 		_core.updateUnit(this, _unitb, 0, new MapPoint(7, 3), 0);
 		_core.updateUnit(this, _unitb, 0, new MapPoint(7, 4), 0);
 		_core.updateUnit(this, _unitb, 0, new MapPoint(7, 5), 0);
-		_core.updateUnit(this, _unitb, 0, new MapPoint(7, 6), 0);
-		_core.updateUnit(this, _unitb, 0, new MapPoint(7, 7), 0);
 		
 		_core.ready(this);
 	}

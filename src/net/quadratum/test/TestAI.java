@@ -110,6 +110,10 @@ class TestAI implements Player
 				{
 					fail("Was not able to add water block");
 				}
+				if(_core.updateUnit(this, _unit, 0, new MapPoint(2, 2), 0))
+				{
+					fail("Was able to add block with 0 resources");
+				}
 				if(_core.getValidActions(this, _unit) != null)
 				{
 					fail("Unit still had actions after a block had been placed");
