@@ -10,14 +10,15 @@ import net.quadratum.core.Action.ActionType;
  * A class that defines a "path-following" behavior
  *
  */
-public class PathBehavior extends AbstractBehavior {
+public class PathBehavior extends ChaseBehavior {
 	private Queue<MapPoint> _path;
 	private boolean _loop;
 	
 	/** Whether the unit prioritizes attacking (aggressive) or path-following (not aggressive) */
 	private boolean _aggressive;
 	
-	public PathBehavior(Queue<MapPoint> path, boolean loop, boolean aggressive) {
+	public PathBehavior(Queue<MapPoint> path, boolean loop, boolean aggressive, int distance) {
+		super(false, distance);
 		_path = path;
 		_loop = loop;
 		_aggressive = aggressive;
@@ -33,7 +34,6 @@ public class PathBehavior extends AbstractBehavior {
 				_path.add(rem);
 		}
 		
-		
 		Set<MapPoint> moves = new HashSet<MapPoint>(), attacks = new HashSet<MapPoint>();
 		filter(availableActions, moves, attacks);
 		
@@ -43,18 +43,18 @@ public class PathBehavior extends AbstractBehavior {
 		if(destination!=null)
 			advance = moveTowards(location, destination, moves);
 		
-		MapPoint attack = randomAction(attacks);
+		MapPoint chase = super.behave(location, availableActions, units);
 		
 		if(_aggressive) {
-			if(attack!=null)
-				return attack;
+			if(chase!=null)
+				return chase;
 			else
 				return advance;
 		} else {
 			if(advance!=null)
 				return advance;
 			else
-				return attack;
+				return chase;
 		}
 	}
 }
