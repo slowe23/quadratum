@@ -16,6 +16,7 @@ import net.quadratum.core.Player;
 import net.quadratum.core.PlayerInformation;
 import net.quadratum.core.Unit;
 import net.quadratum.core.WinCondition;
+import net.quadratum.core.MapData;
 
 public class Level5 implements Level {
 	
@@ -114,7 +115,7 @@ public class Level5 implements Level {
 		}
 
 		@Override
-		public void createUnits(int id) {
+		public void createUnits(MapData mapData, int id) {
 			// Place turrets
 			placeTurret(new MapPoint(13,0));
 			placeTurret(new MapPoint(13,9));

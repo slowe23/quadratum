@@ -13,13 +13,13 @@ import net.quadratum.core.*;
 public abstract class LevelAI implements Player {
 	protected Core _core;
 	
-	protected int[][] _terrain;
-	
 	private Map<Integer, UnitBehavior> _behaviors;
 
 	private Map<MapPoint, Unit> _units;
 	private boolean _unitsChanged;
 	private final Object _unitsLock;
+	
+	private boolean _ended;
 	
 	public LevelAI() {
 		_unitsLock = new Object();
@@ -27,11 +27,10 @@ public abstract class LevelAI implements Player {
 	
 	public final void start(Core core, MapData mapData, int id, int otherPlayers) {
 		_core = core;
-		_terrain = mapData._terrain;
 		
 		_behaviors = new HashMap<Integer, UnitBehavior>();
 		
-		createUnits(id);
+		createUnits(mapData, id);
 		
 		_core.ready(this);
 	}
@@ -40,11 +39,17 @@ public abstract class LevelAI implements Player {
 		_behaviors.put(unitID, behavior);
 	}
 	
-	public abstract void createUnits(int id);
+	public abstract void createUnits(MapData mapData, int id);
 	
 	public final void updatePieces(List<Piece> pieces) {}
 	
-	public final void end(GameStats stats) {}
+	public final void end(GameStats stats) {
+		_ended = true;
+	}
+	
+	protected boolean hasEnded() {
+		return _ended;
+	}
 	
 	public final void lost() {}
 	

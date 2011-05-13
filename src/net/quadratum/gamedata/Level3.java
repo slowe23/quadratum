@@ -18,6 +18,7 @@ import net.quadratum.core.TerrainConstants;
 import net.quadratum.core.Unit;
 import net.quadratum.core.WinCondition;
 import net.quadratum.main.CheckWinner;
+import net.quadratum.core.MapData;
 
 public class Level3 implements Level {
 	
@@ -57,7 +58,7 @@ public class Level3 implements Level {
 			super();
 		}
 		
-		public void createUnits(int id) {
+		public void createUnits(MapData mapData, int id) {
 			// Scout path
 			Queue<MapPoint> patrol = new LinkedList<MapPoint>();
 			patrol.add(new MapPoint(9,9));
@@ -68,13 +69,13 @@ public class Level3 implements Level {
 			patrol.add(new MapPoint(15,11));
 			placeScout(new MapPoint(18,9),patrol);
 			// Place rangers
-			placeRanger(new MapPoint(18,10),false);
-			placeRanger(new MapPoint(19,11),true);
+			placeRanger(new MapPoint(18,10),false, mapData._terrain);
+			placeRanger(new MapPoint(19,11),true, mapData._terrain);
 			// Place soldier
 			placeSoldier(new MapPoint(19,10));
 			// Place tank
-			placeTank(new MapPoint(19,9));
-			placeTank(new MapPoint(20,9));
+			placeTank(new MapPoint(19,9), mapData._terrain);
+			placeTank(new MapPoint(20,9), mapData._terrain);
 		}
 		
 		/**
@@ -107,11 +108,11 @@ public class Level3 implements Level {
 		 * @param sniper if true, the ranger will pick a random mountain, move
 		 * towards it, and stay there
 		 */
-		private void placeRanger(MapPoint location, boolean sniper) {
+		private void placeRanger(MapPoint location, boolean sniper, int[][] terrain) {
 			int unit = _core.placeUnit(this, location, new String("Ranger"));
 			if (unit != -1) {
 				if (sniper) {
-					final MapPoint p = getRandomLocationOfType(TerrainConstants.MOUNTAIN);
+					final MapPoint p = getRandomLocationOfType(terrain, TerrainConstants.MOUNTAIN);
 					if (p != null) {
 						registerUnit(unit, new PathBehavior(new LinkedList<MapPoint>() {
 							{ add(p); }},false,true));
@@ -163,10 +164,10 @@ public class Level3 implements Level {
 		 * Places a tank-type unit
 		 * @param location the starting location of the tank
 		 */
-		private void placeTank(MapPoint location) {
+		private void placeTank(MapPoint location, int[][] terrain) {
 			int unit = _core.placeUnit(this, location, new String("Tank"));
 			if (unit != -1) {
-				final MapPoint p = getRandomLocationOfType(TerrainConstants.BUNKER);
+				final MapPoint p = getRandomLocationOfType(terrain, TerrainConstants.BUNKER);
 				if (p != null) {
 					registerUnit(unit, new PathBehavior(new LinkedList<MapPoint>() {
 						{ add(p); }},false,true));
@@ -192,11 +193,11 @@ public class Level3 implements Level {
 		 * @param type a terrain type
 		 * @return a MapPoint to a random location of the given type, or null.
 		 */
-		private MapPoint getRandomLocationOfType(int type) {
+		private MapPoint getRandomLocationOfType(int[][] terrain, int type) {
 			Set<MapPoint> spots = new HashSet<MapPoint>();
-			for (int i = 0; i < _terrain.length; i++) {
-				for (int j = 0; j < _terrain[0].length; j++) {
-					if (TerrainConstants.isOfType(_terrain[i][j],type)) {
+			for (int i = 0; i < terrain.length; i++) {
+				for (int j = 0; j < terrain[0].length; j++) {
+					if (TerrainConstants.isOfType(terrain[i][j],type)) {
 						spots.add(new MapPoint(i,j));
 					}
 				}
