@@ -86,7 +86,7 @@ public class Level3 implements Level {
 		private void placeScout(MapPoint location, Queue<MapPoint> patrol) {
 			int unit = _core.placeUnit(this, location, new String("Scout"));
 			if (unit != -1) {
-				registerUnit(unit, new PathBehavior(patrol,true,true));
+				registerUnit(unit, new PathBehavior(patrol,true,true,3));
 				_core.updateUnit(this, unit, 6, new MapPoint(1,0), Piece.ROTATE_NONE);
 				_core.updateUnit(this, unit, 1, new MapPoint(5,0), Piece.ROTATE_NONE);
 				_core.updateUnit(this, unit, 0, new MapPoint(6,0), Piece.ROTATE_NONE);
@@ -114,8 +114,9 @@ public class Level3 implements Level {
 				if (sniper) {
 					final MapPoint p = getRandomLocationOfType(terrain, TerrainConstants.MOUNTAIN);
 					if (p != null) {
-						registerUnit(unit, new PathBehavior(new LinkedList<MapPoint>() {
-							{ add(p); }},false,true));
+						Queue<MapPoint> path = new LinkedList<MapPoint>();
+						path.add(p);
+						registerUnit(unit, new PathBehavior(path, true, true, 1));
 					} else {
 						registerUnit(unit, new ChaseBehavior(true));
 					}
@@ -169,8 +170,10 @@ public class Level3 implements Level {
 			if (unit != -1) {
 				final MapPoint p = getRandomLocationOfType(terrain, TerrainConstants.BUNKER);
 				if (p != null) {
-					registerUnit(unit, new PathBehavior(new LinkedList<MapPoint>() {
-						{ add(p); }},false,true));
+					Queue<MapPoint> path = new LinkedList<MapPoint>();
+					path.add(p);
+					
+					registerUnit(unit, new PathBehavior(path,true,true, 1));
 				} else {
 					registerUnit(unit, new ChaseBehavior(true));
 				}

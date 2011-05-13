@@ -102,7 +102,7 @@ public class Level2 implements Level {
 		private void placePatroller(MapPoint location, Queue<MapPoint> patrol) {
 			int unit = _core.placeUnit(this, location, "Patroller");
 			if(unit!=-1) {
-				registerUnit(unit, new PathBehavior(patrol, true, true));
+				registerUnit(unit, new PathBehavior(patrol, true, true, 5));
 				
 				_core.updateUnit(this, unit, 0, new MapPoint(5, 4), Piece.ROTATE_NONE);
 				_core.updateUnit(this, unit, 1, new MapPoint(1, 5), Piece.ROTATE_NONE);
@@ -117,7 +117,7 @@ public class Level2 implements Level {
 		private void placeMover(MapPoint location, Queue<MapPoint> path) {
 			int unit = _core.placeUnit(this, location, "Pursuer");
 			if(unit!=-1) {
-				registerUnit(unit, new PathBehavior(path, false, false));
+				registerUnit(unit, new PathBehavior(path, false, true, 3));
 				
 				_core.updateUnit(this, unit, 0, new MapPoint(5, 4), Piece.ROTATE_NONE);
 				_core.updateUnit(this, unit, 1, new MapPoint(1, 5), Piece.ROTATE_NONE);
