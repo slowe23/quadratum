@@ -13,6 +13,7 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
 
 import net.quadratum.core.Player;
 import net.quadratum.main.MainConstants.Defaults;
@@ -65,6 +66,7 @@ public class NetHostPanel extends JPanel implements ActionListener {
 		
 		JPanel centerPane = new JPanel();
 		centerPane.setLayout(new BoxLayout(centerPane, BoxLayout.X_AXIS));
+		centerPane.setAlignmentX(SwingConstants.CENTER);
 		JPanel leftHalf = new JPanel();
 		JPanel rightHalf = new JPanel();
 		leftHalf.setLayout(new BoxLayout(leftHalf, BoxLayout.Y_AXIS));
@@ -78,8 +80,8 @@ public class NetHostPanel extends JPanel implements ActionListener {
 		_pList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		_pList.setLayoutOrientation(JList.VERTICAL);
 		_pList.setBorder(BorderFactory.createTitledBorder("Connected players"));
+		((TitledBorder) _pList.getBorder()).setTitleJustification(TitledBorder.CENTER);
 		
-		leftHalf.add(new JLabel("Connected players:"));
 		leftHalf.add(_pList);
 		
 		_bootBtn = new JButton("Boot player");
@@ -101,13 +103,14 @@ public class NetHostPanel extends JPanel implements ActionListener {
 		centerPane.setAlignmentX(SwingConstants.CENTER);
 		
 		JPanel bottomPane = new JPanel();
-		bottomPane.setLayout(new BoxLayout(bottomPane, BoxLayout.X_AXIS));
+		bottomPane.setLayout(new BoxLayout(bottomPane, BoxLayout.Y_AXIS));
 		
-		JButton returnMainBtn = new JButton("Return to main.");
+		JButton returnMainBtn = new JButton("Return to main");
 		returnMainBtn.setActionCommand(MainConstants.RETURN_MAIN);
 		returnMainBtn.addActionListener(this);
 		
-		_messageBox = new JTextArea(5, 10);
+		_messageBox = new JTextArea(5, 5);
+		_messageBox.setAlignmentX(SwingConstants.CENTER);
 		_messageBox.append("Message log --- ");
 		_messageBox.setEditable(false);
 		_messageBox.setLineWrap(true);
@@ -117,7 +120,7 @@ public class NetHostPanel extends JPanel implements ActionListener {
 							  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER );
 
 		bottomPane.add(_messageBox);
-		bottomPane.add(Box.createHorizontalGlue());
+		bottomPane.add(Box.createVerticalGlue());
 		bottomPane.add(returnMainBtn);
 		
 

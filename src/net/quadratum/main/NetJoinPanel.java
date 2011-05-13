@@ -18,7 +18,9 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import net.quadratum.gui.GUIPlayer;
 import net.quadratum.main.MainConstants.Defaults;
+import net.quadratum.network.VirtualCore;
 
 public class NetJoinPanel extends JPanel implements ActionListener {
 
@@ -26,6 +28,7 @@ public class NetJoinPanel extends JPanel implements ActionListener {
 	private JLabel _joinStatus, _message, _countdown;
 	private Socket _sock;
 	JButton _connectBtn, _disconnBtn;
+	private MainGui _main;
 	
 	
 	public NetJoinPanel(ActionListener al) {
@@ -34,6 +37,8 @@ public class NetJoinPanel extends JPanel implements ActionListener {
 		setSize(MainConstants.DEFAULT_WINDOW_W, MainConstants.DEFAULT_WINDOW_H);
 		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		
+		_main = ((MainGui) al);
 		
 		JPanel topPane = new JPanel();
 		topPane.setLayout(new BoxLayout(topPane, BoxLayout.X_AXIS));
@@ -129,7 +134,6 @@ public class NetJoinPanel extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
-		// TODO Auto-generated method stub
 		String s = ev.getActionCommand();
 		
 		if(s.equals("connectHost")) {
@@ -152,10 +156,13 @@ public class NetJoinPanel extends JPanel implements ActionListener {
 				return;
 			}
 			
-			_message.setText("Successfully connected!");
+			_message.setText("Successfully connected! Waiting for host to start.");
 			
 			_connectBtn.setEnabled(false);
 			_disconnBtn.setEnabled(true);
+			
+			_main.actionPerformed(new ActionEvent(this, 23, MainConstants.START_GAME));
+			return;
 		}
 		
 //		if(s.equals("join")) {
@@ -172,6 +179,10 @@ public class NetJoinPanel extends JPanel implements ActionListener {
 				
 			}
 		}
+	}
+	
+	public synchronized Socket getSocket() {
+		return _sock;
 	}
 	
 	public synchronized boolean isConnected() {

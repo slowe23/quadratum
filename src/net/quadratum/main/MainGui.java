@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import net.quadratum.gamedata.Tutorial;
 import net.quadratum.gamedata.TutorialCore;
 import net.quadratum.gui.GUIPlayer;
 import net.quadratum.network.NetworkPlayer;
+import net.quadratum.network.VirtualCore;
 import net.quadratum.network.VirtualPlayer;
 import net.quadratum.test.CheckWinnerTest;
 
@@ -211,6 +213,24 @@ public class MainGui extends JFrame
 		}
 		
 //		hideMe();
+	}
+	
+	public void joinNetworkGame(Socket sock) {
+		VirtualCore vc = new VirtualCore(sock);
+		vc.addPlayer(new GUIPlayer(), "Local Player", 5, 5000);
+		vc.startGame();
+		
+		try {
+			if (SwingUtilities.isEventDispatchThread()) {
+				vc.startGame();
+			} else SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					//_gc.startGame();//can't do.
+				}
+			});
+		} catch (Exception e) {
+			System.err.println("Threading error.");
+		}
 	}
 	
 	public void createNetworkGame(List<NetworkPlayer> others) {
