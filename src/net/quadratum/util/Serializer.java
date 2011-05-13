@@ -24,7 +24,7 @@ public class Serializer {
 	 * @param t the object to get the byte array for
 	 * @return a byte array representing this object.
 	 */
-	public static <T extends Serializable> byte[] getByteArray(T t) {
+	public static synchronized <T extends Serializable> byte[] getByteArray(T t) {
 		if (t == null) {
 			return new byte[] {0};
 		}
@@ -44,7 +44,7 @@ public class Serializer {
 	 * @param t the object to get an encoded string for
 	 * @return a string representing this object.
 	 */
-	public static <T extends Serializable> String getEncodedString(T t) {
+	public static synchronized <T extends Serializable> String getEncodedString(T t) {
 		// XXX hacky bullshit with replaceall
 		return _enc.encode(getByteArray(t)).replaceAll("(\r)?\n",""); 
 	}
@@ -55,7 +55,7 @@ public class Serializer {
 	 * @param b the byte array to get an object from
 	 * @return the object represented by the given byte array.
 	 */
-	public static <T extends Serializable> T getObject(byte[] b) {
+	public static synchronized <T extends Serializable> T getObject(byte[] b) {
 		if (b.length == 1 && b[0] == 0) {
 			return null;
 		}
@@ -78,7 +78,7 @@ public class Serializer {
 	 * @param s the string to get an object from
 	 * @return the object represented by the given string.
 	 */
-	public static <T extends Serializable> T getObject(String s) {
+	public static synchronized <T extends Serializable> T getObject(String s) {
 		try {
 			return Serializer.<T>getObject(_dec.decodeBuffer(s));
 		} catch (IOException e) {

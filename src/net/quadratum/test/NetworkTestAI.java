@@ -69,6 +69,12 @@ class NetworkTestAI implements Player
 		// Turn 2 - make sure message has been recieved and resources have increaed by 10, move unit b to mountain, see if other unit is in range
 		// Turn 3 - make sure unit has died, quit game
 		// Any turns past that mean that something has gone wrong
+		
+		// Sleep to avoid synchro issues
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) { }
+		
 		_turn++;
 		switch(_turn)
 		{

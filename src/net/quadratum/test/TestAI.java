@@ -86,6 +86,12 @@ class TestAI implements Player
 		// Turn 2 - try to move onto water
 		// Turn 3 - try to move onto impassable terrain then attack enemy unit
 		// Any turns past that mean that something has gone wrong
+		
+		// Sleep to avoid synchro issues
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) { }
+		
 		_turn++;
 		switch(_turn)
 		{

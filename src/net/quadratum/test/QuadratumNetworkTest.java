@@ -10,13 +10,15 @@ import net.quadratum.main.*;
 import net.quadratum.network.*;
 import net.quadratum.gui.*;
 
-public class QuadratumTest implements Main
+public class QuadratumNetworkTest implements Main
 {
 	static int _port = 9600;
 	public static void main(String[] args)
 	{
 		try
 		{
+			ServerThread server = new ServerThread(_port);
+			server.start();
 			// Make some players.
 			Player player1 = new TestAI();
 			Player player2 = new NetworkTestAI();
@@ -36,13 +38,31 @@ public class QuadratumTest implements Main
 			waterPiece.addBlock(new MapPoint(0, 0), new Block(waterBlock));
 			pieces.add(waterPiece);
 			// Create a core.
-			GameCore core = new GameCore(new QuadratumTest(), "maps/minitest.qmap", new CheckWinner(), pieces);
+			GameCore core = new GameCore(new QuadratumNetworkTest(), "maps/minitest.qmap", new CheckWinner(), pieces);
 			core.addPlayer(player1, "AI Player", 1, 20);
-			core.addPlayer(player2, "Network AI Player", 2, 150);
+			createNetworkPlayer(player2, "Network AI Player", 5);
+			for (Player p : server.stopListening()) {
+				// XXX Massively hacky
+				core.addPlayer(p, "Network AI Player", 2, 160);
+			}
+			core.addObserver(new GUIPlayer());
 			core.startGame();
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 			System.exit(0);
+		}
+	}
+	
+	private static void createNetworkPlayer(Player p, String name, int maxUnits) {
+		try {
+			Socket sock = new Socket("localhost",_port);
+			VirtualCore vc = new VirtualCore(sock);
+			vc.addPlayer(p, name, maxUnits, 100);
+			vc.startGame();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

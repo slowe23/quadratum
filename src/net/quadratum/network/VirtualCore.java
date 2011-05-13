@@ -140,7 +140,8 @@ public class VirtualCore extends NetworkClient implements Core {
 	@Override
 	public Map<MapPoint, ActionType> getValidActions(Player p, int unitID) {
 		// Busyloop until we're done building the list (synchronization sucks)
-		while (_units.size() != _unitRequests) { }
+		while (_units.size() < _unitRequests) { }
+		_unitRequests = 0;
 		// Convert unitID into the position in the list we are going
 		// to pass in.
 		List<Integer> uids = new ArrayList<Integer>(_units.keySet());
@@ -160,6 +161,7 @@ public class VirtualCore extends NetworkClient implements Core {
 					new ArrayList<UnitInformation>(_unitInfo.values()),
 					_mapData._terrain);
 		}
+		
 		
 		/*
 		write("getvalidactions\t"+unitID+"\n");
@@ -213,7 +215,6 @@ public class VirtualCore extends NetworkClient implements Core {
 		if (_units.containsKey(unitID)) {
 			return _units.get(unitID);
 		}
-		_unitRequests++;
 		write("getunit\t"+unitID+"\n");
 		// protocol: <unit \t> id \t unitobject
 		String[] s = getResponse("unit");
@@ -226,7 +227,6 @@ public class VirtualCore extends NetworkClient implements Core {
 		}
 		Unit u = Serializer.<Unit>getObject(s[1]);
 		_units.put(i,u);
-		_unitRequests--;
 		return u;
 	}
 
