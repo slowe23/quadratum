@@ -10,3 +10,4 @@ bin
 *.jar
 *.zip
 *.orig
+maps/random.qmap
