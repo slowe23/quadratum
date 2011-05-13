@@ -18,17 +18,18 @@ public class ChatPanel extends JPanel {
 	private ChatHandler _chatHandler;
 	private MessageDisplay _messageDisplay;
 	
+	private boolean _isPlayer;
+	
 	private JTextArea _area;
 	private JTextField _field;
 	private JButton _fieldButton;
 	private JCheckBox _show;
 	
-	public ChatPanel(ChatHandler chatHandler, MessageDisplay messageDisplay) {
+	public ChatPanel(ChatHandler chatHandler, MessageDisplay messageDisplay, boolean isPlayer) {
 		_chatHandler = chatHandler;
 		_messageDisplay = messageDisplay;
 		
-		ActionListener actionListener = new ChatPanelActionListener();
-		ItemListener itemListener = new ChatPanelItemListener();
+		_isPlayer = isPlayer;
 		
 		setLayout(new BorderLayout());
 		
@@ -41,42 +42,50 @@ public class ChatPanel extends JPanel {
 		_area = std._jta;
 		ctr.add(std._jsp, BorderLayout.CENTER);
 		
-		///Set up text entry area with text field and button
-		JPanel textEntryPanel = new JPanel();
-		textEntryPanel.setLayout(new BorderLayout());
-		
-		//Set up text field
-		_field = new JTextField();
-		_field.addActionListener(actionListener);
-		textEntryPanel.add(_field, BorderLayout.CENTER);
-		
-		//Set up text entry button
-		_fieldButton = new JButton("Send");
-		_fieldButton.addActionListener(actionListener);
-		textEntryPanel.add(_fieldButton, BorderLayout.EAST);
-		
-		ctr.add(textEntryPanel, BorderLayout.SOUTH);
+		if(_isPlayer) {
+			ActionListener actionListener = new ChatPanelActionListener();
+			
+			///Set up text entry area with text field and button
+			JPanel textEntryPanel = new JPanel();
+			textEntryPanel.setLayout(new BorderLayout());
+			
+			//Set up text field
+			_field = new JTextField();
+			_field.addActionListener(actionListener);
+			textEntryPanel.add(_field, BorderLayout.CENTER);
+			
+			//Set up text entry button
+			_fieldButton = new JButton("Send");
+			_fieldButton.addActionListener(actionListener);
+			textEntryPanel.add(_fieldButton, BorderLayout.EAST);
+			
+			ctr.add(textEntryPanel, BorderLayout.SOUTH);
+		}
 		
 		add(ctr, BorderLayout.CENTER);
+		
+		ItemListener itemListener = new ChatPanelItemListener();
 		
 		///Add labeled show/hide checkbox
 		_show = new JCheckBox("Show recent messages over map", _messageDisplay.getShowMessages());
 		_show.addItemListener(itemListener);
 		add(_show, BorderLayout.SOUTH);
 		
-		///Disable input until start method is called
-		_field.setEnabled(false);
-		_fieldButton.setEnabled(false);
-		_show.setEnabled(false);
+		if(_isPlayer) {
+			///Disable input until start method is called
+			_field.setEnabled(false);
+			_fieldButton.setEnabled(false);
+		}
 		
 		_chatHandler.setChatPanel(this);
 	}
 	
 	/** Allow the user to being interacting with the chat panel */
 	public void start() {
-		_field.setEnabled(true);
-		_fieldButton.setEnabled(true);
-		_show.setEnabled(true);
+		if(_isPlayer) {
+			_field.setEnabled(true);
+			_fieldButton.setEnabled(true);
+		}
 	}
 	
 	/**
