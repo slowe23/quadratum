@@ -82,7 +82,7 @@ public class Level4 implements Level
 			target.add(new MapPoint(0, 0));
 			
 			int unit = _core.placeUnit(this, location, new String("Attacker"));
-			registerUnit(unit, new PathBehavior(target, false, true));
+			registerUnit(unit, new PathBehavior(target, false, true, 5));
 			
 			_core.updateUnit(this, unit, 4, new MapPoint(0, 0), Piece.ROTATE_NONE);
 			_core.updateUnit(this, unit, 4, new MapPoint(0, 2), Piece.ROTATE_NONE);

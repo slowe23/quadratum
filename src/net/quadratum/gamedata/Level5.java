@@ -2,6 +2,7 @@ package net.quadratum.gamedata;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Map;
 
 import net.quadratum.ai.ChaseBehavior;
@@ -307,8 +308,10 @@ public class Level5 implements Level {
 		private void placePatrol(final MapPoint location, final MapPoint toGo) {
 			int unit = _core.placeUnit(this, location, "Patroller");
 			if (unit != -1) {
-				registerUnit(unit, new PathBehavior(new LinkedList<MapPoint>() {
-					{ add(toGo); add(location); }},true,true));
+				Queue<MapPoint> path = new LinkedList<MapPoint>();
+				path.add(toGo);
+				path.add(location);
+				registerUnit(unit, new PathBehavior(path, true, true, 5));
 				_core.updateUnit(this, unit, 2, new MapPoint(1,0), Piece.ROTATE_CW);
 				_core.updateUnit(this, unit, 0, new MapPoint(3,0), Piece.ROTATE_CW);
 				_core.updateUnit(this, unit, 0, new MapPoint(6,0), Piece.ROTATE_NONE);
