@@ -106,7 +106,7 @@ public class MainGui extends JFrame
 	}
 	
 	
-	private void hideMe() {
+	public void hideMe() {
 		//System.err.println("Main: Passing off control, hiding.");
 		getContentPane().setVisible(false);
 		getContentPane().setEnabled(false);
@@ -261,8 +261,9 @@ public class MainGui extends JFrame
 		int res = set.getStartingResources();
 		gc.addPlayer(human, "human", maxU, res);
 		
-		for(int i = 1; i < others.size(); i++) {
-			gc.addPlayer(others.get(i), "virtual player"+i, maxU, res);
+		for(int i = 0; i < others.size(); i++) {
+			System.out.println("Network player: " + others.get(i));
+			gc.addPlayer(others.get(i), "virtual player"+(i+1), maxU, res);
 		}
 		hideMe();
 

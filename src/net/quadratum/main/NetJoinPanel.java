@@ -150,6 +150,8 @@ public class NetJoinPanel extends JPanel implements ActionListener {
 			try {
 				_sock = new Socket(addr, port);
 				_vc = new VirtualCore(_sock);
+				_vc.addPlayer(new GUIPlayer(), "Local Player", 5, 5000);
+				_vc.startGame();
 			} catch (UnknownHostException uhe) {
 				_message.setText("Cannot identify that host");
 				return;
@@ -164,7 +166,8 @@ public class NetJoinPanel extends JPanel implements ActionListener {
 			_connectBtn.setEnabled(false);
 			_disconnBtn.setEnabled(true);
 			
-			_main.actionPerformed(new ActionEvent(this, 23, "joinNetGame"));
+			//_main.actionPerformed(new ActionEvent(this, 23, "joinNetGame"));
+			_main.hideMe();
 			return;
 		}
 		
