@@ -111,7 +111,7 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 		
 		_levelName = new JLabel("No level selected");
 		_levelName.setAlignmentX(Component.CENTER_ALIGNMENT);
-		_levelStatus = new JLabel("-");
+		_levelStatus = new JLabel("");
 		_levelStatus.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
 		
@@ -190,11 +190,11 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 				_levelName.setText("Tutorial");
 			else
 				_levelName.setText("Level "+level);
-			_levelStatus.setText(_wins[level].toString());
+			//_levelStatus.setText(_wins[level].toString());
 		} else {
 			_playBtn.setEnabled(false);
 			_levelName.setText("No level selected");
-			_levelStatus.setText("-");
+			//_levelStatus.setText("-");
 		}
 	}
 	
@@ -278,10 +278,10 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 				_wins[i] = LvlStatus.BEATEN;
 			}
 			if(Integer.parseInt(fin.readLine()) == 0)
-				_wins[firstUnbeaten] = LvlStatus.LOST;
+				_wins[firstUnbeaten] = LvlStatus.BEATEN;
 			for(int i = firstUnbeaten; i < _maxLevel; ) {
 				i++;
-				_wins[i] = LvlStatus.UNPLAYED;
+				_wins[i] = LvlStatus.BEATEN;
 			}
 			
 			String[] invLvls = (fin.readLine().split(","));
@@ -296,10 +296,10 @@ public class CampaignPanel extends JPanel implements ActionListener, MouseListen
 			
 			_wins[0] = LvlStatus.BEATEN;
 			_wins[1] = LvlStatus.BEATEN;
-			_wins[2] = LvlStatus.LOST;
-			_wins[3] = LvlStatus.UNPLAYED;
-			_wins[4] = LvlStatus.UNPLAYED;
-			_wins[5] = LvlStatus.UNPLAYED;
+			_wins[2] = LvlStatus.BEATEN;
+			_wins[3] = LvlStatus.BEATEN;
+			_wins[4] = LvlStatus.BEATEN;
+			_wins[5] = LvlStatus.BEATEN;
 			
 			_invalidLevels = new int[] {0, 4, 5};
 		} finally {
