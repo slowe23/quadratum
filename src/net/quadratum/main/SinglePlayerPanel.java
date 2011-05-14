@@ -25,7 +25,7 @@ public class SinglePlayerPanel extends JPanel {
 		holder.setLayout(new BoxLayout(holder, BoxLayout.Y_AXIS));
 		
 		// Create buttons
-		_campaignGameBtn = new JButton("Continue campaign");
+		_campaignGameBtn = new JButton("Play campaign");
 		_quickPlayBtn = new JButton("Quick play game");
 		_returnMainBtn = new JButton("Return to main menu");
 		
