@@ -1,0 +1,1 @@
+Quadratum is a turn based strategy game based on units made up of individual components
